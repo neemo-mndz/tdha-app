@@ -1,45 +1,51 @@
 import { addDays, format } from 'date-fns';
-import { getSQL } from '@/lib/db';
+import { eq, and, asc, sql, count } from 'drizzle-orm';
+import { db } from '@/lib/db/client';
+import { days, logs } from '@/drizzle/schema';
 import type { DayStatus } from '@/lib/types/calendar';
 
 /**
  * Busca o status de 7 dias de uma semana para um usuário.
- *
- * Usa `generate_series` para garantir retorno de exatamente 7 linhas,
- * mesmo para dias sem nenhum registro no banco.
- *
- * @param userId - ID do usuário autenticado
- * @param weekStart - Segunda-feira 00:00 UTC da semana desejada
- * @returns Array de 7 DayStatus ordenados seg→dom
+ * Retorna exatamente 7 items (seg→dom), com logCount = 0 para dias sem logs.
  */
 export async function getWeekStatus(
   userId: string,
   weekStart: Date,
 ): Promise<DayStatus[]> {
-  const weekEnd = addDays(weekStart, 6);
+  // Generate all 7 dates of the week
+  const weekDates: string[] = [];
+  for (let i = 0; i < 7; i++) {
+    weekDates.push(format(addDays(weekStart, i), 'yyyy-MM-dd'));
+  }
 
-  const weekStartStr = format(weekStart, 'yyyy-MM-dd');
-  const weekEndStr = format(weekEnd, 'yyyy-MM-dd');
+  // Query only the days that exist in the database for this user
+  const existingDays = await db
+    .select({
+      date: days.date,
+      dayId: days.id,
+    })
+    .from(days)
+    .where(and(
+      eq(days.userId, userId),
+      sql`${days.date} >= ${weekDates[0]} AND ${days.date} <= ${weekDates[6]}`
+    ));
 
-  const sql = getSQL();
+  // For each existing day, count logs
+  const logCounts: Record<string, number> = {};
+  if (existingDays.length > 0) {
+    for (const day of existingDays) {
+      const [result] = await db
+        .select({ count: count() })
+        .from(logs)
+        .where(eq(logs.dayId, day.dayId));
+      logCounts[day.date] = result?.count ?? 0;
+    }
+  }
 
-  const rows = await sql`
-    SELECT
-      gs.date::date AS date,
-      COUNT(l.id)::int AS log_count
-    FROM
-      generate_series(${weekStartStr}::date, ${weekEndStr}::date, '1 day'::interval) AS gs(date)
-    LEFT JOIN days d
-      ON d.date = gs.date AND d.user_id = ${userId}
-    LEFT JOIN logs l
-      ON l.day_id = d.id
-    GROUP BY gs.date
-    ORDER BY gs.date
-  `;
-
-  return rows.map((row) => ({
-    date: new Date(row.date),
-    logCount: row.log_count ?? 0,
+  // Build the full 7-day result
+  return weekDates.map((dateStr) => ({
+    date: new Date(dateStr + 'T00:00:00'),
+    logCount: logCounts[dateStr] ?? 0,
     mood: null,
   }));
 }

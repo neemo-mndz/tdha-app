@@ -3,9 +3,9 @@ import { currentWeekStart } from '@/lib/utils/date';
 import { getWeekStatus } from '@/lib/db/queries/weeks';
 import { getUserTasks } from '@/lib/db/queries/tasks';
 import { getWeekPlan } from '@/lib/db/queries/weekPlans';
+import { getCurrentUserId } from '@/lib/auth';
 import WeeklyCalendar from '@/components/calendar/WeeklyCalendar';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { HomeGreeting, MonthBadge } from '@/components/home/HomeGreeting';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
@@ -17,14 +17,13 @@ export default async function HomePage() {
   const today = new Date();
   const weekStart = currentWeekStart(today);
 
-  // TODO: substituir por userId real quando auth estiver implementado
-  const userId = '00000000-0000-0000-0000-000000000001';
+  const userId = await getCurrentUserId();
 
-  const days = await getWeekStatus(userId, weekStart);
   const todayStr = format(today, 'yyyy-MM-dd');
   const weekStartStr = format(weekStart, 'yyyy-MM-dd');
 
-  const [userTasks, weekPlan] = await Promise.all([
+  const [days, userTasks, weekPlan] = await Promise.all([
+    getWeekStatus(userId, weekStart),
     getUserTasks(userId),
     getWeekPlan(userId, weekStartStr),
   ]);

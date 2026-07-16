@@ -4,10 +4,11 @@ import { useState } from "react";
 
 interface CalendarToggleProps {
   children: React.ReactNode;
+  defaultOpen?: boolean;
 }
 
-export function CalendarToggle({ children }: CalendarToggleProps) {
-  const [open, setOpen] = useState(false);
+export function CalendarToggle({ children, defaultOpen = false }: CalendarToggleProps) {
+  const [open, setOpen] = useState(defaultOpen);
 
   return (
     <>

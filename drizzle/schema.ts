@@ -242,6 +242,91 @@ export const weekPlanTasksRelations = relations(weekPlanTasks, ({ one, many }) =
 }));
 
 /**
+ * Tabela books — livros do companheiro de leitura
+ */
+export const books = pgTable("books", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  author: text("author"),
+  status: text("status").notNull().default("queued"),
+  progress: text("progress"),
+  rating: integer("rating"),
+  review: text("review"),
+  startedAt: timestamp("started_at", { withTimezone: true }),
+  finishedAt: timestamp("finished_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+/**
+ * Tabela book_reading_logs — registros diários de leitura
+ * Unique constraint em (bookId, date)
+ */
+export const bookReadingLogs = pgTable(
+  "book_reading_logs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    bookId: uuid("book_id")
+      .notNull()
+      .references(() => books.id, { onDelete: "cascade" }),
+    date: date("date").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    bookDateUnique: uniqueIndex("book_reading_logs_book_id_date_unique").on(
+      table.bookId,
+      table.date
+    ),
+  })
+);
+
+/**
+ * Tabela book_notes — notas associadas a um livro
+ */
+export const bookNotes = pgTable("book_notes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  bookId: uuid("book_id")
+    .notNull()
+    .references(() => books.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+/**
+ * Relações Drizzle para books
+ */
+export const booksRelations = relations(books, ({ one, many }) => ({
+  user: one(users, {
+    fields: [books.userId],
+    references: [users.id],
+  }),
+  readingLogs: many(bookReadingLogs),
+  notes: many(bookNotes),
+}));
+
+export const bookReadingLogsRelations = relations(bookReadingLogs, ({ one }) => ({
+  book: one(books, {
+    fields: [bookReadingLogs.bookId],
+    references: [books.id],
+  }),
+}));
+
+export const bookNotesRelations = relations(bookNotes, ({ one }) => ({
+  book: one(books, {
+    fields: [bookNotes.bookId],
+    references: [books.id],
+  }),
+}));
+
+/**
  * Tipos TypeScript inferidos do schema
  */
 export type User = typeof users.$inferSelect;
@@ -253,3 +338,6 @@ export type WeekPlanTask = typeof weekPlanTasks.$inferSelect;
 export type Reminder = typeof reminders.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 export type LoginAttempt = typeof loginAttempts.$inferSelect;
+export type Book = typeof books.$inferSelect;
+export type BookReadingLog = typeof bookReadingLogs.$inferSelect;
+export type BookNote = typeof bookNotes.$inferSelect;

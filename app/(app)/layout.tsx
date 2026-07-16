@@ -25,6 +25,9 @@ export default async function AppLayout({
         <div className="brand">semana<span>.</span></div>
         <div className="app-header__right">
           <MonthBadge />
+          <Link href="/reading" className="top__settings-link" aria-label="Leitura">
+            📖
+          </Link>
           <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
             ⚙
           </Link>

@@ -26,16 +26,19 @@ export function LogForm({ onSubmit }: LogFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="log-form">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="O que aconteceu hoje?"
         maxLength={2000}
         aria-label="Novo registro"
+        className="log-form__textarea"
       />
-      {error && <p role="alert">{error}</p>}
-      <button type="submit">Registrar</button>
+      {error && <p role="alert" className="log-form__error">{error}</p>}
+      <div className="log-form__footer">
+        <button type="submit" className="save-btn">Registrar</button>
+      </div>
     </form>
   );
 }

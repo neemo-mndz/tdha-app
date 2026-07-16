@@ -43,41 +43,55 @@ export function LogItem({ log, dispatch, date }: LogItemProps) {
 
   if (editing) {
     return (
-      <li>
+      <div className="log-item-card">
         <textarea
           value={editContent}
           onChange={(e) => setEditContent(e.target.value)}
           maxLength={2000}
           aria-label="Editar registro"
+          className="log-form__textarea"
         />
-        <button onClick={handleUpdate}>Salvar</button>
-        <button
-          onClick={() => {
-            setEditing(false);
-            setEditContent(log.content);
-            setError(null);
-          }}
-        >
-          Cancelar
-        </button>
-        {error && <p role="alert">{error}</p>}
-      </li>
+        <div className="log-item-card__actions" style={{ marginTop: "10px" }}>
+          <button onClick={handleUpdate} className="save-btn">Salvar</button>
+          <button
+            onClick={() => {
+              setEditing(false);
+              setEditContent(log.content);
+              setError(null);
+            }}
+            className="log-item-card__btn"
+          >
+            Cancelar
+          </button>
+        </div>
+        {error && <p role="alert" className="log-form__error">{error}</p>}
+      </div>
     );
   }
 
   return (
-    <li>
-      <p>{log.content}</p>
-      <button onClick={() => setEditing(true)}>Editar</button>
-      {confirmingDelete ? (
-        <>
-          <button onClick={handleDelete}>Confirmar exclusão</button>
-          <button onClick={() => setConfirmingDelete(false)}>Cancelar</button>
-        </>
-      ) : (
-        <button onClick={() => setConfirmingDelete(true)}>Excluir</button>
-      )}
-      {error && <p role="alert">{error}</p>}
-    </li>
+    <div className="log-item-card">
+      <p className="log-item-card__content">{log.content}</p>
+      <div className="log-item-card__actions">
+        <button onClick={() => setEditing(true)} className="log-item-card__btn">
+          Editar
+        </button>
+        {confirmingDelete ? (
+          <>
+            <button onClick={handleDelete} className="log-item-card__btn log-item-card__btn--danger">
+              Confirmar exclusão
+            </button>
+            <button onClick={() => setConfirmingDelete(false)} className="log-item-card__btn">
+              Cancelar
+            </button>
+          </>
+        ) : (
+          <button onClick={() => setConfirmingDelete(true)} className="log-item-card__btn log-item-card__btn--danger">
+            Excluir
+          </button>
+        )}
+      </div>
+      {error && <p role="alert" className="log-form__error">{error}</p>}
+    </div>
   );
 }

@@ -56,25 +56,25 @@ export function LogList({ initialLogs, date }: LogListProps) {
 
   if (optimisticLogs.length === 0) {
     return (
-      <section aria-label="Sem registros">
-        <p>Nenhum registro ainda. Que tal começar agora?</p>
+      <section aria-label="Sem registros" className="day-view__logs">
+        <div className="day-view__empty">
+          <p>Nenhum registro ainda. Que tal começar agora?</p>
+        </div>
         <LogForm onSubmit={handleCreate} />
       </section>
     );
   }
 
   return (
-    <section>
-      <ul>
-        {optimisticLogs.map((log) => (
-          <LogItem
-            key={log.id}
-            log={log}
-            dispatch={dispatchOptimistic}
-            date={date}
-          />
-        ))}
-      </ul>
+    <section className="day-view__logs">
+      {optimisticLogs.map((log) => (
+        <LogItem
+          key={log.id}
+          log={log}
+          dispatch={dispatchOptimistic}
+          date={date}
+        />
+      ))}
       <LogForm onSubmit={handleCreate} />
     </section>
   );

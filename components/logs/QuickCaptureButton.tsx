@@ -14,7 +14,7 @@ export function QuickCaptureButton() {
         <button
           aria-label="Captura rápida"
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 rounded-full bg-blue-600 p-4 text-white shadow-lg"
+          className="fab"
         >
           +
         </button>

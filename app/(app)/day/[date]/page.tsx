@@ -9,6 +9,11 @@ import { getCurrentUserId } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
+// Don't prerender any date pages at build time
+export function generateStaticParams() {
+  return [];
+}
+
 const dateParamSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Formato inválido")
@@ -32,10 +37,10 @@ export default async function DayPage({ params }: DayPageProps) {
   const displayDate = format(parseISO(dateString), "EEEE, d 'de' MMMM", { locale: ptBR });
 
   return (
-    <main>
-      <header>
-        <a href={`/week/${weekStart}`}>← Voltar à semana</a>
-        <h1>{isToday ? "Hoje" : displayDate}</h1>
+    <main className="day-view">
+      <header className="day-view__header">
+        <a href={`/week/${weekStart}`} className="day-view__back">← Voltar à semana</a>
+        <h1 className="day-view__title">{isToday ? "Hoje" : displayDate}</h1>
       </header>
       <LogList initialLogs={logs} date={dateString} />
     </main>

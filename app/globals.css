@@ -200,3 +200,472 @@ header.top {
     font-size: 9px;
   }
 }
+
+
+/* ---- FAB (Floating Action Button) ---- */
+.fab {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--today);
+  color: #fff;
+  border: none;
+  font-size: 26px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 24px -10px rgba(227, 161, 91, 0.6);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  z-index: 50;
+}
+
+.fab:hover {
+  transform: scale(1.06);
+}
+
+/* ---- Quick Capture Modal ---- */
+.quick-capture-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(35, 48, 43, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pop {
+  from { transform: scale(0.97); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.quick-capture-modal {
+  background: var(--surface);
+  width: 100%;
+  max-width: 480px;
+  border-radius: 20px;
+  padding: 22px;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: pop 0.18s ease;
+}
+
+.quick-capture-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.quick-capture-modal__title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+
+.quick-capture-modal__sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.quick-capture-modal__close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.12s ease;
+}
+
+.quick-capture-modal__close:hover {
+  background: var(--bg);
+}
+
+.quick-capture-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quick-capture-modal__input-box {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.quick-capture-modal__textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: transparent;
+  min-height: 80px;
+}
+
+.quick-capture-modal__textarea::placeholder {
+  color: var(--muted);
+}
+
+.quick-capture-modal__error {
+  font-size: 13px;
+  color: #C6685A;
+  margin: 0;
+}
+
+.quick-capture-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.quick-capture-modal__btn-cancel {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--structure);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.15s ease;
+}
+
+.quick-capture-modal__btn-cancel:hover {
+  background: var(--today-soft);
+}
+
+.quick-capture-modal__btn-save {
+  background: var(--structure);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.12s ease;
+}
+
+.quick-capture-modal__btn-save:hover {
+  opacity: 0.9;
+}
+
+.quick-capture-modal__btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---- Greeting ---- */
+.greeting {
+  margin: 22px 0 18px;
+}
+
+.greeting h1 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 26px;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+
+.greeting p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ---- Calendar Toggle ---- */
+.calendar-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--structure);
+  cursor: pointer;
+  margin: 6px 0 22px;
+  transition: background 0.15s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.calendar-toggle:hover {
+  background: var(--today-soft);
+}
+
+/* ---- Panels Grid ---- */
+.panels {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.panel__title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--structure);
+}
+
+.panel__subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+/* ---- Daily Log Panel (inline capture) ---- */
+.capture-box {
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.capture-box textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: transparent;
+  min-height: 44px;
+}
+
+.capture-box textarea::placeholder {
+  color: var(--muted);
+}
+
+.capture-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.save-btn {
+  background: var(--structure);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  opacity: 0.9;
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---- Tasks Panel ---- */
+.task-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.task-row:last-child {
+  border-bottom: none;
+}
+
+.task-name {
+  font-size: 14px;
+}
+
+.task-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--bg);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.task-empty {
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 14px 0;
+}
+
+/* ---- Day View Page ---- */
+.day-view {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.day-view__header {
+  margin-bottom: 24px;
+}
+
+.day-view__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--structure);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  transition: color 0.12s ease;
+}
+
+.day-view__back:hover {
+  color: var(--today);
+}
+
+.day-view__title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  margin: 0;
+}
+
+.day-view__logs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.day-view__empty {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---- Log Items ---- */
+.log-item-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+
+.log-item-card__content {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 10px;
+  white-space: pre-wrap;
+}
+
+.log-item-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.log-item-card__btn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.12s ease;
+}
+
+.log-item-card__btn:hover {
+  background: var(--bg);
+  color: var(--structure);
+}
+
+.log-item-card__btn--danger:hover {
+  color: #C6685A;
+}
+
+/* ---- Log Form ---- */
+.log-form {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+
+.log-form__textarea {
+  width: 100%;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  outline: none;
+  resize: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: transparent;
+  min-height: 60px;
+}
+
+.log-form__textarea::placeholder {
+  color: var(--muted);
+}
+
+.log-form__footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.log-form__error {
+  font-size: 13px;
+  color: #C6685A;
+  margin: 6px 0 0;
+}
+
+/* Responsive panels */
+@media (max-width: 768px) {
+  .panels {
+    grid-template-columns: 1fr;
+  }
+}

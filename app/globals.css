@@ -1463,3 +1463,140 @@ header.top {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+
+/* ---- Monthly Calendar ---- */
+.monthly-calendar {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px 0 24px;
+}
+
+.monthly-calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.monthly-calendar__nav-btn {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--structure);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.monthly-calendar__nav-btn:hover {
+  background: var(--today-soft);
+  border-color: var(--today);
+}
+
+.monthly-calendar__title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--structure);
+}
+
+.monthly-calendar__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.monthly-calendar__weekday {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+
+.monthly-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.monthly-calendar__empty {
+  /* empty cell placeholder */
+}
+
+/* Monthly calendar compact day cells */
+.monthly-calendar .day-cell {
+  padding: 8px 4px;
+}
+
+.monthly-calendar .day-cell__date {
+  font-size: 14px;
+}
+
+.monthly-calendar .day-cell__weekday {
+  display: none;
+}
+
+.monthly-calendar .day-cell__log-count {
+  font-size: 9px;
+}
+
+/* ---- Calendar View Toggle ---- */
+.calendar-view-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.calendar-view-toggle__btn {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s ease;
+}
+
+.calendar-view-toggle__btn:hover {
+  background: var(--today-soft);
+  border-color: var(--today);
+}
+
+.calendar-view-toggle__btn--active {
+  background: var(--structure);
+  color: #fff;
+  border-color: var(--structure);
+}
+
+/* Monthly responsive */
+@media (max-width: 640px) {
+  .monthly-calendar__grid {
+    gap: 4px;
+  }
+
+  .monthly-calendar .day-cell {
+    padding: 6px 2px;
+  }
+
+  .monthly-calendar .day-cell__date {
+    font-size: 12px;
+  }
+
+  .monthly-calendar__nav-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .monthly-calendar__title {
+    font-size: 14px;
+  }
+}

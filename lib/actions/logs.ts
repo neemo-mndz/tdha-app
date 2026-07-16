@@ -21,7 +21,9 @@ import {
   decrementWeekPlanTask,
   getWeekPlanTaskOwner,
 } from "@/lib/db/queries/weekPlans";
+import { getMonthStatus } from "@/lib/db/queries/months";
 import { getCurrentUserId } from "@/lib/auth";
+import type { DayStatus } from "@/lib/types/calendar";
 
 type ActionResult = { success: true } | { success: false; error: string };
 
@@ -156,4 +158,17 @@ export async function deleteLog(input: unknown): Promise<ActionResult> {
   revalidatePath(`/day/${parsed.data.date}`);
 
   return { success: true };
+}
+
+
+/**
+ * Busca o status de todos os dias de um mês para o usuário autenticado.
+ * Usado pela visualização mensal do calendário na tela principal.
+ *
+ * @param year - Ano (ex: 2025)
+ * @param month - Mês 1-indexado (1=janeiro, 12=dezembro)
+ */
+export async function getMonthStatusAction(year: number, month: number): Promise<DayStatus[]> {
+  const userId = await getCurrentUserId();
+  return getMonthStatus(userId, year, month);
 }

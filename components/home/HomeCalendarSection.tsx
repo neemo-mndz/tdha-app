@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { isSameDay } from "date-fns";
 import WeeklyCalendar from "@/components/calendar/WeeklyCalendar";
+import MonthlyCalendar from "@/components/calendar/MonthlyCalendar";
 import { TodayLogsCard } from "@/components/home/TodayLogsCard";
+import { getMonthStatusAction } from "@/lib/actions/logs";
 import type { DayStatus } from "@/lib/types/calendar";
 import type { LogWithTask } from "@/lib/db/queries/logs";
 
@@ -14,6 +16,8 @@ function parseDateString(s: string | Date): Date {
   return new Date(y, m - 1, d);
 }
 
+type ViewMode = 'week' | 'month';
+
 interface HomeCalendarSectionProps {
   weekStart: string; // "yyyy-MM-dd" format from server
   days: DayStatus[];
@@ -22,7 +26,7 @@ interface HomeCalendarSectionProps {
 }
 
 /**
- * Une o toggle do calendário semanal com o card "Registros do dia".
+ * Une o toggle do calendário semanal/mensal com o card "Registros do dia".
  * O card de registros fica sempre visível, independente do calendário
  * estar expandido ou recolhido, e reflete o dia selecionado pelo usuário.
  */
@@ -32,7 +36,15 @@ export function HomeCalendarSection({ weekStart, days, today, initialLogs }: Hom
   const todayDate = parseDateString(today);
 
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('week');
   const [selectedDate, setSelectedDate] = useState<Date>(todayDate);
+
+  // Month view state
+  const [monthYear, setMonthYear] = useState(weekStartDate.getFullYear());
+  const [monthMonth, setMonthMonth] = useState(weekStartDate.getMonth() + 1); // 1-indexed
+  const [monthDays, setMonthDays] = useState<DayStatus[]>([]);
+  const [monthLoaded, setMonthLoaded] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const normalizedDays = days.map((d) => ({
     ...d,
@@ -43,14 +55,45 @@ export function HomeCalendarSection({ weekStart, days, today, initialLogs }: Hom
     setSelectedDate(date);
   }
 
+  function handleToggleCalendar() {
+    setCalendarOpen(!calendarOpen);
+  }
+
+  function handleViewModeChange(mode: ViewMode) {
+    setViewMode(mode);
+    if (mode === 'month' && !monthLoaded) {
+      fetchMonthData(monthYear, monthMonth);
+    }
+  }
+
+  function fetchMonthData(year: number, month: number) {
+    startTransition(async () => {
+      const data = await getMonthStatusAction(year, month);
+      // Normalize dates from server (they come serialized)
+      const normalized = data.map((d) => ({
+        ...d,
+        date: d.date instanceof Date ? d.date : new Date(d.date),
+      }));
+      setMonthDays(normalized);
+      setMonthLoaded(true);
+    });
+  }
+
+  function handleMonthChange(year: number, month: number) {
+    setMonthYear(year);
+    setMonthMonth(month);
+    setMonthLoaded(false);
+    fetchMonthData(year, month);
+  }
+
   return (
     <>
       <button
         className="calendar-toggle"
-        onClick={() => setCalendarOpen(!calendarOpen)}
+        onClick={handleToggleCalendar}
         aria-expanded={calendarOpen}
       >
-        <span>{calendarOpen ? "Ocultar calendário" : "Ver calendário da semana"}</span>
+        <span>{calendarOpen ? "Ocultar calendário" : "Ver calendário"}</span>
         <span
           style={{
             display: "inline-block",
@@ -64,18 +107,61 @@ export function HomeCalendarSection({ weekStart, days, today, initialLogs }: Hom
 
       <div
         style={{
-          maxHeight: calendarOpen ? "900px" : "0",
+          maxHeight: calendarOpen ? "1200px" : "0",
           overflow: "hidden",
           transition: "max-height 0.28s ease",
         }}
       >
-        <WeeklyCalendar
-          weekStart={weekStartDate}
-          days={normalizedDays}
-          today={todayDate}
-          selectedDate={selectedDate}
-          onSelectDay={handleSelectDay}
-        />
+        {/* View mode toggle */}
+        <div className="calendar-view-toggle">
+          <button
+            type="button"
+            className={`calendar-view-toggle__btn${viewMode === 'week' ? ' calendar-view-toggle__btn--active' : ''}`}
+            onClick={() => handleViewModeChange('week')}
+          >
+            semana
+          </button>
+          <button
+            type="button"
+            className={`calendar-view-toggle__btn${viewMode === 'month' ? ' calendar-view-toggle__btn--active' : ''}`}
+            onClick={() => handleViewModeChange('month')}
+          >
+            mês
+          </button>
+        </div>
+
+        {/* Weekly view */}
+        {viewMode === 'week' && (
+          <WeeklyCalendar
+            weekStart={weekStartDate}
+            days={normalizedDays}
+            today={todayDate}
+            selectedDate={selectedDate}
+            onSelectDay={handleSelectDay}
+          />
+        )}
+
+        {/* Monthly view */}
+        {viewMode === 'month' && (
+          <>
+            {isPending && !monthLoaded && (
+              <div style={{ textAlign: 'center', padding: '20px', color: 'var(--muted)', fontSize: '13px' }}>
+                Carregando...
+              </div>
+            )}
+            {monthLoaded && (
+              <MonthlyCalendar
+                year={monthYear}
+                month={monthMonth}
+                days={monthDays}
+                today={todayDate}
+                selectedDate={selectedDate}
+                onSelectDay={handleSelectDay}
+                onMonthChange={handleMonthChange}
+              />
+            )}
+          </>
+        )}
       </div>
 
       <TodayLogsCard

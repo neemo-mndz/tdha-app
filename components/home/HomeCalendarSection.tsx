@@ -7,10 +7,17 @@ import { TodayLogsCard } from "@/components/home/TodayLogsCard";
 import type { DayStatus } from "@/lib/types/calendar";
 import type { LogWithTask } from "@/lib/db/queries/logs";
 
+/** Parse "yyyy-MM-dd" as local date without timezone shift */
+function parseDateString(s: string | Date): Date {
+  if (s instanceof Date) return s;
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 interface HomeCalendarSectionProps {
-  weekStart: Date;
+  weekStart: string; // "yyyy-MM-dd" format from server
   days: DayStatus[];
-  today: Date;
+  today: string; // "yyyy-MM-dd" format from server
   initialLogs: LogWithTask[]; // logs do dia de hoje, buscados no servidor
 }
 
@@ -20,12 +27,13 @@ interface HomeCalendarSectionProps {
  * estar expandido ou recolhido, e reflete o dia selecionado pelo usuário.
  */
 export function HomeCalendarSection({ weekStart, days, today, initialLogs }: HomeCalendarSectionProps) {
-  const [calendarOpen, setCalendarOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(today instanceof Date ? today : new Date(today));
+  // Parse date strings as local dates (no timezone shift)
+  const weekStartDate = parseDateString(weekStart);
+  const todayDate = parseDateString(today);
 
-  // Ensure dates are proper Date objects after RSC serialization
-  const weekStartDate = weekStart instanceof Date ? weekStart : new Date(weekStart);
-  const todayDate = today instanceof Date ? today : new Date(today);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(todayDate);
+
   const normalizedDays = days.map((d) => ({
     ...d,
     date: d.date instanceof Date ? d.date : new Date(d.date),

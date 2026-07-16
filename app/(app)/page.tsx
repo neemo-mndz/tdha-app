@@ -51,9 +51,9 @@ export default async function HomePage() {
       <HomeGreetingLive initialTime={today.toISOString()} />
 
       <HomeCalendarSection
-        weekStart={weekStart}
+        weekStart={weekStartStr}
         days={days}
-        today={today}
+        today={todayStr}
         initialLogs={todayLogs}
       />
 

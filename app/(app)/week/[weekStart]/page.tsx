@@ -85,9 +85,9 @@ export default async function WeekPage({
       )}
 
       <HomeCalendarSection
-        weekStart={weekStartDate}
+        weekStart={weekStartStr}
         days={days}
-        today={today}
+        today={todayStr}
         initialLogs={isCurrentWeek ? todayLogs : []}
       />
 

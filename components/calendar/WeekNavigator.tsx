@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { addWeeks, subWeeks, isSameDay } from 'date-fns';
-import { currentWeekStart, weekPath, weekLabel } from '@/lib/utils/date';
+import { addDays, subDays, isSameDay, format } from 'date-fns';
+import { currentWeekStart, weekLabel } from '@/lib/utils/date';
 
 export interface WeekNavigatorProps {
   weekStart: Date;       // semana atualmente exibida
@@ -12,18 +12,21 @@ export interface WeekNavigatorProps {
 export function WeekNavigator({ weekStart, today }: WeekNavigatorProps) {
   const router = useRouter();
 
-  // Ensure dates are proper Date objects (RSC serialization may pass strings)
+  // Ensure dates are proper Date objects after RSC serialization
+  // Use parseISO-safe reconstruction to avoid timezone shifts
   const weekStartDate = weekStart instanceof Date ? weekStart : new Date(weekStart);
   const todayDate = today instanceof Date ? today : new Date(today);
 
   const isCurrentWeek = isSameDay(weekStartDate, currentWeekStart(todayDate));
 
   function handlePrevWeek() {
-    router.push(weekPath(subWeeks(weekStartDate, 1)));
+    const prevWeek = subDays(weekStartDate, 7);
+    router.push(`/week/${format(prevWeek, 'yyyy-MM-dd')}`);
   }
 
   function handleNextWeek() {
-    router.push(weekPath(addWeeks(weekStartDate, 1)));
+    const nextWeek = addDays(weekStartDate, 7);
+    router.push(`/week/${format(nextWeek, 'yyyy-MM-dd')}`);
   }
 
   function handleToday() {

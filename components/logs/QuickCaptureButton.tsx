@@ -3,8 +3,13 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { QuickCaptureSheet } from "./QuickCaptureSheet";
+import { ActiveTaskDisplay } from "@/lib/types/tasks";
 
-export function QuickCaptureButton() {
+interface QuickCaptureButtonProps {
+  activeTasks?: ActiveTaskDisplay[];
+}
+
+export function QuickCaptureButton({ activeTasks = [] }: QuickCaptureButtonProps) {
   const [open, setOpen] = useState(false);
   const today = format(new Date(), "yyyy-MM-dd");
 
@@ -19,7 +24,7 @@ export function QuickCaptureButton() {
           +
         </button>
       )}
-      <QuickCaptureSheet open={open} onClose={() => setOpen(false)} date={today} />
+      <QuickCaptureSheet open={open} onClose={() => setOpen(false)} date={today} activeTasks={activeTasks} />
     </>
   );
 }

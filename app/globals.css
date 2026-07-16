@@ -527,6 +527,61 @@ header.top {
   padding: 4px 10px;
 }
 
+.task-count.done {
+  background: var(--structure);
+  color: #fff;
+}
+
+.task-bump-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--structure);
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.task-bump-btn:hover {
+  background: var(--today-soft);
+  border-color: var(--today);
+}
+
+.task-bump-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.task-panel-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.task-panel-btn {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--structure);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.task-panel-btn:hover {
+  background: var(--today-soft);
+  border-color: var(--today);
+}
+
 .task-empty {
   color: var(--muted);
   font-size: 13px;
@@ -668,4 +723,134 @@ header.top {
   .panels {
     grid-template-columns: 1fr;
   }
+}
+
+
+/* ---- Modal Planejar Semana ---- */
+.plan-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.plan-task-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.plan-task-row:last-child {
+  border-bottom: none;
+}
+
+.plan-task-row__label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.plan-task-row__checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--structure);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.plan-task-row__name {
+  font-size: 14px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.plan-task-row__qty {
+  width: 56px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  text-align: center;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.12s ease;
+  flex-shrink: 0;
+}
+
+.plan-task-row__qty:focus {
+  border-color: var(--accent);
+}
+
+.plan-task-row__qty:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
+/* ---- Task Chips ---- */
+.task-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.task-chip {
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--structure);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.task-chip:hover {
+  background: var(--today-soft);
+  border-color: var(--today);
+}
+
+.task-chip.active {
+  background: var(--structure);
+  color: #fff;
+  border-color: var(--structure);
+}
+
+.task-chip--none {
+  color: var(--muted);
+}
+
+.task-chip--none.active {
+  background: var(--structure);
+  color: #fff;
+  border-color: var(--structure);
+}
+
+
+/* ---- Log Item Task Badge ---- */
+.log-item-card__tag {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--structure);
+  background: #E3F0E9;
+  border-radius: 999px;
+  padding: 3px 10px;
+  margin-bottom: 8px;
 }

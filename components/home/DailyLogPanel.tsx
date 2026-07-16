@@ -2,16 +2,20 @@
 
 import { useState } from "react";
 import { createLog } from "@/lib/actions/logs";
+import { TaskChips } from "@/components/logs/TaskChips";
+import type { ActiveTaskDisplay } from "@/lib/types/tasks";
 
 interface DailyLogPanelProps {
   date: string;
+  activeTasks: ActiveTaskDisplay[];
 }
 
-export function DailyLogPanel({ date }: DailyLogPanelProps) {
+export function DailyLogPanel({ date, activeTasks }: DailyLogPanelProps) {
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
   const handleSave = async () => {
     if (!content.trim()) {
@@ -24,10 +28,15 @@ export function DailyLogPanel({ date }: DailyLogPanelProps) {
     }
     setError(null);
     setSubmitting(true);
-    const result = await createLog({ content: content.trim(), date });
+    const result = await createLog({
+      content: content.trim(),
+      date,
+      weekPlanTaskId: selectedTaskId,
+    });
     setSubmitting(false);
     if (result.success) {
       setContent("");
+      setSelectedTaskId(null);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2000);
     } else {
@@ -41,6 +50,11 @@ export function DailyLogPanel({ date }: DailyLogPanelProps) {
       <p className="panel__subtitle">Brain dump rápido. Escreva o que quiser, sem se preocupar.</p>
 
       <div className="capture-box">
+        <TaskChips
+          activeTasks={activeTasks}
+          selectedTaskId={selectedTaskId}
+          onSelect={setSelectedTaskId}
+        />
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}

@@ -1,5 +1,7 @@
 import { currentWeekStart } from '@/lib/utils/date';
 import { getWeekStatus } from '@/lib/db/queries/weeks';
+import { getUserTasks } from '@/lib/db/queries/tasks';
+import { getWeekPlan } from '@/lib/db/queries/weekPlans';
 import WeeklyCalendar from '@/components/calendar/WeeklyCalendar';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -19,6 +21,19 @@ export default async function HomePage() {
 
   const days = await getWeekStatus(userId, weekStart);
   const todayStr = format(today, 'yyyy-MM-dd');
+  const weekStartStr = format(weekStart, 'yyyy-MM-dd');
+
+  const [userTasks, weekPlan] = await Promise.all([
+    getUserTasks(userId),
+    getWeekPlan(userId, weekStartStr),
+  ]);
+
+  const allTasks = userTasks.map((t) => ({
+    id: t.id,
+    name: t.name,
+    defaultQty: t.defaultQty,
+  }));
+  const activeTasks = weekPlan?.tasks ?? [];
 
   return (
     <div className="shell">
@@ -33,8 +48,12 @@ export default async function HomePage() {
       </CalendarToggle>
 
       <div className="panels">
-        <DailyLogPanel date={todayStr} />
-        <WeeklyTasksPanel />
+        <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
+        <WeeklyTasksPanel
+          weekStart={weekStartStr}
+          activeTasks={activeTasks}
+          allTasks={allTasks}
+        />
       </div>
     </div>
   );

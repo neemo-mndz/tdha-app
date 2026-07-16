@@ -15,6 +15,7 @@ const logIdSchema = z.string().uuid("logId deve ser um UUID válido");
 export const createLogSchema = z.object({
   content: contentSchema,
   date: dateSchema,
+  weekPlanTaskId: z.string().uuid().nullable().optional(),
 });
 
 export const updateLogSchema = z.object({

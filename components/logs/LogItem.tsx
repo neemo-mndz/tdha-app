@@ -7,11 +7,12 @@ import type { OptimisticAction } from "./LogList";
 
 interface LogItemProps {
   log: Log;
+  taskName?: string | null;
   dispatch: (action: OptimisticAction) => void;
   date: string;
 }
 
-export function LogItem({ log, dispatch, date }: LogItemProps) {
+export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(log.content);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -71,6 +72,9 @@ export function LogItem({ log, dispatch, date }: LogItemProps) {
 
   return (
     <div className="log-item-card">
+      {taskName && (
+        <span className="log-item-card__tag">{taskName}</span>
+      )}
       <p className="log-item-card__content">{log.content}</p>
       <div className="log-item-card__actions">
         <button onClick={() => setEditing(true)} className="log-item-card__btn">

@@ -2,16 +2,20 @@
 
 import { useRef, useEffect, useState } from "react";
 import { createLog } from "@/lib/actions/logs";
+import { TaskChips } from "@/components/logs/TaskChips";
+import { ActiveTaskDisplay } from "@/lib/types/tasks";
 
 interface QuickCaptureSheetProps {
   open: boolean;
   onClose: () => void;
   date: string; // data atual (hoje)
+  activeTasks: ActiveTaskDisplay[];
 }
 
-export function QuickCaptureSheet({ open, onClose, date }: QuickCaptureSheetProps) {
+export function QuickCaptureSheet({ open, onClose, date, activeTasks }: QuickCaptureSheetProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState("");
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -28,10 +32,11 @@ export function QuickCaptureSheet({ open, onClose, date }: QuickCaptureSheetProp
       return;
     }
     setSubmitting(true);
-    const result = await createLog({ content: content.trim(), date });
+    const result = await createLog({ content: content.trim(), date, weekPlanTaskId: selectedTaskId });
     setSubmitting(false);
     if (result.success) {
       setContent("");
+      setSelectedTaskId(null);
       setError(null);
       onClose();
     } else {
@@ -76,6 +81,11 @@ export function QuickCaptureSheet({ open, onClose, date }: QuickCaptureSheetProp
         </div>
         <form onSubmit={handleSubmit} className="quick-capture-modal__form">
           <div className="quick-capture-modal__input-box">
+            <TaskChips
+              activeTasks={activeTasks}
+              selectedTaskId={selectedTaskId}
+              onSelect={setSelectedTaskId}
+            />
             <textarea
               ref={textareaRef}
               value={content}

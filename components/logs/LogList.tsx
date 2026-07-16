@@ -2,21 +2,22 @@
 
 import { useOptimistic, useTransition } from "react";
 import type { Log } from "@/drizzle/schema";
+import type { LogWithTask } from "@/lib/db/queries/logs";
 import { createLog } from "@/lib/actions/logs";
 import { LogItem } from "./LogItem";
 import { LogForm } from "./LogForm";
 
 interface LogListProps {
-  initialLogs: Log[];
+  initialLogs: LogWithTask[];
   date: string;
 }
 
 export type OptimisticAction =
-  | { type: "add"; log: Log }
+  | { type: "add"; log: LogWithTask }
   | { type: "remove"; id: string }
   | { type: "update"; id: string; content: string };
 
-function logsReducer(state: Log[], action: OptimisticAction): Log[] {
+function logsReducer(state: LogWithTask[], action: OptimisticAction): LogWithTask[] {
   switch (action.type) {
     case "add":
       return [...state, action.log];
@@ -38,12 +39,14 @@ export function LogList({ initialLogs, date }: LogListProps) {
 
   const handleCreate = async (content: string) => {
     const tempId = crypto.randomUUID();
-    const tempLog: Log = {
+    const tempLog: LogWithTask = {
       id: tempId,
       dayId: "optimistic",
       content,
       mood: null,
+      weekPlanTaskId: null,
       createdAt: new Date(),
+      taskName: null,
     };
     startTransition(async () => {
       dispatchOptimistic({ type: "add", log: tempLog });
@@ -71,6 +74,7 @@ export function LogList({ initialLogs, date }: LogListProps) {
         <LogItem
           key={log.id}
           log={log}
+          taskName={log.taskName}
           dispatch={dispatchOptimistic}
           date={date}
         />

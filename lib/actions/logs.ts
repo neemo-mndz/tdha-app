@@ -12,7 +12,13 @@ import {
   updateLogById,
   deleteLogById,
   getLogOwner,
+  getLogWeekPlanTaskId,
 } from "@/lib/db/queries/logs";
+import {
+  bumpWeekPlanTask,
+  decrementWeekPlanTask,
+  getWeekPlanTaskOwner,
+} from "@/lib/db/queries/weekPlans";
 import { getCurrentUserId } from "@/lib/auth";
 
 type ActionResult = { success: true } | { success: false; error: string };
@@ -37,8 +43,27 @@ export async function createLog(input: unknown): Promise<ActionResult> {
   }
 
   const userId = await getCurrentUserId();
+
+  // Validar ownership do weekPlanTaskId se presente
+  const weekPlanTaskId = parsed.data.weekPlanTaskId ?? null;
+  if (weekPlanTaskId) {
+    const taskOwner = await getWeekPlanTaskOwner(weekPlanTaskId);
+    if (!taskOwner || taskOwner.userId !== userId) {
+      return { success: false, error: "Tarefa inválida para esta semana" };
+    }
+  }
+
   const day = await upsertDay(userId, parsed.data.date);
-  await insertLog({ dayId: day.id, content: parsed.data.content });
+  await insertLog({
+    dayId: day.id,
+    content: parsed.data.content,
+    weekPlanTaskId,
+  });
+
+  // Incrementar contador da tarefa vinculada
+  if (weekPlanTaskId) {
+    await bumpWeekPlanTask(weekPlanTaskId);
+  }
 
   revalidatePath(`/day/${parsed.data.date}`);
 
@@ -106,7 +131,15 @@ export async function deleteLog(input: unknown): Promise<ActionResult> {
     return { success: false, error: "Não autorizado" };
   }
 
+  // Buscar weekPlanTaskId antes de excluir o log
+  const weekPlanTaskId = await getLogWeekPlanTaskId(parsed.data.logId);
+
   await deleteLogById(parsed.data.logId);
+
+  // Decrementar contador da tarefa vinculada (floor em 0)
+  if (weekPlanTaskId) {
+    await decrementWeekPlanTask(weekPlanTaskId);
+  }
 
   revalidatePath(`/day/${parsed.data.date}`);
 

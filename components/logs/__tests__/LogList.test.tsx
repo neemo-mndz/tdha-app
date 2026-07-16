@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { LogList } from "../LogList";
-import type { Log } from "@/drizzle/schema";
+import type { LogWithTask } from "@/lib/db/queries/logs";
 
 // Mock the server actions
 vi.mock("@/lib/actions/logs", () => ({
@@ -15,13 +15,15 @@ import { createLog } from "@/lib/actions/logs";
 const mockCreateLog = createLog as ReturnType<typeof vi.fn>;
 
 // Helper to create mock log data
-function createMockLog(overrides: Partial<Log> = {}): Log {
+function createMockLog(overrides: Partial<LogWithTask> = {}): LogWithTask {
   return {
     id: "log-1",
     dayId: "day-1",
     content: "Test log content",
     mood: null,
+    weekPlanTaskId: null,
     createdAt: new Date("2024-07-14T10:00:00Z"),
+    taskName: null,
     ...overrides,
   };
 }
@@ -80,7 +82,7 @@ describe("LogList", () => {
     it("optimistically adds a log to the list before server confirmation", async () => {
       mockCreateLog.mockResolvedValueOnce({ success: true });
 
-      const logs: Log[] = [];
+      const logs: LogWithTask[] = [];
       render(<LogList initialLogs={logs} date="2024-07-14" />);
 
       const textarea = screen.getByPlaceholderText("O que aconteceu hoje?") as HTMLTextAreaElement;
@@ -98,7 +100,7 @@ describe("LogList", () => {
     it("removes optimistic log if server returns error", async () => {
       mockCreateLog.mockResolvedValueOnce({ success: false, error: "Error" });
 
-      const logs: Log[] = [];
+      const logs: LogWithTask[] = [];
       render(<LogList initialLogs={logs} date="2024-07-14" />);
 
       const textarea = screen.getByPlaceholderText("O que aconteceu hoje?") as HTMLTextAreaElement;
@@ -250,7 +252,9 @@ const arbLog = fc.record({
     .string({ minLength: 1, maxLength: 2000 })
     .filter((s) => s.trim().length > 0),
   mood: fc.oneof(fc.constant(null), fc.integer()),
+  weekPlanTaskId: fc.constant(null),
   createdAt: fc.date({ min: new Date("2000-01-01"), max: new Date() }),
+  taskName: fc.constant(null),
 });
 
 // Generates valid date strings in yyyy-MM-dd format

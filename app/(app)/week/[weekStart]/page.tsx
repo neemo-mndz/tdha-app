@@ -31,7 +31,7 @@ export default async function WeekPage({
   const today = new Date();
 
   // TODO: Replace hardcoded userId with real auth when available
-  const userId = 'user-1';
+  const userId = '00000000-0000-0000-0000-000000000001';
   const days = await getWeekStatus(userId, weekStartDate);
 
   return <WeeklyCalendar weekStart={weekStartDate} days={days} today={today} />;

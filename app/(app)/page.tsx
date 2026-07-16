@@ -9,7 +9,7 @@ export default async function HomePage() {
   const weekStart = currentWeekStart(today);
 
   // TODO: substituir por userId real quando auth estiver implementado
-  const userId = 'user-1';
+  const userId = '00000000-0000-0000-0000-000000000001';
 
   const days = await getWeekStatus(userId, weekStart);
 

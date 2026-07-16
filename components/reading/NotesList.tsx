@@ -14,12 +14,17 @@ function notesReducer(
   state: BookNoteDisplay[],
   action: OptimisticAction
 ): BookNoteDisplay[] {
-  switch (action.type) {
-    case "remove":
-      return state.filter((note) => note.id !== action.id);
-    default:
-      return state;
+  if (action.type === "remove") {
+    return state.filter((note) => note.id !== action.id);
   }
+  return state;
+}
+
+function formatNoteDate(iso: string): string {
+  const d = new Date(iso);
+  const day = d.getDate();
+  const months = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  return `${day}  ${months[d.getMonth()]}`;
 }
 
 export function NotesList({ notes }: NotesListProps) {
@@ -34,34 +39,26 @@ export function NotesList({ notes }: NotesListProps) {
       dispatch({ type: "remove", id: noteId });
     });
 
-    const result = await deleteBookNote({ noteId });
-    if (!result.success) {
-      // Rollback happens automatically via re-render with original notes prop
-    }
+    await deleteBookNote({ noteId });
   };
 
   if (optimisticNotes.length === 0) {
-    return (
-      <p className="notes-list__empty">Nenhuma nota ainda.</p>
-    );
+    return null;
   }
 
   return (
     <div className="notes-list">
       {optimisticNotes.map((note) => (
         <div key={note.id} className="note-item">
-          <div className="note-item__content">{note.content}</div>
-          <div className="note-item__footer">
-            <span className="note-item__date">
-              {new Date(note.createdAt).toLocaleDateString("pt-BR")}
-            </span>
-            <button
-              className="note-item__delete-btn"
-              onClick={() => handleDelete(note.id)}
-            >
-              Excluir
-            </button>
-          </div>
+          <span className="note-item__date">{formatNoteDate(note.createdAt)}</span>
+          <span className="note-item__content">{note.content}</span>
+          <button
+            className="note-item__delete-btn"
+            onClick={() => handleDelete(note.id)}
+            aria-label="Excluir nota"
+          >
+            ×
+          </button>
         </div>
       ))}
     </div>

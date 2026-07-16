@@ -14,7 +14,7 @@ import { NoteForm } from "@/components/reading/NoteForm";
 import { NotesList } from "@/components/reading/NotesList";
 import { FinishBookModal } from "@/components/reading/FinishBookModal";
 import { BookQueueList } from "@/components/reading/BookQueueList";
-import { AddBookModal } from "@/components/reading/AddBookModal";
+import { AddBookInline } from "@/components/reading/AddBookInline";
 import { FinishedBooksList } from "@/components/reading/FinishedBooksList";
 
 export interface ReadingCompanionProps {
@@ -28,7 +28,6 @@ export interface ReadingCompanionProps {
 function getWeekStart(): string {
   const now = new Date();
   const day = now.getDay();
-  // getDay(): 0=Sun, 1=Mon ... 6=Sat → offset to Monday
   const diff = day === 0 ? -6 : 1 - day;
   const monday = new Date(now);
   monday.setDate(now.getDate() + diff);
@@ -54,85 +53,75 @@ export function ReadingCompanion({
   queue,
 }: ReadingCompanionProps) {
   const [showFinishModal, setShowFinishModal] = useState(false);
-  const [showAddBookModal, setShowAddBookModal] = useState(false);
-  const [addBookMode, setAddBookMode] = useState<"current" | "queue">("queue");
 
   const todayMarked = weekReadingDays.includes(getTodayDate());
   const weekStart = getWeekStart();
 
-  const handleOpenAddBook = (mode: "current" | "queue") => {
-    setAddBookMode(mode);
-    setShowAddBookModal(true);
-  };
-
   return (
-    <div className="stack">
-      <h1>Leitura</h1>
+    <div className="reading-page">
+      <div className="reading-page__header">
+        <h1 className="reading-page__title">Companheiro de leitura</h1>
+        <p className="reading-page__subtitle">
+          Um livro por vez. Marcar que leu não exige dizer quanto.
+        </p>
+      </div>
 
-      {currentBook ? (
-        <>
-          <CurrentBookCard
-            book={currentBook}
-            onFinish={() => setShowFinishModal(true)}
-          />
+      {/* Livro Atual */}
+      <div className="panel">
+        <h2 className="panel__title">Livro atual</h2>
 
-          <ReadingButton bookId={currentBook.id} todayMarked={todayMarked} />
+        {currentBook ? (
+          <>
+            <CurrentBookCard
+              book={currentBook}
+              onFinish={() => setShowFinishModal(true)}
+            />
 
-          <MiniWeekCalendar
-            bookId={currentBook.id}
-            weekStart={weekStart}
-            readDays={weekReadingDays}
-          />
+            <ReadingButton
+              bookId={currentBook.id}
+              todayMarked={todayMarked}
+              onFinish={() => setShowFinishModal(true)}
+            />
 
-          <div className="panel">
-            <h2 className="panel__title">Notas</h2>
+            <MiniWeekCalendar
+              bookId={currentBook.id}
+              weekStart={weekStart}
+              readDays={weekReadingDays}
+            />
+
             <NoteForm bookId={currentBook.id} />
             <NotesList notes={notes} />
+          </>
+        ) : (
+          <div className="reading-empty">
+            <p>Nenhum livro selecionado.</p>
+            <p>Adicione um livro na fila abaixo e comece a ler.</p>
           </div>
-        </>
-      ) : (
+        )}
+      </div>
+
+      {/* Próximos da fila */}
+      <div className="panel">
+        <h2 className="panel__title">Próximos da fila</h2>
+        <p className="panel__subtitle">Sem pressão pra começar — só uma lista de intenção</p>
+        <BookQueueList queue={queue} hasCurrentBook={currentBook !== null} />
+        <AddBookInline hasCurrentBook={currentBook !== null} />
+      </div>
+
+      {/* Concluídos */}
+      {finishedBooks.length > 0 && (
         <div className="panel">
-          <p>Nenhum livro atual.</p>
-          <p>Escolha um livro da fila ou adicione um novo para começar a ler.</p>
-          <button
-            className="save-btn"
-            onClick={() => handleOpenAddBook("current")}
-          >
-            Adicionar livro
-          </button>
+          <h2 className="panel__title">Concluídos</h2>
+          <p className="panel__subtitle">Livros finalizados, com a resenha que você escreveu ao terminar</p>
+          <FinishedBooksList books={finishedBooks} />
         </div>
       )}
-
-      <div className="panel">
-        <h2 className="panel__title">Fila de livros</h2>
-        <BookQueueList queue={queue} hasCurrentBook={currentBook !== null} />
-        <button
-          className="save-btn"
-          style={{ marginTop: "8px" }}
-          onClick={() => handleOpenAddBook("queue")}
-        >
-          Adicionar à fila
-        </button>
-      </div>
-
-      <div className="panel">
-        <h2 className="panel__title">Livros concluídos</h2>
-        <FinishedBooksList books={finishedBooks} />
-      </div>
 
       {showFinishModal && currentBook && (
         <FinishBookModal
           bookId={currentBook.id}
           bookTitle={currentBook.title}
           onClose={() => setShowFinishModal(false)}
-        />
-      )}
-
-      {showAddBookModal && (
-        <AddBookModal
-          mode={addBookMode}
-          hasCurrentBook={currentBook !== null}
-          onClose={() => setShowAddBookModal(false)}
         />
       )}
     </div>

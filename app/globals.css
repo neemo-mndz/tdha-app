@@ -43,6 +43,7 @@ header.top {
   font-size: 22px;
   color: var(--structure);
   letter-spacing: -0.02em;
+  text-decoration: none;
 }
 
 .brand span { color: var(--today); }
@@ -1739,12 +1740,123 @@ header.top {
 }
 
 
-/* ---- Reading Button ---- */
-.reading-button-wrapper {
+/* ---- Reading Companion Page ---- */
+.reading-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px 120px;
+}
+
+.reading-page__header {
+  margin-bottom: 24px;
+}
+
+.reading-page__title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+
+.reading-page__subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.reading-empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 24px 0;
+}
+
+.reading-empty p {
+  margin: 0 0 4px;
+}
+
+/* ---- Current Book Card ---- */
+.current-book {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.current-book__cover {
+  width: 64px;
+  height: 88px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #c4a882 0%, #a08870 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: #fff;
+  opacity: 0.8;
+}
+
+.current-book__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.current-book__title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0 0 2px;
+  color: var(--ink);
+}
+
+.current-book__author {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+.current-book__progress-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.current-book__progress-label {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.current-book__progress-input {
+  width: 120px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+
+.current-book__progress-input:focus {
+  border-color: var(--structure);
+}
+
+.current-book__error {
+  font-size: 12px;
+  color: #C6685A;
+  margin: 4px 0 0;
+}
+
+/* ---- Reading Actions (button + finish link) ---- */
+.reading-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
 .reading-button {
@@ -1765,19 +1877,7 @@ header.top {
 }
 
 .reading-button--marked {
-  background: var(--today);
-  color: #fff;
-}
-
-.reading-button--marked:hover {
-  opacity: 0.85;
-}
-
-.reading-button--disabled {
-  background: var(--line);
-  color: var(--muted);
-  cursor: not-allowed;
-  opacity: 0.7;
+  background: var(--structure);
 }
 
 .reading-button:disabled {
@@ -1785,74 +1885,28 @@ header.top {
   cursor: not-allowed;
 }
 
-.reading-button__hint {
-  font-size: 12px;
-  color: var(--muted);
-  margin: 0;
-}
-
-/* ---- Notes List ---- */
-.notes-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.notes-list__empty {
-  color: var(--muted);
-  font-size: 13px;
-  text-align: center;
-  padding: 14px 0;
-  margin: 8px 0 0;
-}
-
-.note-item {
-  background: var(--bg);
-  border-radius: 12px;
-  padding: 12px 14px;
-}
-
-.note-item__content {
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--ink);
-  white-space: pre-wrap;
-  margin-bottom: 8px;
-}
-
-.note-item__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.note-item__date {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.note-item__delete-btn {
+.reading-finish-link {
   background: none;
   border: none;
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  color: var(--muted);
+  color: var(--structure);
+  text-decoration: underline;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: all 0.12s ease;
+  padding: 0;
+  transition: color 0.12s ease;
 }
 
-.note-item__delete-btn:hover {
-  background: var(--surface);
-  color: #C6685A;
+.reading-finish-link:hover {
+  color: var(--today);
 }
 
+/* ---- Mini Week Calendar ---- */
+.mini-week-wrapper {
+  margin-bottom: 20px;
+}
 
-/* ---- Mini Week Calendar (Reading Companion) ---- */
 .mini-week-calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -1865,12 +1919,12 @@ header.top {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 4px;
   padding: 10px 4px;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid var(--line);
   background: var(--surface);
-  color: var(--ink);
+  color: var(--muted);
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: 'Inter', sans-serif;
@@ -1878,30 +1932,23 @@ header.top {
 
 .mini-week-calendar__cell:hover:not(:disabled) {
   border-color: var(--structure);
-  transform: translateY(-1px);
 }
 
 .mini-week-calendar__cell--read {
-  background: var(--structure);
-  border-color: var(--structure);
-  color: #fff;
-}
-
-.mini-week-calendar__cell--read:hover:not(:disabled) {
-  background: #365049;
-  border-color: #365049;
+  background: var(--today-soft);
+  border-color: var(--today);
+  color: var(--structure);
 }
 
 .mini-week-calendar__cell--today {
-  border-color: var(--today);
-  box-shadow: 0 0 0 2px var(--today);
+  border-color: var(--ink);
+  color: var(--ink);
   font-weight: 600;
 }
 
 .mini-week-calendar__cell--today.mini-week-calendar__cell--read {
-  background: var(--today);
+  background: var(--today-soft);
   border-color: var(--today);
-  box-shadow: 0 0 0 2px var(--today);
 }
 
 .mini-week-calendar__cell--future {
@@ -1911,7 +1958,7 @@ header.top {
 }
 
 .mini-week-calendar__cell--future:hover {
-  transform: none;
+  border-color: var(--line);
 }
 
 .mini-week-calendar__weekday {
@@ -1919,22 +1966,111 @@ header.top {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: inherit;
-  opacity: 0.7;
 }
 
 .mini-week-calendar__date {
-  font-family: 'Outfit', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
 }
 
-.mini-week-calendar__dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #fff;
-  margin-top: 2px;
+.mini-week-calendar__hint {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* ---- Note Form ---- */
+.note-form {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.note-form__textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: transparent;
+  min-height: 60px;
+}
+
+.note-form__textarea::placeholder {
+  color: var(--muted);
+}
+
+.note-form__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.note-form__error {
+  font-size: 12px;
+  color: #C6685A;
+  margin: 0;
+}
+
+/* ---- Notes List ---- */
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.note-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.note-item:last-child {
+  border-bottom: none;
+}
+
+.note-item__date {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.note-item__content {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+}
+
+.note-item__delete-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 4px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.12s ease, color 0.12s ease;
+}
+
+.note-item:hover .note-item__delete-btn {
+  opacity: 1;
+}
+
+.note-item__delete-btn:hover {
+  color: #C6685A;
 }
 
 /* ---- Book Queue ---- */
@@ -1942,14 +2078,6 @@ header.top {
   display: flex;
   flex-direction: column;
   gap: 0;
-}
-
-.book-queue__empty {
-  color: var(--muted);
-  font-size: 13px;
-  text-align: center;
-  padding: 14px 0;
-  margin: 0;
 }
 
 .book-queue__item {
@@ -1974,11 +2102,8 @@ header.top {
 
 .book-queue__title {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .book-queue__author {
@@ -1988,15 +2113,16 @@ header.top {
 
 .book-queue__actions {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
   flex-shrink: 0;
 }
 
 .book-queue__start-btn {
   background: none;
-  border: 1px solid var(--structure);
+  border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 6px 12px;
+  padding: 6px 14px;
   font-family: 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 500;
@@ -2006,26 +2132,88 @@ header.top {
 }
 
 .book-queue__start-btn:hover {
+  border-color: var(--structure);
   background: var(--structure);
   color: #fff;
 }
 
 .book-queue__remove-btn {
   background: none;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
+  border: none;
+  font-size: 18px;
   color: var(--muted);
   cursor: pointer;
-  transition: all 0.12s ease;
+  padding: 0 4px;
+  transition: color 0.12s ease;
 }
 
 .book-queue__remove-btn:hover {
-  border-color: #C6685A;
   color: #C6685A;
+}
+
+/* ---- Add Book Inline ---- */
+.add-book-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.add-book-inline__input {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+
+.add-book-inline__input:focus {
+  border-color: var(--structure);
+}
+
+.add-book-inline__input--author {
+  flex: 0.7;
+}
+
+.add-book-inline__btn {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--structure);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.add-book-inline__btn:hover:not(:disabled) {
+  border-color: var(--structure);
+  background: var(--structure);
+  color: #fff;
+}
+
+.add-book-inline__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.add-book-inline__error {
+  width: 100%;
+  font-size: 12px;
+  color: #C6685A;
+  margin: 4px 0 0;
 }
 
 /* ---- Finished Books List ---- */
@@ -2036,27 +2224,30 @@ header.top {
   gap: 0;
 }
 
-.finished-books-list__empty {
-  color: var(--muted);
-  font-size: 13px;
-  text-align: center;
-  padding: 14px 0;
-  margin: 0;
-}
-
 .finished-book-item {
   padding: 12px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 14px;
 }
 
 .finished-book-item:last-child {
   border-bottom: none;
 }
 
+.finished-book-item strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.finished-book-item .finished-book-author {
+  font-size: 12px;
+  color: var(--muted);
+  display: block;
+  margin-top: 2px;
+}
+
 .finished-book-review {
   font-size: 13px;
   color: var(--muted);
-  margin-top: 6px;
+  margin-top: 4px;
   line-height: 1.5;
 }

@@ -6,9 +6,10 @@ import { toggleReadingDay } from "@/lib/actions/readingLogs";
 export interface ReadingButtonProps {
   bookId: string;
   todayMarked: boolean;
+  onFinish?: () => void;
 }
 
-export function ReadingButton({ bookId, todayMarked }: ReadingButtonProps) {
+export function ReadingButton({ bookId, todayMarked, onFinish }: ReadingButtonProps) {
   const [optimisticMarked, setOptimisticMarked] = useOptimistic(todayMarked);
   const [isPending, startTransition] = useTransition();
 
@@ -22,28 +23,24 @@ export function ReadingButton({ bookId, todayMarked }: ReadingButtonProps) {
   };
 
   if (!bookId) {
-    return (
-      <div className="reading-button-wrapper">
-        <button className="reading-button reading-button--disabled" disabled>
-          Marquei que li hoje
-        </button>
-        <p className="reading-button__hint">
-          Selecione um livro para registrar leitura
-        </p>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="reading-button-wrapper">
+    <div className="reading-actions">
       <button
         className={`reading-button ${optimisticMarked ? "reading-button--marked" : ""}`}
         onClick={handleToggle}
         disabled={isPending}
         aria-pressed={optimisticMarked}
       >
-        {optimisticMarked ? "✓ Lido hoje" : "Marquei que li hoje"}
+        {optimisticMarked ? "✓ Marquei que li hoje" : "Marquei que li hoje"}
       </button>
+      {onFinish && (
+        <button className="reading-finish-link" onClick={onFinish}>
+          Concluí o livro
+        </button>
+      )}
     </div>
   );
 }

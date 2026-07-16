@@ -20,14 +20,7 @@ function queueReducer(
   state: QueuedBookDisplay[],
   action: OptimisticAction
 ): QueuedBookDisplay[] {
-  switch (action.type) {
-    case "remove":
-      return state.filter((book) => book.id !== action.id);
-    case "start":
-      return state.filter((book) => book.id !== action.id);
-    default:
-      return state;
-  }
+  return state.filter((book) => book.id !== action.id);
 }
 
 export function BookQueueList({ queue, hasCurrentBook }: BookQueueListProps) {
@@ -61,11 +54,7 @@ export function BookQueueList({ queue, hasCurrentBook }: BookQueueListProps) {
   };
 
   if (optimisticQueue.length === 0) {
-    return (
-      <p className="book-queue__empty">
-        Nenhum livro na fila. Adicione livros para ler depois.
-      </p>
-    );
+    return null;
   }
 
   return (
@@ -88,8 +77,9 @@ export function BookQueueList({ queue, hasCurrentBook }: BookQueueListProps) {
             <button
               className="book-queue__remove-btn"
               onClick={() => handleRemove(book.id)}
+              aria-label="Remover da fila"
             >
-              Remover
+              ×
             </button>
           </div>
         </div>

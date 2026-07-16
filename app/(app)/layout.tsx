@@ -22,7 +22,7 @@ export default async function AppLayout({
   return (
     <>
       <header className="app-header" aria-label="Navegação principal">
-        <div className="brand">semana<span>.</span></div>
+        <Link href="/" className="brand">semana<span>.</span></Link>
         <div className="app-header__right">
           <MonthBadge />
           <Link href="/reading" className="top__settings-link" aria-label="Leitura">

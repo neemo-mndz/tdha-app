@@ -18,14 +18,12 @@ export function NoteForm({ bookId }: NoteFormProps) {
     if (!content.trim()) return;
 
     setError(null);
-
     startTransition(async () => {
       const result = await createBookNote({ bookId, content: content.trim() });
-
       if (result.success) {
         setContent("");
       } else {
-        setError(result.error ?? "Não foi possível salvar. Tente novamente.");
+        setError(result.error ?? "Não foi possível salvar.");
       }
     });
   };
@@ -38,22 +36,19 @@ export function NoteForm({ bookId }: NoteFormProps) {
   };
 
   return (
-    <div className="capture-box">
+    <div className="note-form">
       <textarea
+        className="note-form__textarea"
         value={content}
         onChange={(e) => setContent(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Anote um pensamento solto..."
+        placeholder="Uma nota rápida sobre o que está achando (opcional)..."
         maxLength={1000}
         disabled={disabled}
         aria-label="Nova nota de leitura"
       />
-      {error && (
-        <p style={{ color: "#C6685A", fontSize: "13px", marginTop: "8px" }}>
-          {error}
-        </p>
-      )}
-      <div className="capture-actions">
+      <div className="note-form__footer">
+        {error && <p className="note-form__error">{error}</p>}
         <button
           className="save-btn"
           onClick={handleSave}

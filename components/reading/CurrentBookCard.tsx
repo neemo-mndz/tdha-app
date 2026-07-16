@@ -16,7 +16,6 @@ export function CurrentBookCard({ book, onFinish }: CurrentBookCardProps) {
 
   const saveProgress = (value: string) => {
     const trimmed = value.trim() || null;
-    // Skip if value hasn't changed
     if (trimmed === (book.progress ?? null)) return;
 
     startTransition(async () => {
@@ -25,17 +24,14 @@ export function CurrentBookCard({ book, onFinish }: CurrentBookCardProps) {
         progress: trimmed,
       });
       if (!result.success) {
-        setError(result.error ?? "Não foi possível salvar. Tente novamente.");
+        setError(result.error ?? "Não foi possível salvar.");
       } else {
         setError(null);
       }
     });
   };
 
-  const handleBlur = () => {
-    saveProgress(progress);
-  };
-
+  const handleBlur = () => saveProgress(progress);
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -44,51 +40,33 @@ export function CurrentBookCard({ book, onFinish }: CurrentBookCardProps) {
   };
 
   return (
-    <div className="panel">
-      <h2 className="panel__title">{book.title}</h2>
-      {book.author && (
-        <p className="panel__subtitle">{book.author}</p>
-      )}
-
-      <div style={{ marginTop: "12px" }}>
-        <label
-          htmlFor="book-progress"
-          style={{ fontSize: "13px", color: "var(--muted)", display: "block", marginBottom: "6px" }}
-        >
-          Progresso (opcional)
-        </label>
-        <input
-          id="book-progress"
-          type="text"
-          value={progress}
-          onChange={(e) => setProgress(e.target.value)}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          maxLength={50}
-          placeholder="ex: pág. 120, 40%, cap. 5"
-          disabled={isPending}
-          style={{
-            width: "100%",
-            padding: "10px 12px",
-            border: "1px solid var(--line)",
-            borderRadius: "10px",
-            fontSize: "14px",
-            fontFamily: "Inter, sans-serif",
-            background: "var(--bg)",
-            color: "var(--ink)",
-          }}
-        />
-        {error && (
-          <p style={{ color: "#C6685A", fontSize: "13px", marginTop: "6px" }}>
-            {error}
-          </p>
-        )}
+    <div className="current-book">
+      <div className="current-book__cover" aria-hidden="true">
+        <span>Capa</span>
       </div>
-
-      <div style={{ marginTop: "16px" }}>
-        <button className="save-btn" onClick={onFinish}>
-          Concluí o livro
-        </button>
+      <div className="current-book__info">
+        <h3 className="current-book__title">{book.title}</h3>
+        {book.author && (
+          <p className="current-book__author">{book.author}</p>
+        )}
+        <div className="current-book__progress-row">
+          <label htmlFor="book-progress" className="current-book__progress-label">
+            Onde parei (opcional):
+          </label>
+          <input
+            id="book-progress"
+            type="text"
+            className="current-book__progress-input"
+            value={progress}
+            onChange={(e) => setProgress(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            maxLength={50}
+            placeholder="pág. 120"
+            disabled={isPending}
+          />
+        </div>
+        {error && <p className="current-book__error">{error}</p>}
       </div>
     </div>
   );

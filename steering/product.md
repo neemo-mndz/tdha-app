@@ -59,3 +59,17 @@ Pessoas neurodivergentes, especialmente com TDAH, que:
 ## Inspiração de UX
 
 Stripe e Notion como referência de clareza visual em SaaS; padrões de UI amigáveis a TDAH (baixa densidade de informação, uma ação primária por tela, espaço em branco generoso).
+
+# Adendo — Utilitários (adicionar ao final de product.md)
+
+## Conceito: Utilitários
+
+Além do núcleo de registro diário/semanal, o produto vai acumular pequenos **utilitários** — módulos de apoio a hábitos específicos (o primeiro é o Companheiro de Leitura). Cada utilitário:
+
+- Vive em sua própria rota/tela dedicada (não polui o calendário principal).
+- Segue os mesmos tokens visuais do núcleo do produto (cores, tipografia, componentes de card/lista/chip/modal já estabelecidos).
+- Segue os mesmos princípios de design não-negociáveis do produto: sem streaks, sem culpa, ação central em poucos segundos, campos opcionais nunca bloqueiam a ação principal.
+- Pode, opcionalmente, refletir um indicador discreto na tela principal (ex: um marcador de "leu hoje" no card de registros do dia), mas nunca exige que o usuário abra o utilitário para usar o núcleo do produto.
+- Tem seu próprio schema de banco (tabelas prefixadas pelo domínio, ex: `books`, `book_notes`), sem acoplar às tabelas do núcleo (`days`, `logs`).
+
+O padrão "biblioteca reutilizável → seleção ativa → progresso → conclusão" já usado em Tarefas da Semana (biblioteca de tarefas → plano da semana → contador) deve ser reconhecido como o mesmo padrão estrutural do Companheiro de Leitura (fila de próximos → livro atual → dias lidos → conclusão com resenha). Novos utilitários futuros que sigam essa forma devem reutilizar os mesmos componentes de UI já construídos para esse padrão, em vez de recriá-los.

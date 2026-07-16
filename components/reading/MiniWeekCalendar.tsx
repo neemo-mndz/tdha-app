@@ -75,11 +75,12 @@ export function MiniWeekCalendar({
   };
 
   return (
-    <div
-      className="mini-week-calendar"
-      role="group"
-      aria-label="Calendário semanal de leitura"
-    >
+    <div className="mini-week-wrapper">
+      <div
+        className="mini-week-calendar"
+        role="group"
+        aria-label="Calendário semanal de leitura"
+      >
       {weekDays.map((date, index) => {
         const isToday = date === today;
         const isFuture = date > today;
@@ -108,13 +109,16 @@ export function MiniWeekCalendar({
             <span className="mini-week-calendar__weekday">
               {DAY_LABELS[index]}
             </span>
-            <span className="mini-week-calendar__date">{getDayNumber(date)}</span>
-            {isRead && (
-              <span className="mini-week-calendar__dot" aria-hidden="true" />
-            )}
+            <span className="mini-week-calendar__date">
+              {isRead ? "✓" : "·"}
+            </span>
           </button>
         );
       })}
+    </div>
+      <p className="mini-week-calendar__hint">
+        Dias em que você leu essa semana — clique para marcar/desmarcar um dia passado
+      </p>
     </div>
   );
 }

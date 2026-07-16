@@ -6,21 +6,20 @@ interface FinishedBooksListProps {
 
 export function FinishedBooksList({ books }: FinishedBooksListProps) {
   if (books.length === 0) {
-    return (
-      <p className="finished-books-list__empty">Nenhum livro concluído ainda.</p>
-    );
+    return null;
   }
 
   return (
-    <ul className="finished-books-list">
+    <div className="finished-books-list">
       {books.map((book) => (
-        <li key={book.id} className="finished-book-item">
+        <div key={book.id} className="finished-book-item">
           <strong>{book.title}</strong>
-          {book.author && <span> — {book.author}</span>}
-          {book.rating && <span> ({book.rating}/5)</span>}
+          {book.author && (
+            <span className="finished-book-author">{book.author}</span>
+          )}
           {book.review && <p className="finished-book-review">{book.review}</p>}
-        </li>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 }

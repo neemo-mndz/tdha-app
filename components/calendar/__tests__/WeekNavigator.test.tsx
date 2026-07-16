@@ -211,3 +211,42 @@ describe('WeekNavigator — Property-Based Tests', () => {
     );
   });
 });
+
+// ─── Example Tests for Task 4.3 ──────────────────────────────────────────────
+describe('WeekNavigator — Example Tests', () => {
+  beforeEach(() => {
+    mockPush.mockClear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  // Feature: weekly-calendar, Task 4.3: Testes de exemplo para WeekNavigator
+  // **Validates: Requirements 1.5**
+  describe('Hoje button visibility — example tests', () => {
+    it('current week → "hoje" button is NOT present in DOM', () => {
+      const today = new Date(2025, 6, 2); // Wednesday July 2
+      const weekStart = currentWeekStart(today); // Monday June 30
+
+      renderWeekNavigator({ weekStart, today });
+
+      const todayBtn = screen.queryByLabelText('Voltar para semana atual');
+      expect(todayBtn).not.toBeInTheDocument();
+    });
+
+    it('different week → "hoje" button IS present in DOM and points to /', () => {
+      const today = new Date(2025, 6, 2); // Wednesday July 2
+      const weekStart = new Date(2025, 5, 23); // June 23 (previous week Monday)
+
+      renderWeekNavigator({ weekStart, today });
+
+      const todayBtn = screen.getByLabelText('Voltar para semana atual');
+      expect(todayBtn).toBeInTheDocument();
+
+      fireEvent.click(todayBtn);
+
+      expect(mockPush).toHaveBeenCalledWith('/');
+    });
+  });
+});

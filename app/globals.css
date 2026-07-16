@@ -96,6 +96,37 @@ header.top {
   border-color: #d18f4e;
 }
 
+/* On mobile, show only arrows */
+.week-navigator__btn-arrow {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .week-navigator {
+    gap: 8px;
+  }
+
+  .week-navigator__btn-text {
+    display: none;
+  }
+
+  .week-navigator__btn-arrow {
+    display: inline;
+    font-size: 16px;
+  }
+
+  .week-navigator__btn {
+    padding: 8px 12px;
+    min-width: 36px;
+    text-align: center;
+  }
+
+  .week-navigator__label {
+    min-width: auto;
+    font-size: 14px;
+  }
+}
+
 /* Weekly Calendar Grid */
 .weekly-calendar {
   max-width: 960px;
@@ -1245,6 +1276,11 @@ header.top {
   border-radius: var(--radius);
   padding: 14px 18px;
   margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .notification-banner p {
@@ -1252,6 +1288,29 @@ header.top {
   font-size: 13px;
   color: var(--muted);
   line-height: 1.5;
+  flex: 1;
+}
+
+.notification-banner--prompt {
+  border-left-color: var(--structure);
+}
+
+.notification-banner__btn {
+  background: var(--structure);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.12s ease;
+}
+
+.notification-banner__btn:hover {
+  opacity: 0.9;
 }
 
 /* ---- Header Settings Link ---- */

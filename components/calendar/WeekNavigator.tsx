@@ -41,7 +41,8 @@ export function WeekNavigator({ weekStart, today }: WeekNavigatorProps) {
         aria-label="Semana anterior"
         className="week-navigator__btn week-navigator__btn--prev"
       >
-        ← semana anterior
+        <span className="week-navigator__btn-text">← semana anterior</span>
+        <span className="week-navigator__btn-arrow">←</span>
       </button>
 
       <span className="week-navigator__label">
@@ -54,7 +55,8 @@ export function WeekNavigator({ weekStart, today }: WeekNavigatorProps) {
         aria-label="Próxima semana"
         className="week-navigator__btn week-navigator__btn--next"
       >
-        próxima semana →
+        <span className="week-navigator__btn-text">próxima semana →</span>
+        <span className="week-navigator__btn-arrow">→</span>
       </button>
 
       {!isCurrentWeek && (

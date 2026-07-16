@@ -39,6 +39,10 @@ export default async function HomePage() {
     <div className="shell">
       <HomeGreetingLive initialTime={today.toISOString()} />
 
+      <div className="stack">
+        <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
+      </div>
+
       <HomeCalendarSection
         weekStart={weekStartStr}
         days={days}
@@ -47,7 +51,6 @@ export default async function HomePage() {
       />
 
       <div className="stack">
-        <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
         <WeeklyTasksPanel
           weekStart={weekStartStr}
           activeTasks={activeTasks}

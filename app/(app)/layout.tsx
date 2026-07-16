@@ -1,4 +1,5 @@
 import { QuickCaptureButton } from "@/components/logs/QuickCaptureButton";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 import { getCurrentUserId } from "@/lib/auth";
 import { getWeekPlan } from "@/lib/db/queries/weekPlans";
 import { currentWeekStart } from "@/lib/utils/date";
@@ -18,6 +19,9 @@ export default async function AppLayout({
 
   return (
     <>
+      <nav className="app-nav" aria-label="Navegação principal">
+        <LogoutButton />
+      </nav>
       {children}
       <QuickCaptureButton activeTasks={activeTasks} />
     </>

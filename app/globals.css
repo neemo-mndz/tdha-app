@@ -419,10 +419,11 @@ header.top {
   background: var(--today-soft);
 }
 
-/* ---- Panels Grid ---- */
-.panels {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
+/* ---- Panels / Stack (lista vertical única, mobile-first) ---- */
+.panels,
+.stack {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   margin-top: 24px;
 }
@@ -943,6 +944,10 @@ header.top {
   padding: 3px 10px;
 }
 
+.log-item-card__meta .log-item-card__tag {
+  margin-bottom: 0;
+}
+
 
 /* ---- Month Badge ---- */
 .month-badge {
@@ -1299,4 +1304,162 @@ header.top {
   .loading-skeleton__cell {
     height: 70px;
   }
+}
+
+/* ---- Day Cell Selected State ---- */
+.day-cell--selected {
+  border-color: var(--structure);
+  box-shadow: 0 0 0 2px var(--structure) inset;
+}
+
+/* ---- Today Logs Card (sempre visível) ---- */
+.today-logs-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.today-logs-card__title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: var(--structure);
+}
+
+.today-logs-card__empty {
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 10px 0;
+  margin: 0;
+}
+
+.today-logs-card__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.today-logs-card__item {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+
+.today-logs-card__item:last-child {
+  border-bottom: none;
+}
+
+.today-logs-card__time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  padding-top: 1px;
+  flex-shrink: 0;
+}
+
+.today-logs-card__text {
+  color: var(--ink);
+}
+
+/* ---- Vincular a tarefa (label acima dos chips) ---- */
+.link-task-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 10px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---- Task Panel Actions (Planejar semana = primária, Editar tarefas = link) ---- */
+.task-panel-btn--primary {
+  background: var(--structure);
+  color: #fff;
+  border-color: var(--structure);
+}
+
+.task-panel-btn--primary:hover {
+  background: var(--structure);
+  opacity: 0.9;
+  border-color: var(--structure);
+}
+
+.task-panel-link {
+  background: none;
+  border: none;
+  color: var(--structure);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.task-panel-link:hover {
+  color: var(--today);
+}
+
+/* ---- Log Item Meta (horário + tag da tarefa) ---- */
+.log-item-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.log-item-card__time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+
+/* ---- Auth Spinner ---- */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ---- App Navigation (logout) ---- */
+.app-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 12px 24px;
+  background: var(--bg);
+}
+
+.logout-button {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.logout-button:hover {
+  background: var(--surface);
+  border-color: var(--structure);
+  color: var(--structure);
+}
+
+.logout-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

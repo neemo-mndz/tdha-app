@@ -7,9 +7,11 @@ export interface WeeklyCalendarProps {
   weekStart: Date;       // segunda-feira da semana exibida
   days: DayStatus[];     // 7 itens, ordenados seg→dom
   today: Date;           // passado do servidor para evitar hidratação errada
+  selectedDate?: Date;             // dia atualmente selecionado (opcional)
+  onSelectDay?: (date: Date) => void; // ao informar, clique seleciona em vez de navegar
 }
 
-export function WeeklyCalendar({ weekStart, days, today }: WeeklyCalendarProps) {
+export function WeeklyCalendar({ weekStart, days, today, selectedDate, onSelectDay }: WeeklyCalendarProps) {
   return (
     <section className="weekly-calendar" aria-label="Calendário semanal">
       <WeekNavigator weekStart={weekStart} today={today} />
@@ -23,6 +25,8 @@ export function WeeklyCalendar({ weekStart, days, today }: WeeklyCalendarProps) 
             mood={day.mood}
             isToday={isSameDay(day.date, today)}
             isFuture={isFutureDate(day.date)}
+            isSelected={selectedDate ? isSameDay(day.date, selectedDate) : false}
+            onSelect={onSelectDay}
           />
         ))}
       </div>

@@ -12,6 +12,8 @@ export interface DayCellProps {
   mood: MoodValue | null;
   isToday: boolean;
   isFuture: boolean;
+  isSelected?: boolean;
+  onSelect?: (date: Date) => void;
 }
 
 function formatLogCount(count: number): string {
@@ -27,15 +29,23 @@ const MOOD_EMOJI: Record<MoodValue, string> = {
   awful: '😢',
 };
 
-export function DayCell({ date, logCount, mood, isToday, isFuture }: DayCellProps) {
+export function DayCell({ date, logCount, mood, isToday, isFuture, isSelected, onSelect }: DayCellProps) {
   const href = `/day/${formatDateParam(date)}`;
   const weekday = format(date, 'EEE', { locale: ptBR });
+
+  function handleClick(e: React.MouseEvent) {
+    if (onSelect) {
+      e.preventDefault();
+      onSelect(date);
+    }
+  }
 
   return (
     <Link
       href={href}
+      onClick={handleClick}
       aria-current={isToday ? 'date' : undefined}
-      className={`day-cell${isToday ? ' day-cell--today' : ''}${isFuture ? ' day-cell--future' : ''}`}
+      className={`day-cell${isToday ? ' day-cell--today' : ''}${isFuture ? ' day-cell--future' : ''}${isSelected ? ' day-cell--selected' : ''}`}
     >
       <span className="day-cell__weekday">{weekday}</span>
 

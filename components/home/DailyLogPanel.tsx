@@ -12,13 +12,9 @@ import type { LogWithTask } from "@/lib/db/queries/logs";
 interface DailyLogPanelProps {
   date: string;
   activeTasks: ActiveTaskDisplay[];
-  initialLogs: LogWithTask[];
 }
 
-/** Quantidade de registros recentes exibidos direto no painel da home/semana. */
-const VISIBLE_LOG_COUNT = 3;
-
-export function DailyLogPanel({ date, activeTasks, initialLogs }: DailyLogPanelProps) {
+export function DailyLogPanel({ date, activeTasks }: DailyLogPanelProps) {
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -26,7 +22,7 @@ export function DailyLogPanel({ date, activeTasks, initialLogs }: DailyLogPanelP
   const [, startTransition] = useTransition();
 
   const [optimisticLogs, dispatchOptimistic] = useOptimistic(
-    initialLogs,
+    [] as LogWithTask[],
     logsReducer
   );
 
@@ -86,30 +82,12 @@ export function DailyLogPanel({ date, activeTasks, initialLogs }: DailyLogPanelP
     }
   };
 
-  const totalCount = optimisticLogs.length;
-  const recentLogs = optimisticLogs.slice(-VISIBLE_LOG_COUNT).reverse();
-  const hiddenCount = totalCount - recentLogs.length;
-
   return (
     <div className="panel">
-      <div className="panel__header-row">
-        <div>
-          <h2 className="panel__title">Registro do dia</h2>
-          <p className="panel__subtitle">Brain dump rápido. Escreva o que quiser, sem se preocupar.</p>
-        </div>
-        {totalCount > 0 && (
-          <span className="panel__count-badge" aria-label={`${totalCount} registros hoje`}>
-            {totalCount}
-          </span>
-        )}
-      </div>
+      <h2 className="panel__title">Registro do dia</h2>
+      <p className="panel__subtitle">Brain dump rápido. O humor terá um espaço próprio, futuramente.</p>
 
       <div className="capture-box">
-        <TaskChips
-          activeTasks={activeTasks}
-          selectedTaskId={selectedTaskId}
-          onSelect={setSelectedTaskId}
-        />
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -118,40 +96,36 @@ export function DailyLogPanel({ date, activeTasks, initialLogs }: DailyLogPanelP
           maxLength={2000}
           aria-label="Novo registro do dia"
         />
-        {error && <p role="alert" className="capture-box__error">{error}</p>}
+        {activeTasks.length > 0 && (
+          <>
+            <p className="link-task-label">Vincular a uma tarefa da semana (opcional)</p>
+            <TaskChips
+              activeTasks={activeTasks}
+              selectedTaskId={selectedTaskId}
+              onSelect={setSelectedTaskId}
+            />
+          </>
+        )}
+        {error && <p style={{ color: "#C6685A", fontSize: "13px", marginTop: "8px" }}>{error}</p>}
         <div className="capture-actions">
-          <span className="capture-actions__hint">Ctrl/Cmd + Enter para salvar</span>
           <button className="save-btn" onClick={handleSave} disabled={submitting}>
             {submitting ? "Salvando..." : "Salvar"}
           </button>
         </div>
       </div>
 
-      {recentLogs.length > 0 && (
-        <div className="daily-log-panel__recent">
-          <ul className="daily-log-panel__list">
-            {recentLogs.map((log) => (
-              <LogItem
-                key={log.id}
-                log={log}
-                taskName={log.taskName}
-                dispatch={dispatchOptimistic}
-                date={date}
-              />
-            ))}
-          </ul>
-          {hiddenCount > 0 && (
-            <Link href={`/day/${date}`} className="daily-log-panel__view-all">
-              Ver todos os {totalCount} registros de hoje →
-            </Link>
-          )}
+      {optimisticLogs.length > 0 && (
+        <div className="daily-log-panel__recent" style={{ marginTop: "14px" }}>
+          {optimisticLogs.map((log) => (
+            <LogItem
+              key={log.id}
+              log={log}
+              taskName={log.taskName}
+              dispatch={dispatchOptimistic}
+              date={date}
+            />
+          ))}
         </div>
-      )}
-
-      {totalCount === 0 && (
-        <p className="task-empty" style={{ marginTop: "14px" }}>
-          Nenhum registro ainda hoje.
-        </p>
       )}
     </div>
   );

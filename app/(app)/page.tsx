@@ -4,13 +4,12 @@ import { getWeekStatus } from '@/lib/db/queries/weeks';
 import { getUserTasks } from '@/lib/db/queries/tasks';
 import { getWeekPlan } from '@/lib/db/queries/weekPlans';
 import { getDayLogs } from '@/lib/db/queries/logs';
-import { getCurrentUserId } from '@/lib/auth';
-import WeeklyCalendar from '@/components/calendar/WeeklyCalendar';
 import { format } from 'date-fns';
-import { HomeGreeting, MonthBadge } from '@/components/home/HomeGreeting';
+import { getCurrentUserId } from '@/lib/auth';
+import { HomeGreetingLive, MonthBadgeLive } from '@/components/home/HomeGreetingLive';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
-import { CalendarToggle } from '@/components/home/CalendarToggle';
+import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,18 +44,21 @@ export default async function HomePage() {
           <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
             ⚙
           </Link>
-          <MonthBadge today={today} />
+          <MonthBadgeLive initialTime={today.toISOString()} />
         </div>
       </header>
 
-      <HomeGreeting today={today} />
+      <HomeGreetingLive initialTime={today.toISOString()} />
 
-      <CalendarToggle>
-        <WeeklyCalendar weekStart={weekStart} days={days} today={today} />
-      </CalendarToggle>
+      <HomeCalendarSection
+        weekStart={weekStart}
+        days={days}
+        today={today}
+        initialLogs={todayLogs}
+      />
 
-      <div className="panels">
-        <DailyLogPanel date={todayStr} activeTasks={activeTasks} initialLogs={todayLogs} />
+      <div className="stack">
+        <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
         <WeeklyTasksPanel
           weekStart={weekStartStr}
           activeTasks={activeTasks}

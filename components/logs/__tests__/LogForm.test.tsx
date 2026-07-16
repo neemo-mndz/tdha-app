@@ -3,10 +3,10 @@ import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/re
 import { LogForm } from "../LogForm";
 
 describe("LogForm", () => {
-  let mockOnSubmit: ReturnType<typeof vi.fn>;
+  let mockOnSubmit: ReturnType<typeof vi.fn<(content: string) => Promise<void>>>;
 
   beforeEach(() => {
-    mockOnSubmit = vi.fn(async () => {});
+    mockOnSubmit = vi.fn<(content: string) => Promise<void>>(async () => {});
   });
 
   afterEach(() => {

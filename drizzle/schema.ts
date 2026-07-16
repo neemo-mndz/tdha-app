@@ -16,7 +16,31 @@ import { relations } from "drizzle-orm";
  */
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * Tabela sessions — sessões de autenticação do usuário
+ * Token de 64 caracteres hex como ID; expira após 30 dias (rolling)
+ */
+export const sessions = pgTable("sessions", {
+  id: text("id").primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * Tabela login_attempts — registro de tentativas falhas de login para rate limiting
+ */
+export const loginAttempts = pgTable("login_attempts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  attemptedAt: timestamp("attempted_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 /**
@@ -153,6 +177,21 @@ export const usersRelations = relations(users, ({ many }) => ({
   tasks: many(tasks),
   weekPlans: many(weekPlans),
   reminders: many(reminders),
+  sessions: many(sessions),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, {
+    fields: [sessions.userId],
+    references: [users.id],
+  }),
+}));
+
+export const loginAttemptsRelations = relations(loginAttempts, ({ one }) => ({
+  user: one(users, {
+    fields: [loginAttempts.email],
+    references: [users.email],
+  }),
 }));
 
 export const daysRelations = relations(days, ({ one, many }) => ({
@@ -212,3 +251,5 @@ export type Task = typeof tasks.$inferSelect;
 export type WeekPlan = typeof weekPlans.$inferSelect;
 export type WeekPlanTask = typeof weekPlanTasks.$inferSelect;
 export type Reminder = typeof reminders.$inferSelect;
+export type Session = typeof sessions.$inferSelect;
+export type LoginAttempt = typeof loginAttempts.$inferSelect;

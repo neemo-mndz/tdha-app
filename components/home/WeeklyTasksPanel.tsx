@@ -72,16 +72,16 @@ export function WeeklyTasksPanel({
 
       <div className="task-panel-actions">
         <button
-          className="task-panel-btn"
-          onClick={() => setShowEditModal(true)}
-        >
-          Editar tarefas
-        </button>
-        <button
-          className="task-panel-btn"
+          className="task-panel-btn task-panel-btn--primary"
           onClick={() => setShowPlanModal(true)}
         >
           Planejar semana
+        </button>
+        <button
+          className="task-panel-link"
+          onClick={() => setShowEditModal(true)}
+        >
+          Editar tarefas
         </button>
       </div>
 

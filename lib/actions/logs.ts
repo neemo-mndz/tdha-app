@@ -13,6 +13,8 @@ import {
   deleteLogById,
   getLogOwner,
   getLogWeekPlanTaskId,
+  getDayLogs,
+  type LogWithTask,
 } from "@/lib/db/queries/logs";
 import {
   bumpWeekPlanTask,
@@ -22,6 +24,16 @@ import {
 import { getCurrentUserId } from "@/lib/auth";
 
 type ActionResult = { success: true } | { success: false; error: string };
+
+/**
+ * Busca os logs de uma data específica para o usuário autenticado.
+ * Usado pelo card "Registros do dia" na tela principal, que exibe
+ * os registros do dia atualmente selecionado no calendário.
+ */
+export async function getLogsForDate(date: string): Promise<LogWithTask[]> {
+  const userId = await getCurrentUserId();
+  return getDayLogs(userId, date);
+}
 
 /**
  * Cria um novo log para uma data específica do usuário autenticado.

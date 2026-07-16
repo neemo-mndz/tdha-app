@@ -10,10 +10,10 @@ import { getWeekPlan } from '@/lib/db/queries/weekPlans';
 import { getDayLogs } from '@/lib/db/queries/logs';
 import { getCurrentUserId } from '@/lib/auth';
 import { currentWeekStart } from '@/lib/utils/date';
-import { HomeGreeting, MonthBadge } from '@/components/home/HomeGreeting';
+import { HomeGreetingLive, MonthBadgeLive } from '@/components/home/HomeGreetingLive';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
-import { CalendarToggle } from '@/components/home/CalendarToggle';
+import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
 
 export const dynamic = 'force-dynamic';
 
@@ -68,11 +68,11 @@ export default async function WeekPage({
           <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
             ⚙
           </Link>
-          <MonthBadge today={today} />
+          <MonthBadgeLive initialTime={today.toISOString()} />
         </div>
       </header>
 
-      {isCurrentWeek && <HomeGreeting today={today} />}
+      {isCurrentWeek && <HomeGreetingLive initialTime={today.toISOString()} />}
       {!isCurrentWeek && (
         <div className="greeting">
           <h1>Semana de {format(weekStartDate, "d 'de' MMMM", { locale: ptBR })}</h1>
@@ -80,13 +80,16 @@ export default async function WeekPage({
         </div>
       )}
 
-      <CalendarToggle defaultOpen={true}>
-        <WeeklyCalendar weekStart={weekStartDate} days={days} today={today} />
-      </CalendarToggle>
+      <HomeCalendarSection
+        weekStart={weekStartDate}
+        days={days}
+        today={today}
+        initialLogs={isCurrentWeek ? todayLogs : []}
+      />
 
-      <div className="panels">
+      <div className="stack">
         {isCurrentWeek && (
-          <DailyLogPanel date={todayStr} activeTasks={activeTasks} initialLogs={todayLogs} />
+          <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
         )}
         <WeeklyTasksPanel
           weekStart={weekStartStr}

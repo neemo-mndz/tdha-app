@@ -14,12 +14,11 @@ interface LogItemProps {
 }
 
 export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
+  const time = format(new Date(log.createdAt), "HH:mm");
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(log.content);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const time = format(new Date(log.createdAt), "HH:mm");
 
   const handleUpdate = async () => {
     const result = await updateLog({
@@ -47,7 +46,8 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
 
   if (editing) {
     return (
-      <li className="log-item-card">
+      <div className="log-item-card">
+        <span className="log-item-card__time">{time}</span>
         <textarea
           value={editContent}
           onChange={(e) => setEditContent(e.target.value)}
@@ -69,21 +69,17 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
           </button>
         </div>
         {error && <p role="alert" className="log-form__error">{error}</p>}
-      </li>
+      </div>
     );
   }
 
   return (
-    <li className="log-item-card">
-      <div className="log-item-card__header">
-        {taskName ? (
+    <div className="log-item-card">
+      <div className="log-item-card__meta">
+        <span className="log-item-card__time">{time}</span>
+        {taskName && (
           <span className="log-item-card__tag">{taskName}</span>
-        ) : (
-          <span />
         )}
-        <time className="log-item-card__time" dateTime={new Date(log.createdAt).toISOString()}>
-          {time}
-        </time>
       </div>
       <p className="log-item-card__content">{log.content}</p>
       <div className="log-item-card__actions">
@@ -106,6 +102,6 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
         )}
       </div>
       {error && <p role="alert" className="log-form__error">{error}</p>}
-    </li>
+    </div>
   );
 }

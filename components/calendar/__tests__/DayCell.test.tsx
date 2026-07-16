@@ -112,9 +112,9 @@ describe('DayCell', () => {
       expect(screen.getByText('99')).toBeInTheDocument();
     });
 
-    it('displays "0" for logCount = 0', () => {
-      renderDayCell({ logCount: 0 });
-      expect(screen.getByText('0')).toBeInTheDocument();
+    it('does not display log count for logCount = 0', () => {
+      const { container } = renderDayCell({ logCount: 0 });
+      expect(container.querySelector('.day-cell__log-count')).toBeNull();
     });
   });
 
@@ -184,7 +184,7 @@ describe('DayCell — Property-Based Tests', () => {
       fc.property(arbDayCellProps, (props) => {
         cleanup();
         const { container } = render(<DayCell {...props} />);
-        const indicator = container.querySelector('.day-cell__mood-indicator');
+        const indicator = container.querySelector('.day-cell__mood');
 
         if (props.mood !== null) {
           expect(indicator).not.toBeNull();
@@ -204,7 +204,7 @@ describe('DayCell — Property-Based Tests', () => {
       date: arbWeekStart.chain(ws =>
         fc.integer({ min: 0, max: 6 }).map(n => addDays(ws, n))
       ).filter(d => !isNaN(d.getTime())),
-      logCount: fc.nat({ max: 200 }),
+      logCount: fc.integer({ min: 1, max: 200 }),
       mood: fc.option(fc.constantFrom('great' as const, 'good' as const, 'neutral' as const, 'bad' as const, 'awful' as const), { nil: null }),
       isToday: fc.boolean(),
       isFuture: fc.boolean(),

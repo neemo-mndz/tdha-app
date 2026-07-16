@@ -19,10 +19,14 @@ export const dynamic = 'force-dynamic';
 
 const WeekStartSchema = z
   .string()
-  .refine((s) => isValid(parseISO(s)), { message: 'Data inválida' })
-  .transform((s) => parseISO(s))
+  .refine((s) => /^\d{4}-\d{2}-\d{2}$/.test(s) && isValid(parseISO(s)), { message: 'Data inválida' })
+  .transform((s) => {
+    // Parse as local date to avoid timezone issues (parseISO("2025-06-30") creates midnight local)
+    const [year, month, day] = s.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  })
   .refine(
-    (d) => startOfWeek(d, { weekStartsOn: 1 }).getTime() === d.getTime(),
+    (d) => d.getDay() === 1, // 1 = Monday
     { message: 'A data deve ser uma segunda-feira' },
   );
 

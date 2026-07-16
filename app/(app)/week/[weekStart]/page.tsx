@@ -4,6 +4,8 @@ import { startOfWeek, parseISO, isValid } from 'date-fns';
 import { WeeklyCalendar } from '@/components/calendar/WeeklyCalendar';
 import { getWeekStatus } from '@/lib/db/queries/weeks';
 
+export const dynamic = 'force-dynamic';
+
 const WeekStartSchema = z
   .string()
   .refine((s) => isValid(parseISO(s)), { message: 'Data inválida' })

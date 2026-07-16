@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --no-turbopack",
     "start": "next start",
     "test": "vitest run"
   },
@@ -28,7 +28,7 @@
     "@types/react-dom": "^19.2.3",
     "fast-check": "^4.9.0",
     "jsdom": "^29.1.1",
-    "typescript": "^7.0.2",
+    "typescript": "7.0.2",
     "vitest": "^4.1.10"
   }
 }

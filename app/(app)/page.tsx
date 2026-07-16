@@ -2,6 +2,8 @@ import { currentWeekStart } from '@/lib/utils/date';
 import { getWeekStatus } from '@/lib/db/queries/weeks';
 import WeeklyCalendar from '@/components/calendar/WeeklyCalendar';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const today = new Date();
   const weekStart = currentWeekStart(today);

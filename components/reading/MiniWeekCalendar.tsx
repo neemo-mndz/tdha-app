@@ -79,12 +79,6 @@ export function MiniWeekCalendar({
       className="mini-week-calendar"
       role="group"
       aria-label="Calendário semanal de leitura"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(7, 1fr)",
-        gap: "4px",
-        textAlign: "center",
-      }}
     >
       {weekDays.map((date, index) => {
         const isToday = date === today;
@@ -92,51 +86,31 @@ export function MiniWeekCalendar({
         const isPast = date < today;
         const isRead = optimisticReadDays.includes(date);
 
+        const classNames = [
+          "mini-week-calendar__cell",
+          isRead && "mini-week-calendar__cell--read",
+          isToday && "mini-week-calendar__cell--today",
+          isFuture && "mini-week-calendar__cell--future",
+        ]
+          .filter(Boolean)
+          .join(" ");
+
         return (
           <button
             key={date}
             type="button"
+            className={classNames}
             disabled={isFuture}
             onClick={isPast ? () => handleDayClick(date) : undefined}
             aria-label={`${DAY_LABELS[index]} ${getDayNumber(date)}${isRead ? " — lido" : ""}${isToday ? " (hoje)" : ""}`}
             aria-pressed={isPast ? isRead : undefined}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "2px",
-              padding: "6px 4px",
-              borderRadius: "8px",
-              border: "none",
-              background: isRead ? "var(--color-accent, #7C9A6E)" : "var(--color-surface, #2a2a2a)",
-              color: isFuture
-                ? "var(--color-muted, #666)"
-                : isRead
-                  ? "#fff"
-                  : "var(--color-text, #e0e0e0)",
-              opacity: isFuture ? 0.4 : 1,
-              cursor: isFuture ? "not-allowed" : isPast ? "pointer" : "default",
-              fontSize: "12px",
-              fontWeight: isToday ? 700 : 400,
-              outline: isToday ? "2px solid var(--color-accent, #7C9A6E)" : "none",
-              outlineOffset: "2px",
-              transition: "background 0.15s, transform 0.1s",
-            }}
           >
-            <span style={{ fontSize: "10px", textTransform: "uppercase" }}>
+            <span className="mini-week-calendar__weekday">
               {DAY_LABELS[index]}
             </span>
-            <span style={{ fontSize: "14px" }}>{getDayNumber(date)}</span>
+            <span className="mini-week-calendar__date">{getDayNumber(date)}</span>
             {isRead && (
-              <span
-                style={{
-                  width: "6px",
-                  height: "6px",
-                  borderRadius: "50%",
-                  background: "#fff",
-                }}
-                aria-hidden="true"
-              />
+              <span className="mini-week-calendar__dot" aria-hidden="true" />
             )}
           </button>
         );

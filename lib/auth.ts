@@ -12,5 +12,5 @@
 export async function getCurrentUserId(): Promise<string> {
   // STUB: Retorna um ID fixo para desenvolvimento
   // TODO: Integrar com middleware/session após spec 'auth'
-  return "550e8400-e29b-41d4-a716-446655440000";
+  return "00000000-0000-0000-0000-000000000001";
 }

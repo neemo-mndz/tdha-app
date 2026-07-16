@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from "react";
 
+/**
+ * Requests notification permission if status is "default".
+ * Call this after the user creates their first reminder.
+ */
+export function requestNotificationPermission() {
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+  if (Notification.permission === "default") {
+    Notification.requestPermission();
+  }
+}
+
 export function NotificationBanner() {
   const [permission, setPermission] = useState<NotificationPermission | null>(null);
 

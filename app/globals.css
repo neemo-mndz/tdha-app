@@ -450,6 +450,25 @@ header.top {
   margin: 0 0 14px;
 }
 
+.panel__header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel__count-badge {
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--structure);
+  background: var(--bg);
+  border-radius: 999px;
+  padding: 4px 10px;
+  margin-top: 2px;
+}
+
 /* ---- Daily Log Panel (inline capture) ---- */
 .capture-box {
   border: 1px dashed var(--line);
@@ -473,11 +492,57 @@ header.top {
   color: var(--muted);
 }
 
+.capture-box__error {
+  color: #C6685A;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
 .capture-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 10px;
   margin-top: 12px;
+}
+
+.capture-actions__hint {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Daily Log Panel — recent logs preview ---- */
+.daily-log-panel__recent {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.daily-log-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+}
+
+.daily-log-panel__list .log-item-card {
+  padding: 12px 14px;
+}
+
+.daily-log-panel__view-all {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--structure);
+  text-decoration: none;
+}
+
+.daily-log-panel__view-all:hover {
+  color: var(--today);
 }
 
 .save-btn {
@@ -629,6 +694,13 @@ header.top {
   gap: 12px;
 }
 
+.day-view__log-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+}
+
 .day-view__empty {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -645,6 +717,21 @@ header.top {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 16px 18px;
+}
+
+.log-item-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  min-height: 20px;
+}
+
+.log-item-card__time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  flex-shrink: 0;
 }
 
 .log-item-card__content {
@@ -708,7 +795,9 @@ header.top {
 
 .log-form__footer {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   margin-top: 10px;
 }
 
@@ -852,7 +941,6 @@ header.top {
   background: #E3F0E9;
   border-radius: 999px;
   padding: 3px 10px;
-  margin-bottom: 8px;
 }
 
 

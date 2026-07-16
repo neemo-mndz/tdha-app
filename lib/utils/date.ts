@@ -42,6 +42,13 @@ export function isCurrentWeek(date: Date): boolean {
   return isSameWeek(date, new Date(), { weekStartsOn: WEEK_START_DAY });
 }
 
+/** Retorna a segunda-feira (weekStart) como string "yyyy-MM-dd" para uma data no formato "yyyy-MM-dd" */
+export function getWeekStart(dateString: string): string {
+  const date = new Date(dateString);
+  const weekStart = startOfWeek(date, { weekStartsOn: WEEK_START_DAY });
+  return format(weekStart, 'yyyy-MM-dd');
+}
+
 /** Label legível da semana: "30 jun – 6 jul · 2025" */
 export function weekLabel(weekStart: Date, locale = ptBR): string {
   const weekEnd = addDays(weekStart, 6);

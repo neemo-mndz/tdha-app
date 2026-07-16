@@ -25,10 +25,8 @@ export function formatDateParam(date: Date): string {
   return format(date, 'yyyy-MM-dd');
 }
 
-/** Rota para uma semana: "/week/2025-06-30" (ou "/" para a atual) */
+/** Rota para uma semana: "/week/2025-06-30" */
 export function weekPath(weekStart: Date): string {
-  const now = currentWeekStart();
-  if (isSameDay(weekStart, now)) return '/';
   return `/week/${formatWeekParam(weekStart)}`;
 }
 

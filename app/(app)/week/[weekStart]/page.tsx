@@ -1,8 +1,18 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
-import { startOfWeek, parseISO, isValid } from 'date-fns';
+import { startOfWeek, parseISO, isValid, format, isSameDay } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { WeeklyCalendar } from '@/components/calendar/WeeklyCalendar';
 import { getWeekStatus } from '@/lib/db/queries/weeks';
+import { getUserTasks } from '@/lib/db/queries/tasks';
+import { getWeekPlan } from '@/lib/db/queries/weekPlans';
+import { getCurrentUserId } from '@/lib/auth';
+import { currentWeekStart } from '@/lib/utils/date';
+import { HomeGreeting, MonthBadge } from '@/components/home/HomeGreeting';
+import { DailyLogPanel } from '@/components/home/DailyLogPanel';
+import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
+import { CalendarToggle } from '@/components/home/CalendarToggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,10 +39,59 @@ export default async function WeekPage({
 
   const weekStartDate = result.data;
   const today = new Date();
+  const todayStr = format(today, 'yyyy-MM-dd');
+  const weekStartStr = format(weekStartDate, 'yyyy-MM-dd');
+  const isCurrentWeek = isSameDay(weekStartDate, currentWeekStart(today));
 
-  // TODO: Replace hardcoded userId with real auth when available
-  const userId = '00000000-0000-0000-0000-000000000001';
-  const days = await getWeekStatus(userId, weekStartDate);
+  const userId = await getCurrentUserId();
 
-  return <WeeklyCalendar weekStart={weekStartDate} days={days} today={today} />;
+  const [days, userTasks, weekPlan] = await Promise.all([
+    getWeekStatus(userId, weekStartDate),
+    getUserTasks(userId),
+    getWeekPlan(userId, weekStartStr),
+  ]);
+
+  const allTasks = userTasks.map((t) => ({
+    id: t.id,
+    name: t.name,
+    defaultQty: t.defaultQty,
+  }));
+  const activeTasks = weekPlan?.tasks ?? [];
+
+  return (
+    <div className="shell">
+      <header className="top">
+        <div className="brand">semana<span>.</span></div>
+        <div className="top__right">
+          <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
+            ⚙
+          </Link>
+          <MonthBadge today={today} />
+        </div>
+      </header>
+
+      {isCurrentWeek && <HomeGreeting today={today} />}
+      {!isCurrentWeek && (
+        <div className="greeting">
+          <h1>Semana de {format(weekStartDate, "d 'de' MMMM", { locale: ptBR })}</h1>
+          <p>Visualizando uma semana {weekStartDate > today ? 'futura' : 'passada'}.</p>
+        </div>
+      )}
+
+      <CalendarToggle defaultOpen={true}>
+        <WeeklyCalendar weekStart={weekStartDate} days={days} today={today} />
+      </CalendarToggle>
+
+      <div className="panels">
+        {isCurrentWeek && (
+          <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
+        )}
+        <WeeklyTasksPanel
+          weekStart={weekStartStr}
+          activeTasks={activeTasks}
+          allTasks={allTasks}
+        />
+      </div>
+    </div>
+  );
 }

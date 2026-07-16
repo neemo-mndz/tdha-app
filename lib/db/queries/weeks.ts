@@ -1,5 +1,5 @@
 import { addDays, format } from 'date-fns';
-import { eq, and, asc, sql, count } from 'drizzle-orm';
+import { eq, and, sql, count } from 'drizzle-orm';
 import { db } from '@/lib/db/client';
 import { days, logs } from '@/drizzle/schema';
 import type { DayStatus } from '@/lib/types/calendar';
@@ -7,6 +7,8 @@ import type { DayStatus } from '@/lib/types/calendar';
 /**
  * Busca o status de 7 dias de uma semana para um usuário.
  * Retorna exatamente 7 items (seg→dom), com logCount = 0 para dias sem logs.
+ *
+ * Usa uma única query com LEFT JOIN + GROUP BY em vez de N+1 queries.
  */
 export async function getWeekStatus(
   userId: string,
@@ -18,28 +20,24 @@ export async function getWeekStatus(
     weekDates.push(format(addDays(weekStart, i), 'yyyy-MM-dd'));
   }
 
-  // Query only the days that exist in the database for this user
-  const existingDays = await db
+  // Uma única query: busca dias + contagem de logs via LEFT JOIN + GROUP BY
+  const results = await db
     .select({
       date: days.date,
-      dayId: days.id,
+      logCount: count(logs.id),
     })
     .from(days)
+    .leftJoin(logs, eq(logs.dayId, days.id))
     .where(and(
       eq(days.userId, userId),
       sql`${days.date} >= ${weekDates[0]} AND ${days.date} <= ${weekDates[6]}`
-    ));
+    ))
+    .groupBy(days.date);
 
-  // For each existing day, count logs
+  // Mapear resultados para lookup rápido
   const logCounts: Record<string, number> = {};
-  if (existingDays.length > 0) {
-    for (const day of existingDays) {
-      const [result] = await db
-        .select({ count: count() })
-        .from(logs)
-        .where(eq(logs.dayId, day.dayId));
-      logCounts[day.date] = result?.count ?? 0;
-    }
+  for (const r of results) {
+    logCounts[r.date] = r.logCount;
   }
 
   // Build the full 7-day result

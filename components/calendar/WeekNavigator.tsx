@@ -12,14 +12,18 @@ export interface WeekNavigatorProps {
 export function WeekNavigator({ weekStart, today }: WeekNavigatorProps) {
   const router = useRouter();
 
-  const isCurrentWeek = isSameDay(weekStart, currentWeekStart(today));
+  // Ensure dates are proper Date objects (RSC serialization may pass strings)
+  const weekStartDate = weekStart instanceof Date ? weekStart : new Date(weekStart);
+  const todayDate = today instanceof Date ? today : new Date(today);
+
+  const isCurrentWeek = isSameDay(weekStartDate, currentWeekStart(todayDate));
 
   function handlePrevWeek() {
-    router.push(weekPath(subWeeks(weekStart, 1)));
+    router.push(weekPath(subWeeks(weekStartDate, 1)));
   }
 
   function handleNextWeek() {
-    router.push(weekPath(addWeeks(weekStart, 1)));
+    router.push(weekPath(addWeeks(weekStartDate, 1)));
   }
 
   function handleToday() {
@@ -38,7 +42,7 @@ export function WeekNavigator({ weekStart, today }: WeekNavigatorProps) {
       </button>
 
       <span className="week-navigator__label">
-        {weekLabel(weekStart)}
+        {weekLabel(weekStartDate)}
       </span>
 
       <button

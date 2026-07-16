@@ -21,7 +21,15 @@ interface HomeCalendarSectionProps {
  */
 export function HomeCalendarSection({ weekStart, days, today, initialLogs }: HomeCalendarSectionProps) {
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(today);
+  const [selectedDate, setSelectedDate] = useState<Date>(today instanceof Date ? today : new Date(today));
+
+  // Ensure dates are proper Date objects after RSC serialization
+  const weekStartDate = weekStart instanceof Date ? weekStart : new Date(weekStart);
+  const todayDate = today instanceof Date ? today : new Date(today);
+  const normalizedDays = days.map((d) => ({
+    ...d,
+    date: d.date instanceof Date ? d.date : new Date(d.date),
+  }));
 
   function handleSelectDay(date: Date) {
     setSelectedDate(date);
@@ -54,9 +62,9 @@ export function HomeCalendarSection({ weekStart, days, today, initialLogs }: Hom
         }}
       >
         <WeeklyCalendar
-          weekStart={weekStart}
-          days={days}
-          today={today}
+          weekStart={weekStartDate}
+          days={normalizedDays}
+          today={todayDate}
           selectedDate={selectedDate}
           onSelectDay={handleSelectDay}
         />
@@ -64,8 +72,8 @@ export function HomeCalendarSection({ weekStart, days, today, initialLogs }: Hom
 
       <TodayLogsCard
         selectedDate={selectedDate}
-        today={today}
-        initialLogs={isSameDay(selectedDate, today) ? initialLogs : []}
+        today={todayDate}
+        initialLogs={isSameDay(selectedDate, todayDate) ? initialLogs : []}
       />
     </>
   );

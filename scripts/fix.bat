@@ -1,4 +1,4 @@
 @echo off
 git add -A
-git commit -m "fix: week route timezone validation on Vercel (UTC)"
+git commit -m "fix: ensure Date objects after RSC serialization in week navigation"
 git push

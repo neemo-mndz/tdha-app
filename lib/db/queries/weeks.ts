@@ -1,5 +1,5 @@
 import { addDays, format } from 'date-fns';
-import { sql } from '@/lib/db';
+import { getSQL } from '@/lib/db';
 import type { DayStatus, MoodValue } from '@/lib/types/calendar';
 
 /** Conjunto de valores de mood válidos — moods desconhecidos são mapeados para null */
@@ -24,7 +24,7 @@ export async function getWeekStatus(
   const weekStartStr = format(weekStart, 'yyyy-MM-dd');
   const weekEndStr = format(weekEnd, 'yyyy-MM-dd');
 
-  const rows = await sql`
+  const rows = await getSQL()`
     SELECT
       gs.date::date AS date,
       d.mood AS mood,

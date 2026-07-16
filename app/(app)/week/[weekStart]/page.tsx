@@ -7,6 +7,7 @@ import { WeeklyCalendar } from '@/components/calendar/WeeklyCalendar';
 import { getWeekStatus } from '@/lib/db/queries/weeks';
 import { getUserTasks } from '@/lib/db/queries/tasks';
 import { getWeekPlan } from '@/lib/db/queries/weekPlans';
+import { getDayLogs } from '@/lib/db/queries/logs';
 import { getCurrentUserId } from '@/lib/auth';
 import { currentWeekStart } from '@/lib/utils/date';
 import { HomeGreeting, MonthBadge } from '@/components/home/HomeGreeting';
@@ -45,10 +46,11 @@ export default async function WeekPage({
 
   const userId = await getCurrentUserId();
 
-  const [days, userTasks, weekPlan] = await Promise.all([
+  const [days, userTasks, weekPlan, todayLogs] = await Promise.all([
     getWeekStatus(userId, weekStartDate),
     getUserTasks(userId),
     getWeekPlan(userId, weekStartStr),
+    isCurrentWeek ? getDayLogs(userId, todayStr) : Promise.resolve([]),
   ]);
 
   const allTasks = userTasks.map((t) => ({
@@ -84,7 +86,7 @@ export default async function WeekPage({
 
       <div className="panels">
         {isCurrentWeek && (
-          <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
+          <DailyLogPanel date={todayStr} activeTasks={activeTasks} initialLogs={todayLogs} />
         )}
         <WeeklyTasksPanel
           weekStart={weekStartStr}

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { format } from "date-fns";
 import type { Log } from "@/drizzle/schema";
 import { updateLog, deleteLog } from "@/lib/actions/logs";
-import type { OptimisticAction } from "./LogList";
+import type { OptimisticAction } from "./optimisticLogs";
 
 interface LogItemProps {
   log: Log;
@@ -17,6 +18,8 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
   const [editContent, setEditContent] = useState(log.content);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const time = format(new Date(log.createdAt), "HH:mm");
 
   const handleUpdate = async () => {
     const result = await updateLog({
@@ -44,7 +47,7 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
 
   if (editing) {
     return (
-      <div className="log-item-card">
+      <li className="log-item-card">
         <textarea
           value={editContent}
           onChange={(e) => setEditContent(e.target.value)}
@@ -66,15 +69,22 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
           </button>
         </div>
         {error && <p role="alert" className="log-form__error">{error}</p>}
-      </div>
+      </li>
     );
   }
 
   return (
-    <div className="log-item-card">
-      {taskName && (
-        <span className="log-item-card__tag">{taskName}</span>
-      )}
+    <li className="log-item-card">
+      <div className="log-item-card__header">
+        {taskName ? (
+          <span className="log-item-card__tag">{taskName}</span>
+        ) : (
+          <span />
+        )}
+        <time className="log-item-card__time" dateTime={new Date(log.createdAt).toISOString()}>
+          {time}
+        </time>
+      </div>
       <p className="log-item-card__content">{log.content}</p>
       <div className="log-item-card__actions">
         <button onClick={() => setEditing(true)} className="log-item-card__btn">
@@ -96,6 +106,6 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
         )}
       </div>
       {error && <p role="alert" className="log-form__error">{error}</p>}
-    </div>
+    </li>
   );
 }

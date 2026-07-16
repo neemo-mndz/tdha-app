@@ -1,33 +1,17 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
-import type { Log } from "@/drizzle/schema";
 import type { LogWithTask } from "@/lib/db/queries/logs";
 import { createLog } from "@/lib/actions/logs";
 import { LogItem } from "./LogItem";
 import { LogForm } from "./LogForm";
+import { logsReducer, type OptimisticAction } from "./optimisticLogs";
+
+export type { OptimisticAction };
 
 interface LogListProps {
   initialLogs: LogWithTask[];
   date: string;
-}
-
-export type OptimisticAction =
-  | { type: "add"; log: LogWithTask }
-  | { type: "remove"; id: string }
-  | { type: "update"; id: string; content: string };
-
-function logsReducer(state: LogWithTask[], action: OptimisticAction): LogWithTask[] {
-  switch (action.type) {
-    case "add":
-      return [...state, action.log];
-    case "remove":
-      return state.filter((l) => l.id !== action.id);
-    case "update":
-      return state.map((l) =>
-        l.id === action.id ? { ...l, content: action.content } : l
-      );
-  }
 }
 
 export function LogList({ initialLogs, date }: LogListProps) {
@@ -70,15 +54,17 @@ export function LogList({ initialLogs, date }: LogListProps) {
 
   return (
     <section className="day-view__logs">
-      {optimisticLogs.map((log) => (
-        <LogItem
-          key={log.id}
-          log={log}
-          taskName={log.taskName}
-          dispatch={dispatchOptimistic}
-          date={date}
-        />
-      ))}
+      <ul className="day-view__log-items">
+        {optimisticLogs.map((log) => (
+          <LogItem
+            key={log.id}
+            log={log}
+            taskName={log.taskName}
+            dispatch={dispatchOptimistic}
+            date={date}
+          />
+        ))}
+      </ul>
       <LogForm onSubmit={handleCreate} />
     </section>
   );

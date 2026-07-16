@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { QuickCaptureButton } from "@/components/logs/QuickCaptureButton";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { MonthBadge } from "@/components/home/MonthBadge";
 import { getCurrentUserId } from "@/lib/auth";
 import { getWeekPlan } from "@/lib/db/queries/weekPlans";
 import { currentWeekStart } from "@/lib/utils/date";
@@ -23,6 +24,7 @@ export default async function AppLayout({
       <header className="app-header" aria-label="Navegação principal">
         <div className="brand">semana<span>.</span></div>
         <div className="app-header__right">
+          <MonthBadge />
           <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
             ⚙
           </Link>

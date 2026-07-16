@@ -74,7 +74,18 @@ async function run() {
   await sql`ALTER TABLE logs ADD COLUMN IF NOT EXISTS week_plan_task_id UUID REFERENCES week_plan_tasks(id) ON DELETE SET NULL`;
   console.log("✓ logs.week_plan_task_id column");
 
-  // 10. Create stub user for development
+  // 10. Reminders table
+  await sql`CREATE TABLE IF NOT EXISTS reminders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    hour INTEGER NOT NULL,
+    minute INTEGER NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
+  console.log("✓ reminders table");
+
+  // 11. Create stub user for development
   await sql`INSERT INTO users (id) VALUES ('00000000-0000-0000-0000-000000000001') ON CONFLICT DO NOTHING`;
   console.log("✓ stub user created");
 

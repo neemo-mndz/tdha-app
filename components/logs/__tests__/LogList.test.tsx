@@ -73,7 +73,7 @@ describe("LogList", () => {
       ];
       const { container } = render(<LogList initialLogs={logs} date="2024-07-14" />);
 
-      const logCards = container.querySelectorAll(".log-item-card");
+      const logCards = container.querySelectorAll(".log-item");
       expect(logCards).toHaveLength(2);
     });
   });
@@ -216,7 +216,7 @@ describe("LogList", () => {
 
       const { container } = render(<LogList initialLogs={logs} date="2024-07-14" />);
 
-      const logCards = container.querySelectorAll(".log-item-card");
+      const logCards = container.querySelectorAll(".log-item");
       expect(logCards[0]).toHaveTextContent("First");
       expect(logCards[1]).toHaveTextContent("Second");
       expect(logCards[2]).toHaveTextContent("Third");
@@ -229,7 +229,7 @@ describe("LogList", () => {
       const { container } = render(<LogList initialLogs={logs} date="2024-07-14" />);
 
       // Verify components are rendered (they receive date internally)
-      expect(container.querySelector('.log-item-card')).toBeInTheDocument();
+      expect(container.querySelector('.log-item')).toBeInTheDocument();
       expect(screen.getByPlaceholderText("O que aconteceu hoje?")).toBeInTheDocument();
     });
   });
@@ -281,7 +281,7 @@ describe("LogList — Property-Based Tests", () => {
           const { container } = render(<LogList initialLogs={allLogs} date={date} />);
 
           // All logs should be in the document
-          const logCards = container.querySelectorAll(".log-item-card");
+          const logCards = container.querySelectorAll(".log-item");
           expect(logCards.length).toBe(allLogs.length);
         }
       ),
@@ -301,11 +301,11 @@ describe("LogList — Property-Based Tests", () => {
           cleanup();
           const { container } = render(<LogList initialLogs={logs} date="2024-07-14" />);
 
-          const logCards = container.querySelectorAll(".log-item-card");
+          const logCards = container.querySelectorAll(".log-item");
           expect(logCards.length).toBe(logs.length);
 
           for (let i = 0; i < logs.length; i++) {
-            const contentEl = logCards[i].querySelector(".log-item-card__content");
+            const contentEl = logCards[i].querySelector(".log-item__body");
             expect(contentEl).not.toBeNull();
             expect(contentEl!.textContent).toBe(logs[i].content);
           }

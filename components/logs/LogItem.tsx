@@ -74,33 +74,23 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
   }
 
   return (
-    <div className="log-item-card">
-      <div className="log-item-card__meta">
-        <span className="log-item-card__time">{time}</span>
-        {taskName && (
-          <span className="log-item-card__tag">{taskName}</span>
-        )}
-      </div>
-      <p className="log-item-card__content">{log.content}</p>
-      <div className="log-item-card__actions">
-        <button onClick={() => setEditing(true)} className="log-item-card__btn">
-          Editar
-        </button>
+    <div className="log-item">
+      <span className="log-item__time">{time}</span>
+      <span className="log-item__body">
+        {log.content}
+        {taskName && <span className="log-item__tag">{taskName}</span>}
+      </span>
+      <span className="log-item__actions">
+        <button onClick={() => setEditing(true)} className="log-item__action-btn">Editar</button>
         {confirmingDelete ? (
           <>
-            <button onClick={handleDelete} className="log-item-card__btn log-item-card__btn--danger">
-              Confirmar exclusão
-            </button>
-            <button onClick={() => setConfirmingDelete(false)} className="log-item-card__btn">
-              Cancelar
-            </button>
+            <button onClick={handleDelete} className="log-item__action-btn log-item__action-btn--danger">Confirmar</button>
+            <button onClick={() => setConfirmingDelete(false)} className="log-item__action-btn">×</button>
           </>
         ) : (
-          <button onClick={() => setConfirmingDelete(true)} className="log-item-card__btn log-item-card__btn--danger">
-            Excluir
-          </button>
+          <button onClick={() => setConfirmingDelete(true)} className="log-item__action-btn log-item__action-btn--danger">Excluir</button>
         )}
-      </div>
+      </span>
       {error && <p role="alert" className="log-form__error">{error}</p>}
     </div>
   );

@@ -92,29 +92,14 @@ describe('DayCell', () => {
   });
 
   describe('Log count display', () => {
-    it('displays logCount as number', () => {
-      renderDayCell({ logCount: 5 });
-      expect(screen.getByText('5')).toBeInTheDocument();
+    it('displays dot indicator when logCount > 0', () => {
+      const { container } = renderDayCell({ logCount: 5 });
+      expect(container.querySelector('.day-cell__dot')).not.toBeNull();
     });
 
-    it('displays "99+" for logCount >= 100', () => {
-      renderDayCell({ logCount: 100 });
-      expect(screen.getByText('99+')).toBeInTheDocument();
-    });
-
-    it('displays "99+" for logCount = 150', () => {
-      renderDayCell({ logCount: 150 });
-      expect(screen.getByText('99+')).toBeInTheDocument();
-    });
-
-    it('displays "99" for logCount = 99', () => {
-      renderDayCell({ logCount: 99 });
-      expect(screen.getByText('99')).toBeInTheDocument();
-    });
-
-    it('does not display log count for logCount = 0', () => {
+    it('does not display dot indicator for logCount = 0', () => {
       const { container } = renderDayCell({ logCount: 0 });
-      expect(container.querySelector('.day-cell__log-count')).toBeNull();
+      expect(container.querySelector('.day-cell__dot')).toBeNull();
     });
   });
 
@@ -165,7 +150,7 @@ describe('DayCell — Property-Based Tests', () => {
       fc.property(arbDayCellProps, (props) => {
         cleanup();
         const { container } = render(<DayCell {...props} />);
-        const indicator = container.querySelector('.day-cell__log-indicator');
+        const indicator = container.querySelector('.day-cell__dot');
 
         if (props.logCount > 0) {
           expect(indicator).not.toBeNull();
@@ -197,28 +182,30 @@ describe('DayCell — Property-Based Tests', () => {
     );
   });
 
-  // Feature: weekly-calendar, Property 9: Contagem de logs exibida corretamente
+  // Feature: weekly-calendar, Property 9: Dot indicator presence matches logCount > 0
   // **Validates: Requirements 3.3**
-  it('log count is displayed correctly (capped at 99+)', () => {
-    const arbDayCellPropsWithHighCount = fc.record({
+  it('dot indicator present when logCount > 0, absent when logCount = 0', () => {
+    const arbDayCellPropsWithCount = fc.record({
       date: arbWeekStart.chain(ws =>
         fc.integer({ min: 0, max: 6 }).map(n => addDays(ws, n))
       ).filter(d => !isNaN(d.getTime())),
-      logCount: fc.integer({ min: 1, max: 200 }),
+      logCount: fc.nat({ max: 200 }),
       mood: fc.option(fc.constantFrom('great' as const, 'good' as const, 'neutral' as const, 'bad' as const, 'awful' as const), { nil: null }),
       isToday: fc.boolean(),
       isFuture: fc.boolean(),
     });
 
     fc.assert(
-      fc.property(arbDayCellPropsWithHighCount, (props) => {
+      fc.property(arbDayCellPropsWithCount, (props) => {
         cleanup();
         const { container } = render(<DayCell {...props} />);
-        const countEl = container.querySelector('.day-cell__log-count');
-        expect(countEl).not.toBeNull();
+        const dot = container.querySelector('.day-cell__dot');
 
-        const expectedText = props.logCount >= 100 ? '99+' : String(props.logCount);
-        expect(countEl!.textContent).toBe(expectedText);
+        if (props.logCount > 0) {
+          expect(dot).not.toBeNull();
+        } else {
+          expect(dot).toBeNull();
+        }
       }),
       { numRuns: 100 }
     );

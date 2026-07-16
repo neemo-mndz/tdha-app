@@ -16,11 +16,6 @@ export interface DayCellProps {
   onSelect?: (date: Date) => void;
 }
 
-function formatLogCount(count: number): string {
-  if (count >= 100) return '99+';
-  return String(count);
-}
-
 const MOOD_EMOJI: Record<MoodValue, string> = {
   great: '😊',
   good: '🙂',
@@ -54,12 +49,7 @@ export function DayCell({ date, logCount, mood, isToday, isFuture, isSelected, o
       </span>
 
       {logCount > 0 && (
-        <>
-          <span className="day-cell__log-indicator" aria-label="tem registros" />
-          <span className="day-cell__log-count">
-            {formatLogCount(logCount)}
-          </span>
-        </>
+        <span className="day-cell__dot" aria-label="tem registros" />
       )}
 
       {mood !== null && (

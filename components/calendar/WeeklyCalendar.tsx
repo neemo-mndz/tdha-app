@@ -12,23 +12,36 @@ export interface WeeklyCalendarProps {
 }
 
 export function WeeklyCalendar({ weekStart, days, today, selectedDate, onSelectDay }: WeeklyCalendarProps) {
+  // Find the index of today in the days array (0-6) for positioning the marker
+  const todayIndex = days.findIndex((d) => isSameDay(d.date, today));
+
   return (
     <section className="weekly-calendar" aria-label="Calendário semanal">
       <WeekNavigator weekStart={weekStart} today={today} />
 
-      <div className="weekly-calendar__grid">
-        {days.map((day) => (
-          <DayCell
-            key={day.date.toISOString()}
-            date={day.date}
-            logCount={day.logCount}
-            mood={day.mood}
-            isToday={isSameDay(day.date, today)}
-            isFuture={isFutureDate(day.date)}
-            isSelected={selectedDate ? isSameDay(day.date, selectedDate) : false}
-            onSelect={onSelectDay}
-          />
-        ))}
+      <div className="weekly-calendar__timeline-wrapper">
+        <div className="weekly-calendar__timeline-bar">
+          {todayIndex >= 0 && (
+            <span
+              className="weekly-calendar__timeline-marker"
+              style={{ left: `${((todayIndex + 0.5) / 7) * 100}%` }}
+            />
+          )}
+        </div>
+        <div className="weekly-calendar__grid">
+          {days.map((day) => (
+            <DayCell
+              key={day.date.toISOString()}
+              date={day.date}
+              logCount={day.logCount}
+              mood={day.mood}
+              isToday={isSameDay(day.date, today)}
+              isFuture={isFutureDate(day.date)}
+              isSelected={selectedDate ? isSameDay(day.date, selectedDate) : false}
+              onSelect={onSelectDay}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

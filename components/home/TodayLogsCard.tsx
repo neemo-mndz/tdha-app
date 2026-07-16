@@ -57,9 +57,7 @@ export function TodayLogsCard({ selectedDate, today, initialLogs }: TodayLogsCar
               <span className="today-logs-card__text">
                 {log.content}
                 {log.taskName && (
-                  <span className="log-item-card__tag" style={{ marginLeft: 8 }}>
-                    {log.taskName}
-                  </span>
+                  <span className="log-item__tag">{log.taskName}</span>
                 )}
               </span>
             </div>

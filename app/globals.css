@@ -85,14 +85,14 @@ header.top {
 }
 
 .week-navigator__btn--today {
-  background: var(--accent);
+  background: var(--today);
   color: #fff;
-  border-color: var(--accent);
+  border-color: var(--today);
 }
 
 .week-navigator__btn--today:hover {
-  background: #5a75b3;
-  border-color: #5a75b3;
+  background: #d18f4e;
+  border-color: #d18f4e;
 }
 
 /* Weekly Calendar Grid */
@@ -106,6 +106,40 @@ header.top {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Timeline gradient bar */
+.weekly-calendar__timeline-wrapper {
+  position: relative;
+}
+
+.weekly-calendar__timeline-bar {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--structure), var(--today));
+  border-radius: 2px;
+  z-index: 0;
+  opacity: 0.4;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.weekly-calendar__timeline-marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--today);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--today);
+  z-index: 1;
 }
 
 /* Day Cell */
@@ -131,12 +165,12 @@ header.top {
 }
 
 .day-cell--today {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent);
+  border-color: var(--today);
+  box-shadow: 0 0 0 2px var(--today);
 }
 
 .day-cell--today .day-cell__date {
-  color: var(--accent);
+  color: var(--today);
 }
 
 .day-cell--future {
@@ -167,10 +201,19 @@ header.top {
 }
 
 .day-cell__log-count {
+  display: none; /* deprecated */
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
   color: var(--muted);
   margin-top: 2px;
+}
+
+.day-cell__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--structure);
+  margin-top: 6px;
 }
 
 .day-cell__mood {
@@ -1599,4 +1642,81 @@ header.top {
   .monthly-calendar__title {
     font-size: 14px;
   }
+}
+
+
+/* ---- Log Item (compact inline) ---- */
+.log-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+.log-item__time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.log-item__body {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+}
+
+.log-item__tag {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #3F5C53;
+  background: #E7EFE8;
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.log-item__actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.log-item:hover .log-item__actions {
+  opacity: 1;
+}
+
+.log-item__action-btn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.12s ease;
+}
+
+.log-item__action-btn:hover {
+  color: var(--structure);
+}
+
+.log-item__action-btn--danger:hover {
+  color: #C6685A;
 }

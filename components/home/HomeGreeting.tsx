@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, getDaysInMonth, getDate } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface HomeGreetingProps {
@@ -10,10 +10,24 @@ export function HomeGreeting({ today }: HomeGreetingProps) {
   const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
   const dateStr = format(today, "EEEE, d 'de' MMMM", { locale: ptBR });
 
+  const dayOfMonth = getDate(today);
+  const totalDays = getDaysInMonth(today);
+  const daysLeft = totalDays - dayOfMonth;
+
   return (
     <div className="greeting">
       <h1>{greeting}. Hoje é {dateStr}.</h1>
       <p>Seu espaço para registrar o dia, sem pressão.</p>
     </div>
   );
+}
+
+export function MonthBadge({ today }: { today: Date }) {
+  const dayOfMonth = getDate(today);
+  const totalDays = getDaysInMonth(today);
+  const daysLeft = totalDays - dayOfMonth;
+
+  const text = daysLeft === 0 ? 'último dia do mês' : `faltam ${daysLeft} dias no mês`;
+
+  return <span className="month-badge">{text}</span>;
 }

@@ -854,3 +854,15 @@ header.top {
   padding: 3px 10px;
   margin-bottom: 8px;
 }
+
+
+/* ---- Month Badge ---- */
+.month-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px;
+}

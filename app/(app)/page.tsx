@@ -5,7 +5,7 @@ import { getWeekPlan } from '@/lib/db/queries/weekPlans';
 import WeeklyCalendar from '@/components/calendar/WeeklyCalendar';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { HomeGreeting } from '@/components/home/HomeGreeting';
+import { HomeGreeting, MonthBadge } from '@/components/home/HomeGreeting';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { CalendarToggle } from '@/components/home/CalendarToggle';
@@ -39,6 +39,7 @@ export default async function HomePage() {
     <div className="shell">
       <header className="top">
         <div className="brand">semana<span>.</span></div>
+        <MonthBadge today={today} />
       </header>
 
       <HomeGreeting today={today} />

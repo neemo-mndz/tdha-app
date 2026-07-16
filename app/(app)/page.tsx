@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { currentWeekStart } from '@/lib/utils/date';
 import { getWeekStatus } from '@/lib/db/queries/weeks';
 import { getUserTasks } from '@/lib/db/queries/tasks';
@@ -6,7 +5,7 @@ import { getWeekPlan } from '@/lib/db/queries/weekPlans';
 import { getDayLogs } from '@/lib/db/queries/logs';
 import { format } from 'date-fns';
 import { getCurrentUserId } from '@/lib/auth';
-import { HomeGreetingLive, MonthBadgeLive } from '@/components/home/HomeGreetingLive';
+import { HomeGreetingLive } from '@/components/home/HomeGreetingLive';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
@@ -38,16 +37,6 @@ export default async function HomePage() {
 
   return (
     <div className="shell">
-      <header className="top">
-        <div className="brand">semana<span>.</span></div>
-        <div className="top__right">
-          <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
-            ⚙
-          </Link>
-          <MonthBadgeLive initialTime={today.toISOString()} />
-        </div>
-      </header>
-
       <HomeGreetingLive initialTime={today.toISOString()} />
 
       <HomeCalendarSection

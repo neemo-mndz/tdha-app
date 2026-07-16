@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 import { startOfWeek, parseISO, isValid, format, isSameDay } from 'date-fns';
@@ -10,7 +9,7 @@ import { getWeekPlan } from '@/lib/db/queries/weekPlans';
 import { getDayLogs } from '@/lib/db/queries/logs';
 import { getCurrentUserId } from '@/lib/auth';
 import { currentWeekStart } from '@/lib/utils/date';
-import { HomeGreetingLive, MonthBadgeLive } from '@/components/home/HomeGreetingLive';
+import { HomeGreetingLive } from '@/components/home/HomeGreetingLive';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
@@ -66,16 +65,6 @@ export default async function WeekPage({
 
   return (
     <div className="shell">
-      <header className="top">
-        <div className="brand">semana<span>.</span></div>
-        <div className="top__right">
-          <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
-            ⚙
-          </Link>
-          <MonthBadgeLive initialTime={today.toISOString()} />
-        </div>
-      </header>
-
       {isCurrentWeek && <HomeGreetingLive initialTime={today.toISOString()} />}
       {!isCurrentWeek && (
         <div className="greeting">

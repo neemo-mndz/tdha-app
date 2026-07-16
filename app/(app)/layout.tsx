@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { QuickCaptureButton } from "@/components/logs/QuickCaptureButton";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { getCurrentUserId } from "@/lib/auth";
@@ -19,9 +20,15 @@ export default async function AppLayout({
 
   return (
     <>
-      <nav className="app-nav" aria-label="Navegação principal">
-        <LogoutButton />
-      </nav>
+      <header className="app-header" aria-label="Navegação principal">
+        <div className="brand">semana<span>.</span></div>
+        <div className="app-header__right">
+          <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
+            ⚙
+          </Link>
+          <LogoutButton />
+        </div>
+      </header>
       {children}
       <QuickCaptureButton activeTasks={activeTasks} />
     </>

@@ -6,6 +6,7 @@ import {
   timestamp,
   integer,
   uniqueIndex,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -122,12 +123,36 @@ export const logs = pgTable("logs", {
 });
 
 /**
+ * Tabela reminders — lembretes de notificação diária do usuário
+ */
+export const reminders = pgTable("reminders", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  hour: integer("hour").notNull(),
+  minute: integer("minute").notNull(),
+  active: boolean("active").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export const remindersRelations = relations(reminders, ({ one }) => ({
+  user: one(users, {
+    fields: [reminders.userId],
+    references: [users.id],
+  }),
+}));
+
+/**
  * Relações Drizzle para facilitar queries com joins
  */
 export const usersRelations = relations(users, ({ many }) => ({
   days: many(days),
   tasks: many(tasks),
   weekPlans: many(weekPlans),
+  reminders: many(reminders),
 }));
 
 export const daysRelations = relations(days, ({ one, many }) => ({
@@ -186,3 +211,4 @@ export type Day = typeof days.$inferSelect;
 export type Task = typeof tasks.$inferSelect;
 export type WeekPlan = typeof weekPlans.$inferSelect;
 export type WeekPlanTask = typeof weekPlanTasks.$inferSelect;
+export type Reminder = typeof reminders.$inferSelect;

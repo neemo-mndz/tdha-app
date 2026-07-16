@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { currentWeekStart } from '@/lib/utils/date';
 import { getWeekStatus } from '@/lib/db/queries/weeks';
 import { getUserTasks } from '@/lib/db/queries/tasks';
@@ -39,7 +40,12 @@ export default async function HomePage() {
     <div className="shell">
       <header className="top">
         <div className="brand">semana<span>.</span></div>
-        <MonthBadge today={today} />
+        <div className="top__right">
+          <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
+            ⚙
+          </Link>
+          <MonthBadge today={today} />
+        </div>
       </header>
 
       <HomeGreeting today={today} />

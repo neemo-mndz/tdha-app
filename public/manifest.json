@@ -1,0 +1,24 @@
+{
+  "name": "semana.",
+  "short_name": "semana.",
+  "description": "Seu companheiro semanal — registros, leitura e tarefas sem pressão",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#EEF1EC",
+  "theme_color": "#3F5C53",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

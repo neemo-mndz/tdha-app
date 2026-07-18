@@ -56,6 +56,10 @@ export async function updateLogById(logId: string, content: string): Promise<voi
   await db.update(logs).set({ content }).where(eq(logs.id, logId));
 }
 
+export async function updateLogCreatedAt(logId: string, newCreatedAt: Date): Promise<void> {
+  await db.update(logs).set({ createdAt: newCreatedAt }).where(eq(logs.id, logId));
+}
+
 export async function deleteLogById(logId: string): Promise<void> {
   await db.delete(logs).where(eq(logs.id, logId));
 }

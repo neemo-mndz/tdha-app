@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import type { Log } from "@/drizzle/schema";
-import { updateLog, deleteLog } from "@/lib/actions/logs";
+import { updateLog, deleteLog, updateLogTime } from "@/lib/actions/logs";
 import type { OptimisticAction } from "./optimisticLogs";
 
 interface LogItemProps {
@@ -13,14 +13,49 @@ interface LogItemProps {
   date: string;
 }
 
+/**
+ * Validates a time string for the HH:mm format and valid ranges.
+ * Returns an error message string if invalid, or null if valid.
+ */
+export function validateTime(time: string): string | null {
+  if (!time || time.trim().length === 0) {
+    return "O horário é obrigatório";
+  }
+
+  if (!/^\d{2}:\d{2}$/.test(time)) {
+    return "Formato esperado: HH:mm";
+  }
+
+  const [hh, mm] = time.split(":").map(Number);
+  if (hh < 0 || hh > 23 || mm < 0 || mm > 59) {
+    return "Horário inválido. Horas: 00-23, Minutos: 00-59";
+  }
+
+  return null;
+}
+
 export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
   const time = format(new Date(log.createdAt), "HH:mm");
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(log.content);
+  const [editTime, setEditTime] = useState(format(new Date(log.createdAt), "HH:mm"));
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [timeError, setTimeError] = useState<string | null>(null);
+
+  const originalTime = format(new Date(log.createdAt), "HH:mm");
 
   const handleUpdate = async () => {
+    setTimeError(null);
+    setError(null);
+
+    // Client-side validation before server call
+    const validationError = validateTime(editTime);
+    if (validationError) {
+      setTimeError(validationError);
+      return;
+    }
+
     const result = await updateLog({
       logId: log.id,
       content: editContent,
@@ -28,12 +63,22 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
     });
     if (result.success) {
       dispatch({ type: "update", id: log.id, content: editContent });
-      setEditing(false);
-      setError(null);
     } else {
       setEditContent(log.content);
       setError(result.error ?? "Erro ao salvar");
+      return;
     }
+
+    if (editTime !== originalTime) {
+      const timeResult = await updateLogTime({ logId: log.id, time: editTime, date });
+      if (!timeResult.success) {
+        setEditTime(originalTime);
+        setTimeError(timeResult.error ?? "Erro ao salvar horário. Tente novamente.");
+        return;
+      }
+    }
+
+    setEditing(false);
   };
 
   const handleDelete = async () => {
@@ -47,7 +92,14 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
   if (editing) {
     return (
       <div className="log-item-card">
-        <span className="log-item-card__time">{time}</span>
+        <input
+          type="time"
+          value={editTime}
+          onChange={(e) => setEditTime(e.target.value)}
+          aria-label="Selecionar horário do registro"
+          className="log-item-card__time-input"
+        />
+        {timeError && <p role="alert" className="log-form__error">{timeError}</p>}
         <textarea
           value={editContent}
           onChange={(e) => setEditContent(e.target.value)}
@@ -61,7 +113,9 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
             onClick={() => {
               setEditing(false);
               setEditContent(log.content);
+              setEditTime(format(new Date(log.createdAt), "HH:mm"));
               setError(null);
+              setTimeError(null);
             }}
             className="log-item-card__btn"
           >

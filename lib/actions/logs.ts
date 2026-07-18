@@ -5,11 +5,13 @@ import {
   createLogSchema,
   updateLogSchema,
   deleteLogSchema,
+  updateLogTimeSchema,
 } from "@/lib/validation/log.schema";
 import {
   upsertDay,
   insertLog,
   updateLogById,
+  updateLogCreatedAt,
   deleteLogById,
   getLogOwner,
   getLogWeekPlanTaskId,
@@ -160,6 +162,46 @@ export async function deleteLog(input: unknown): Promise<ActionResult> {
   return { success: true };
 }
 
+
+/**
+ * Atualiza o horário (createdAt) de um log existente.
+ *
+ * 1. Valida o payload com updateLogTimeSchema (Zod)
+ * 2. Obtém o userId do usuário autenticado
+ * 3. Verifica autorização via getLogOwner
+ * 4. Se log não encontrado, retorna "Registro não encontrado"
+ * 5. Se não autorizado, retorna "Não autorizado"
+ * 6. Constrói novo timestamp a partir de date + time
+ * 7. Atualiza o createdAt no banco
+ * 8. Invalida o cache da rota do dia
+ * 9. Retorna resultado estruturado
+ */
+export async function updateLogTime(input: unknown): Promise<ActionResult> {
+  const parsed = updateLogTimeSchema.safeParse(input);
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos",
+    };
+  }
+
+  const userId = await getCurrentUserId();
+  const owner = await getLogOwner(parsed.data.logId);
+
+  if (!owner) {
+    return { success: false, error: "Registro não encontrado" };
+  }
+  if (owner.userId !== userId) {
+    return { success: false, error: "Não autorizado" };
+  }
+
+  const newCreatedAt = new Date(`${parsed.data.date}T${parsed.data.time}:00`);
+
+  await updateLogCreatedAt(parsed.data.logId, newCreatedAt);
+  revalidatePath(`/day/${parsed.data.date}`);
+
+  return { success: true };
+}
 
 /**
  * Busca o status de todos os dias de um mês para o usuário autenticado.

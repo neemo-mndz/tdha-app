@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="96" fill="#3F5C53"/>
-  <text x="256" y="300" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="180" fill="#FFFFFF">s.</text>
+  <text x="210" y="320" font-family="'Outfit', sans-serif" font-weight="700" font-size="220" fill="#FFFFFF" letter-spacing="-8">s</text>
+  <text x="330" y="320" font-family="'Outfit', sans-serif" font-weight="700" font-size="220" fill="#E3A15B" letter-spacing="-8">.</text>
 </svg>

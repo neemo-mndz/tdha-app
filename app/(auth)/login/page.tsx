@@ -118,13 +118,22 @@ export default function LoginPage() {
           }
         }
         // If success, the server action will redirect — no action needed here
-      } catch {
+      } catch (err) {
         // Clear timeout
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
           timeoutRef.current = null;
         }
         // NEXT_REDIRECT errors are thrown by redirect() — let them propagate
+        if (
+          err &&
+          typeof err === "object" &&
+          "digest" in err &&
+          typeof (err as { digest?: string }).digest === "string" &&
+          (err as { digest: string }).digest.startsWith("NEXT_REDIRECT")
+        ) {
+          throw err;
+        }
         // For other errors, show generic message
         setPassword("");
         setFormError("Algo deu errado. Tente novamente.");

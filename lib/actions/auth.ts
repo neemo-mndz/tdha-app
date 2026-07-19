@@ -23,15 +23,16 @@ export interface ActionResult {
 }
 
 const COOKIE_NAME = "session_id";
-const COOKIE_MAX_AGE = 2592000; // 30 days in seconds
+const COOKIE_MAX_AGE_DEFAULT = 2592000; // 30 days in seconds
+const COOKIE_MAX_AGE_REMEMBER = 7776000; // 90 days in seconds
 
-function getSessionCookieOptions() {
+function getSessionCookieOptions(rememberMe: boolean = false) {
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax" as const,
     path: "/",
-    maxAge: COOKIE_MAX_AGE,
+    maxAge: rememberMe ? COOKIE_MAX_AGE_REMEMBER : COOKIE_MAX_AGE_DEFAULT,
   };
 }
 
@@ -125,6 +126,7 @@ export async function registerAction(formData: FormData): Promise<ActionResult> 
 export async function loginAction(formData: FormData): Promise<ActionResult> {
   const rawEmail = formData.get("email") ?? "";
   const rawPassword = formData.get("password") ?? "";
+  const rememberMe = formData.get("rememberMe") === "true";
 
   const parsed = loginSchema.safeParse({
     email: rawEmail,
@@ -192,7 +194,7 @@ export async function loginAction(formData: FormData): Promise<ActionResult> {
     }
 
     const cookieStore = await cookies();
-    cookieStore.set(COOKIE_NAME, sessionId, getSessionCookieOptions());
+    cookieStore.set(COOKIE_NAME, sessionId, getSessionCookieOptions(rememberMe));
   } catch (error) {
     console.error("Login action failed:", error);
     return {

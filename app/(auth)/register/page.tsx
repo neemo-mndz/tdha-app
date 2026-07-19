@@ -11,6 +11,8 @@ export default function RegisterPage() {
   const [generalError, setGeneralError] = useState("");
   const [isPending, startTransition] = useTransition();
   const [isTimedOut, setIsTimedOut] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -183,27 +185,62 @@ export default function RegisterPage() {
 
       {/* Password field */}
       <div>
-        <input
-          type="password"
-          name="password"
-          autoComplete="new-password"
-          placeholder="Senha"
-          aria-label="Senha"
-          aria-invalid={!!fieldErrors.password}
-          onChange={() => clearFieldError("password")}
-          style={{
-            width: "100%",
-            padding: "14px 16px",
-            border: `1px solid ${fieldErrors.password ? "#C6685A" : "var(--line)"}`,
-            borderRadius: "var(--radius)",
-            fontFamily: "'Inter', sans-serif",
-            fontSize: "14px",
-            color: "var(--ink)",
-            background: "var(--surface)",
-            outline: "none",
-            transition: "border-color 0.15s ease",
-          }}
-        />
+        <div style={{ position: "relative" }}>
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            autoComplete="new-password"
+            placeholder="Senha"
+            aria-label="Senha"
+            aria-invalid={!!fieldErrors.password}
+            onChange={() => clearFieldError("password")}
+            style={{
+              width: "100%",
+              padding: "14px 44px 14px 16px",
+              border: `1px solid ${fieldErrors.password ? "#C6685A" : "var(--line)"}`,
+              borderRadius: "var(--radius)",
+              fontFamily: "'Inter', sans-serif",
+              fontSize: "14px",
+              color: "var(--ink)",
+              background: "var(--surface)",
+              outline: "none",
+              transition: "border-color 0.15s ease",
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+            style={{
+              position: "absolute",
+              right: "12px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "4px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--muted)",
+            }}
+          >
+            {showPassword ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+                <line x1="1" y1="1" x2="23" y2="23" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            )}
+          </button>
+        </div>
         {fieldErrors.password && (
           <p
             role="alert"
@@ -220,27 +257,62 @@ export default function RegisterPage() {
 
       {/* Confirm password field */}
       <div>
-        <input
-          type="password"
-          name="confirmPassword"
-          autoComplete="new-password"
-          placeholder="Confirmar senha"
-          aria-label="Confirmar senha"
-          aria-invalid={!!fieldErrors.confirmPassword}
-          onChange={() => clearFieldError("confirmPassword")}
-          style={{
-            width: "100%",
-            padding: "14px 16px",
-            border: `1px solid ${fieldErrors.confirmPassword ? "#C6685A" : "var(--line)"}`,
-            borderRadius: "var(--radius)",
-            fontFamily: "'Inter', sans-serif",
-            fontSize: "14px",
-            color: "var(--ink)",
-            background: "var(--surface)",
-            outline: "none",
-            transition: "border-color 0.15s ease",
-          }}
-        />
+        <div style={{ position: "relative" }}>
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            name="confirmPassword"
+            autoComplete="new-password"
+            placeholder="Confirmar senha"
+            aria-label="Confirmar senha"
+            aria-invalid={!!fieldErrors.confirmPassword}
+            onChange={() => clearFieldError("confirmPassword")}
+            style={{
+              width: "100%",
+              padding: "14px 44px 14px 16px",
+              border: `1px solid ${fieldErrors.confirmPassword ? "#C6685A" : "var(--line)"}`,
+              borderRadius: "var(--radius)",
+              fontFamily: "'Inter', sans-serif",
+              fontSize: "14px",
+              color: "var(--ink)",
+              background: "var(--surface)",
+              outline: "none",
+              transition: "border-color 0.15s ease",
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            aria-label={showConfirmPassword ? "Ocultar confirmação de senha" : "Mostrar confirmação de senha"}
+            style={{
+              position: "absolute",
+              right: "12px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "4px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--muted)",
+            }}
+          >
+            {showConfirmPassword ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+                <line x1="1" y1="1" x2="23" y2="23" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            )}
+          </button>
+        </div>
         {fieldErrors.confirmPassword && (
           <p
             role="alert"

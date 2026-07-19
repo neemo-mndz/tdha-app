@@ -4,6 +4,7 @@ import { LogoutButton } from "@/components/auth/LogoutButton";
 import { MonthBadge } from "@/components/home/MonthBadge";
 import { getCurrentUserId } from "@/lib/auth";
 import { getWeekPlan } from "@/lib/db/queries/weekPlans";
+import { getUserProfile } from "@/lib/db/queries/profile";
 import { currentWeekStart } from "@/lib/utils/date";
 import { format } from "date-fns";
 
@@ -16,7 +17,10 @@ export default async function AppLayout({
 }) {
   const userId = await getCurrentUserId();
   const weekStart = format(currentWeekStart(), "yyyy-MM-dd");
-  const plan = await getWeekPlan(userId, weekStart);
+  const [plan, profile] = await Promise.all([
+    getWeekPlan(userId, weekStart),
+    getUserProfile(userId),
+  ]);
   const activeTasks = plan?.tasks ?? [];
 
   return (
@@ -30,6 +34,13 @@ export default async function AppLayout({
           </Link>
           <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
             ⚙
+          </Link>
+          <Link href="/profile" className="top__settings-link app-header__profile" aria-label="Perfil">
+            {profile?.avatarUrl ? (
+              <img src={profile.avatarUrl} alt="" className="app-header__avatar" />
+            ) : (
+              "👤"
+            )}
           </Link>
           <LogoutButton />
         </div>

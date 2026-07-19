@@ -44,6 +44,7 @@ export const updateLogTimeSchema = z.object({
       return hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59;
     }, "Horário inválido. Horas: 00-23, Minutos: 00-59"),
   date: dateSchema,
+  timezoneOffset: z.number().int().min(-720).max(840),
 });
 
 export type CreateLogInput = z.infer<typeof createLogSchema>;

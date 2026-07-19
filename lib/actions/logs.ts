@@ -198,7 +198,16 @@ export async function updateLogTime(input: unknown): Promise<ActionResult> {
     return { success: false, error: "Não autorizado" };
   }
 
-  const newCreatedAt = new Date(`${parsed.data.date}T${parsed.data.time}:00`);
+  // Construct timestamp preserving local timezone by using UTC offset
+  // new Date('yyyy-MM-ddTHH:mm:00') without 'Z' is interpreted as local time
+  // but on the server (UTC), it shifts. Instead, store as UTC explicitly.
+  const { date, time, timezoneOffset } = parsed.data;
+  const [year, month, day] = date.split("-").map(Number);
+  const [hh, mm] = time.split(":").map(Number);
+  // timezoneOffset is in minutes (e.g., -180 for UTC-3), same as Date.getTimezoneOffset()
+  // To convert local time to UTC: UTC = local + offset
+  const localMs = Date.UTC(year, month - 1, day, hh, mm, 0);
+  const newCreatedAt = new Date(localMs + timezoneOffset * 60 * 1000);
 
   await updateLogCreatedAt(parsed.data.logId, newCreatedAt);
   revalidatePath(`/day/${parsed.data.date}`);

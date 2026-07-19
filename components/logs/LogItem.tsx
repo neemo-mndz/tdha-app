@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { format } from "date-fns";
 import type { LogWithTask } from "@/lib/db/queries/logs";
 import { updateLog, deleteLog, updateLogTime } from "@/lib/actions/logs";
 import type { OptimisticAction } from "./optimisticLogs";
@@ -34,16 +33,26 @@ export function validateTime(time: string): string | null {
   return null;
 }
 
+/**
+ * Formats a Date as "HH:mm" in local timezone for display.
+ */
+function formatTimeLocal(date: Date): string {
+  const d = new Date(date);
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
 export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
-  const time = format(new Date(log.createdAt), "HH:mm");
+  const time = formatTimeLocal(new Date(log.createdAt));
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(log.content);
-  const [editTime, setEditTime] = useState(format(new Date(log.createdAt), "HH:mm"));
+  const [editTime, setEditTime] = useState(formatTimeLocal(new Date(log.createdAt)));
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [timeError, setTimeError] = useState<string | null>(null);
 
-  const originalTime = format(new Date(log.createdAt), "HH:mm");
+  const originalTime = formatTimeLocal(new Date(log.createdAt));
 
   const handleUpdate = async () => {
     setTimeError(null);
@@ -70,7 +79,12 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
     }
 
     if (editTime !== originalTime) {
-      const timeResult = await updateLogTime({ logId: log.id, time: editTime, date });
+      const timeResult = await updateLogTime({
+        logId: log.id,
+        time: editTime,
+        date,
+        timezoneOffset: new Date().getTimezoneOffset(),
+      });
       if (!timeResult.success) {
         setEditTime(originalTime);
         setTimeError(timeResult.error ?? "Erro ao salvar horário. Tente novamente.");
@@ -113,7 +127,7 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
             onClick={() => {
               setEditing(false);
               setEditContent(log.content);
-              setEditTime(format(new Date(log.createdAt), "HH:mm"));
+              setEditTime(formatTimeLocal(new Date(log.createdAt)));
               setError(null);
               setTimeError(null);
             }}

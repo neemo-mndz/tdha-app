@@ -1549,6 +1549,19 @@ header.top {
   gap: 12px;
 }
 
+.app-header__profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-header__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .app-nav {
   position: sticky;
   top: 0;
@@ -2309,4 +2322,588 @@ header.top {
   color: var(--muted);
   margin-top: 4px;
   line-height: 1.5;
+}
+
+
+/* ---- Profile Page ---- */
+.profile-page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 0 24px 120px;
+}
+
+.profile-page__header {
+  margin-bottom: 24px;
+}
+
+.profile-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--structure);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  transition: color 0.12s ease;
+}
+
+.profile-page__back:hover {
+  color: var(--today);
+}
+
+.profile-page__title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  margin: 0;
+}
+
+.profile-page__section {
+  margin-bottom: 24px;
+}
+
+.profile-page__section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: var(--structure);
+}
+
+.profile-page__email {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.profile-page__created-at {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+
+/* ---- Avatar Uploader ---- */
+.avatar-uploader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-uploader__area {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  padding: 0;
+}
+
+.avatar-uploader__area:hover {
+  border-color: var(--structure);
+  box-shadow: 0 4px 12px -4px rgba(35, 48, 43, 0.2);
+}
+
+.avatar-uploader__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-uploader__initials {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 28px;
+  color: #fff;
+  background: var(--structure);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-uploader__loading {
+  position: absolute;
+  inset: 0;
+  background: rgba(35, 48, 43, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.avatar-uploader__spinner {
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+.avatar-uploader__hint {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 14px;
+  background: var(--surface);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.avatar-uploader__area:hover .avatar-uploader__hint {
+  opacity: 1;
+}
+
+.avatar-uploader__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.avatar-uploader__error {
+  font-size: 13px;
+  color: #C6685A;
+  margin: 4px 0 0;
+  text-align: center;
+}
+
+
+/* ---- Name Form ---- */
+.name-form {
+  margin-bottom: 20px;
+}
+
+.name-form__label {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.name-form__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.name-form__input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+
+.name-form__input:focus {
+  border-color: var(--accent);
+}
+
+.name-form__input[aria-invalid="true"] {
+  border-color: #C6685A;
+}
+
+.name-form__input::placeholder {
+  color: var(--muted);
+}
+
+.name-form__btn {
+  background: var(--structure);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.12s ease;
+  white-space: nowrap;
+}
+
+.name-form__btn:hover {
+  opacity: 0.9;
+}
+
+.name-form__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.name-form__error {
+  font-size: 13px;
+  color: #C6685A;
+  margin: 6px 0 0;
+}
+
+/* ---- Birth Date Form ---- */
+.birthdate-form {
+  margin-bottom: 20px;
+}
+
+.birthdate-form__label {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.birthdate-form__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.birthdate-form__input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+
+.birthdate-form__input:focus {
+  border-color: var(--accent);
+}
+
+.birthdate-form__input[aria-invalid="true"] {
+  border-color: #C6685A;
+}
+
+.birthdate-form__age {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--structure);
+  white-space: nowrap;
+}
+
+.birthdate-form__btn {
+  background: var(--structure);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.12s ease;
+  white-space: nowrap;
+}
+
+.birthdate-form__btn:hover {
+  opacity: 0.9;
+}
+
+.birthdate-form__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.birthdate-form__error {
+  font-size: 13px;
+  color: #C6685A;
+  margin: 6px 0 0;
+}
+
+
+/* ---- Password Form ---- */
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.password-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.password-form__label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.password-form__input {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+
+.password-form__input:focus {
+  border-color: var(--accent);
+}
+
+.password-form__input::placeholder {
+  color: var(--muted);
+}
+
+.password-form__error {
+  font-size: 13px;
+  color: #C6685A;
+  margin: 0;
+}
+
+.password-form__success {
+  font-size: 13px;
+  color: var(--structure);
+  margin: 0;
+}
+
+.password-form__btn {
+  align-self: flex-start;
+  background: var(--structure);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.12s ease;
+}
+
+.password-form__btn:hover {
+  opacity: 0.9;
+}
+
+.password-form__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* ---- Day Selector ---- */
+.day-selector {
+  margin-bottom: 16px;
+}
+
+.day-selector__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.day-selector__week-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  min-width: 160px;
+  text-align: center;
+}
+
+.day-selector__arrow {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--structure);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.day-selector__arrow:hover:not(:disabled) {
+  background: var(--today-soft);
+  border-color: var(--today);
+}
+
+.day-selector__arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.day-selector__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.day-selector__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.day-selector__day:hover {
+  border-color: var(--structure);
+}
+
+.day-selector__day--selected {
+  border-color: var(--structure);
+  background: #E7EFE8;
+}
+
+.day-selector__day--has-data .day-selector__label {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.day-selector__checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--structure);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.day-selector__checkbox:disabled {
+  cursor: not-allowed;
+}
+
+.day-selector__label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.day-selector__date {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.day-selector__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--today);
+  flex-shrink: 0;
+}
+
+/* Day Selector Responsive */
+@media (max-width: 480px) {
+  .day-selector__grid {
+    gap: 4px;
+  }
+
+  .day-selector__day {
+    padding: 8px 4px;
+  }
+
+  .day-selector__label {
+    font-size: 9px;
+  }
+
+  .day-selector__date {
+    font-size: 10px;
+  }
+
+  .day-selector__checkbox {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+
+/* ---- Report Actions ---- */
+.report-actions {
+  margin-top: 16px;
+}
+
+.report-actions__buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.report-actions__btn {
+  background: var(--structure);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.12s ease;
+}
+
+.report-actions__btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.report-actions__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.report-actions__btn--xls {
+  background: var(--accent);
+}
+
+.report-actions__error {
+  font-size: 13px;
+  color: #C6685A;
+  margin-top: 10px;
 }

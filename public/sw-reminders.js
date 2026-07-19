@@ -1,23 +1,54 @@
-/// Service Worker for semana. — Reminders + PWA installability
+/// Service Worker for semana. — PWA + Reminders
+
+const CACHE_NAME = 'semana-v1';
+const STATIC_ASSETS = [
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/icon.svg',
+];
 
 let reminders = [];
 const firedToday = new Map();
 
-// Activate immediately without waiting
-self.addEventListener("install", () => {
+// Install: cache static assets
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
+  );
   self.skipWaiting();
 });
 
-// Claim clients immediately so messages work on first visit
+// Activate: clean old caches and claim clients
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
 });
 
-// Required fetch handler for PWA installability
-// We use network-first strategy (no offline cache for now)
+// Fetch: network-first with cache fallback for navigation
 self.addEventListener("fetch", (event) => {
-  // Let all requests pass through to the network
-  return;
+  // Only handle same-origin GET requests
+  if (event.request.method !== 'GET') return;
+
+  // For navigation requests, try network first, fall back to cache
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match('/') || caches.match(event.request))
+    );
+    return;
+  }
+
+  // For static assets (icons), serve from cache first
+  if (event.request.url.includes('/icons/')) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => cached || fetch(event.request))
+    );
+    return;
+  }
+
+  // Everything else: network only
 });
 
 // Receive reminders from the app
@@ -27,7 +58,7 @@ self.addEventListener("message", (event) => {
   }
 });
 
-// Check reminders every 30 seconds (more reliable than 60s)
+// Check reminders every 30 seconds
 setInterval(() => {
   const now = new Date();
   const h = now.getHours();
@@ -55,8 +86,8 @@ setInterval(() => {
 
     self.registration.showNotification("semana.", {
       body: msgs[Math.floor(Math.random() * msgs.length)],
-      icon: "/icons/icon.svg",
-      badge: "/icons/icon.svg",
+      icon: "/icons/icon-192.png",
+      badge: "/icons/icon-192.png",
       tag: `reminder-${r.id}`,
       renotify: false,
     });

@@ -1,7 +1,7 @@
-import { jsPDF } from "jspdf";
 import type { WeekReportData } from "@/lib/types/report";
 
-export function generatePdfReport(data: WeekReportData): Blob {
+export async function generatePdfReport(data: WeekReportData): Promise<Blob> {
+  const { jsPDF } = await import("jspdf");
   const doc = new jsPDF("p", "mm", "a4");
   const margin = 20;
   let y = margin;

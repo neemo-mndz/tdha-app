@@ -1,4 +1,3 @@
-import { Workbook } from "exceljs";
 import type { WeekReportData } from "@/lib/types/report";
 
 /**
@@ -14,6 +13,7 @@ import type { WeekReportData } from "@/lib/types/report";
 export async function generateXlsReport(
   data: WeekReportData
 ): Promise<Blob> {
+  const { Workbook } = await import("exceljs");
   const workbook = new Workbook();
 
   const userName = data.userName ?? "Usuário";

@@ -58,6 +58,7 @@ describe('Date helpers - Property-Based Tests', () => {
   it('Property 6: getWeekStart returns Monday of same week for any valid date', () => {
     const validDateArb = fc
       .date({ min: new Date('2000-01-01'), max: new Date('2099-12-31') })
+      .filter((d) => !isNaN(d.getTime()))
       .map((d) => d.toISOString().split('T')[0]);
 
     fc.assert(

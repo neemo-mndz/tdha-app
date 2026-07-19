@@ -1,12 +1,9 @@
 "use client";
 
-import { useOptimistic, useState, useTransition } from "react";
-import Link from "next/link";
+import { useState } from "react";
 import { createLog } from "@/lib/actions/logs";
 import { TaskChips } from "@/components/logs/TaskChips";
-import { logsReducer } from "@/components/logs/optimisticLogs";
 import type { ActiveTaskDisplay } from "@/lib/types/tasks";
-import type { LogWithTask } from "@/lib/db/queries/logs";
 
 interface DailyLogPanelProps {
   date: string;
@@ -18,12 +15,6 @@ export function DailyLogPanel({ date, activeTasks }: DailyLogPanelProps) {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [, startTransition] = useTransition();
-
-  const [optimisticLogs, dispatchOptimistic] = useOptimistic(
-    [] as LogWithTask[],
-    logsReducer
-  );
 
   const handleSave = async () => {
     if (!content.trim()) {
@@ -37,24 +28,7 @@ export function DailyLogPanel({ date, activeTasks }: DailyLogPanelProps) {
     setError(null);
     setSubmitting(true);
 
-    const selectedTask = activeTasks.find((t) => t.weekPlanTaskId === selectedTaskId);
-    const tempId = crypto.randomUUID();
     const trimmed = content.trim();
-
-    startTransition(() => {
-      dispatchOptimistic({
-        type: "add",
-        log: {
-          id: tempId,
-          dayId: "optimistic",
-          content: trimmed,
-          mood: null,
-          weekPlanTaskId: selectedTaskId,
-          createdAt: new Date(),
-          taskName: selectedTask?.name ?? null,
-        },
-      });
-    });
 
     const result = await createLog({
       content: trimmed,
@@ -67,9 +41,6 @@ export function DailyLogPanel({ date, activeTasks }: DailyLogPanelProps) {
       setContent("");
       setSelectedTaskId(null);
     } else {
-      startTransition(() => {
-        dispatchOptimistic({ type: "remove", id: tempId });
-      });
       setError(result.error ?? "Erro ao salvar.");
     }
   };
@@ -112,23 +83,6 @@ export function DailyLogPanel({ date, activeTasks }: DailyLogPanelProps) {
           </button>
         </div>
       </div>
-
-      {optimisticLogs.length > 0 && (
-        <div className="daily-log-panel__recent" style={{ marginTop: "14px" }}>
-          <p style={{ fontSize: "13px", color: "var(--muted)", marginBottom: "8px" }}>Adicionados agora:</p>
-          {optimisticLogs.map((log) => (
-            <div key={log.id} className="today-logs-card__item">
-              <span className="today-logs-card__time">
-                {new Date(log.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-              </span>
-              <span className="today-logs-card__text">
-                {log.content}
-                {log.taskName && <span className="log-item__tag">{log.taskName}</span>}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

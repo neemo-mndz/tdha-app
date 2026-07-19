@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, cleanup, act } from "@testing-library/react";
 import { LogForm } from "../LogForm";
 
 describe("LogForm", () => {
@@ -190,7 +190,7 @@ describe("LogForm", () => {
   });
 
   describe("Form Submission Prevention", () => {
-    it("prevents default form submission", () => {
+    it("prevents default form submission", async () => {
       render(<LogForm onSubmit={mockOnSubmit} />);
       const textarea = screen.getByRole("textbox", { name: "Novo registro" });
       const form = textarea.closest("form")!;
@@ -198,7 +198,9 @@ describe("LogForm", () => {
       const submitEvent = new SubmitEvent("submit", { bubbles: true, cancelable: true });
       const preventDefaultSpy = vi.spyOn(submitEvent, "preventDefault");
       
-      form.dispatchEvent(submitEvent);
+      await act(async () => {
+        form.dispatchEvent(submitEvent);
+      });
       
       expect(preventDefaultSpy).toHaveBeenCalled();
     });

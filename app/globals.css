@@ -29,7 +29,6 @@ body {
   padding: 32px 24px 120px;
 }
 
-/* Header */
 header.top {
   display: flex;
   align-items: flex-end;
@@ -273,6 +272,17 @@ header.top {
 
   .day-cell__weekday {
     font-size: 9px;
+  }
+
+  /* Prevent iOS auto-zoom on inputs with small font */
+  input[type="time"],
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 16px;
   }
 }
 
@@ -734,7 +744,7 @@ header.top {
 .day-view {
   max-width: 960px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: 32px 24px 100px;
 }
 
 .day-view__header {
@@ -1788,6 +1798,19 @@ header.top {
 
 .log-item:hover .log-item__actions {
   opacity: 1;
+}
+
+/* Mobile: always show edit/delete actions (no hover on touch) */
+@media (hover: none) {
+  .log-item__actions {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .log-item__actions {
+    opacity: 1;
+  }
 }
 
 .log-item__action-btn {

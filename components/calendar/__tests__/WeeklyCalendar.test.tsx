@@ -292,7 +292,7 @@ describe('WeeklyCalendar — Example Tests', () => {
     expect(cells.length).toBe(7);
 
     // Verify log indicators for cells with logCount > 0 (indices 0, 2, 3, 5)
-    const cellsWithLogs = container.querySelectorAll('.day-cell__log-indicator');
+    const cellsWithLogs = container.querySelectorAll('.day-cell__dot');
     expect(cellsWithLogs.length).toBe(4); // Monday, Wednesday, Thursday, Saturday
 
     // Verify mood indicators exist (indices 0, 2, 4, 5)

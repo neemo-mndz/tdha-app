@@ -43,7 +43,7 @@ export function ReportActions({ userName, selectedDays }: ReportActionsProps) {
       }
 
       const data = result as WeekReportData;
-      const blob = generatePdfReport(data);
+      const blob = await generatePdfReport(data);
       const filename = generateFilename(
         userName,
         data.dateRange.start,

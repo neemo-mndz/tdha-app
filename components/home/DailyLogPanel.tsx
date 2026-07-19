@@ -4,7 +4,6 @@ import { useOptimistic, useState, useTransition } from "react";
 import Link from "next/link";
 import { createLog } from "@/lib/actions/logs";
 import { TaskChips } from "@/components/logs/TaskChips";
-import { LogItem } from "@/components/logs/LogItem";
 import { logsReducer } from "@/components/logs/optimisticLogs";
 import type { ActiveTaskDisplay } from "@/lib/types/tasks";
 import type { LogWithTask } from "@/lib/db/queries/logs";
@@ -116,14 +115,17 @@ export function DailyLogPanel({ date, activeTasks }: DailyLogPanelProps) {
 
       {optimisticLogs.length > 0 && (
         <div className="daily-log-panel__recent" style={{ marginTop: "14px" }}>
+          <p style={{ fontSize: "13px", color: "var(--muted)", marginBottom: "8px" }}>Adicionados agora:</p>
           {optimisticLogs.map((log) => (
-            <LogItem
-              key={log.id}
-              log={log}
-              taskName={log.taskName}
-              dispatch={dispatchOptimistic}
-              date={date}
-            />
+            <div key={log.id} className="today-logs-card__item">
+              <span className="today-logs-card__time">
+                {new Date(log.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+              </span>
+              <span className="today-logs-card__text">
+                {log.content}
+                {log.taskName && <span className="log-item__tag">{log.taskName}</span>}
+              </span>
+            </div>
           ))}
         </div>
       )}

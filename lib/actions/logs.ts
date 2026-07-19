@@ -82,6 +82,7 @@ export async function createLog(input: unknown): Promise<ActionResult> {
   }
 
   revalidatePath(`/day/${parsed.data.date}`);
+  revalidatePath("/");
 
   return { success: true };
 }
@@ -116,6 +117,7 @@ export async function updateLog(input: unknown): Promise<ActionResult> {
   await updateLogById(parsed.data.logId, parsed.data.content);
 
   revalidatePath(`/day/${parsed.data.date}`);
+  revalidatePath("/");
 
   return { success: true };
 }
@@ -158,6 +160,7 @@ export async function deleteLog(input: unknown): Promise<ActionResult> {
   }
 
   revalidatePath(`/day/${parsed.data.date}`);
+  revalidatePath("/");
 
   return { success: true };
 }
@@ -199,6 +202,7 @@ export async function updateLogTime(input: unknown): Promise<ActionResult> {
 
   await updateLogCreatedAt(parsed.data.logId, newCreatedAt);
   revalidatePath(`/day/${parsed.data.date}`);
+  revalidatePath("/");
 
   return { success: true };
 }

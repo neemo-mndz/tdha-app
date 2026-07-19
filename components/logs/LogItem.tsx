@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import type { Log } from "@/drizzle/schema";
+import type { LogWithTask } from "@/lib/db/queries/logs";
 import { updateLog, deleteLog, updateLogTime } from "@/lib/actions/logs";
 import type { OptimisticAction } from "./optimisticLogs";
 
 interface LogItemProps {
-  log: Log;
+  log: LogWithTask;
   taskName?: string | null;
   dispatch: (action: OptimisticAction) => void;
   date: string;

@@ -41,8 +41,9 @@ export async function getWeekStatus(
   }
 
   // Build the full 7-day result
+  // Use noon UTC to avoid timezone shift issues when serialized to client
   return weekDates.map((dateStr) => ({
-    date: new Date(dateStr + 'T00:00:00'),
+    date: new Date(dateStr + 'T12:00:00Z'),
     logCount: logCounts[dateStr] ?? 0,
     mood: null,
   }));

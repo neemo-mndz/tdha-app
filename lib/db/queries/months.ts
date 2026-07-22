@@ -49,8 +49,9 @@ export async function getMonthStatus(
   }
 
   // Build the full month result
+  // Use noon UTC to avoid timezone shift issues when serialized to client
   return monthDates.map((dateStr) => ({
-    date: new Date(dateStr + 'T00:00:00'),
+    date: new Date(dateStr + 'T12:00:00Z'),
     logCount: logCounts[dateStr] ?? 0,
     mood: null,
   }));

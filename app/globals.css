@@ -3013,3 +3013,106 @@ header.top {
 .mood-selector__option--dimmed:hover:not(:disabled) {
   opacity: 0.7;
 }
+
+/* ---- Mood Card ---- */
+.mood-card {
+  margin-top: 24px;
+}
+
+.mood-card__error {
+  font-size: 13px;
+  color: #C6685A;
+  margin: 10px 0 0;
+}
+
+.mood-card__note-section {
+  margin-top: 14px;
+}
+
+.mood-card__note-toggle {
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mood-card__note-toggle:hover {
+  color: var(--structure);
+}
+
+.mood-card__note-input {
+  margin-top: 10px;
+}
+
+/* ---- Mood Note Input ---- */
+.mood-note {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mood-note__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mood-note__input {
+  flex: 1;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: transparent;
+}
+
+.mood-note__input::placeholder {
+  color: var(--muted);
+}
+
+.mood-note__input:focus {
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+.mood-note__save {
+  flex-shrink: 0;
+  background: var(--structure);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.mood-note__save:hover {
+  opacity: 0.85;
+}
+
+.mood-note__save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mood-note__count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.mood-note__count--limit {
+  color: #C6685A;
+  font-weight: 500;
+}

@@ -55,3 +55,13 @@ export function weekLabel(weekStart: Date, locale = ptBR): string {
   const year = format(weekEnd, 'yyyy');
   return `${start} – ${end} · ${year}`;
 }
+
+/**
+ * Returns the current date in Brazil timezone (UTC-3) as a Date object.
+ * Used on the server (Vercel runs in UTC) to determine the user's "today".
+ */
+export function getBrazilNow(): Date {
+  const now = new Date();
+  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+  return new Date(utcMs - 3 * 60 * 60000); // UTC-3
+}

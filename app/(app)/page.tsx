@@ -1,4 +1,4 @@
-import { currentWeekStart } from '@/lib/utils/date';
+import { currentWeekStart, getBrazilNow } from '@/lib/utils/date';
 import { getWeekStatus } from '@/lib/db/queries/weeks';
 import { getUserTasks } from '@/lib/db/queries/tasks';
 import { getWeekPlan } from '@/lib/db/queries/weekPlans';
@@ -13,7 +13,7 @@ import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const today = new Date();
+  const today = getBrazilNow();
   const weekStart = currentWeekStart(today);
 
   const userId = await getCurrentUserId();
@@ -39,16 +39,16 @@ export default async function HomePage() {
     <div className="shell">
       <HomeGreetingLive initialTime={today.toISOString()} />
 
-      <div className="stack">
-        <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
-      </div>
-
       <HomeCalendarSection
         weekStart={weekStartStr}
         days={days}
         today={todayStr}
         initialLogs={todayLogs}
       />
+
+      <div className="stack">
+        <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
+      </div>
 
       <div className="stack">
         <WeeklyTasksPanel

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { isValid, parseISO, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getDayLogs } from "@/lib/db/queries/logs";
-import { getWeekStart } from "@/lib/utils/date";
+import { getWeekStart, getBrazilNow } from "@/lib/utils/date";
 import { LogList } from "@/components/logs/LogList";
 import { getCurrentUserId } from "@/lib/auth";
 
@@ -33,7 +33,7 @@ export default async function DayPage({ params }: DayPageProps) {
   const userId = await getCurrentUserId();
   const logs = await getDayLogs(userId, dateString);
   const weekStart = getWeekStart(dateString);
-  const isToday = dateString === format(new Date(), "yyyy-MM-dd");
+  const isToday = dateString === format(getBrazilNow(), "yyyy-MM-dd");
   const displayDate = format(parseISO(dateString), "EEEE, d 'de' MMMM", { locale: ptBR });
 
   return (

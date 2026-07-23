@@ -296,7 +296,7 @@ describe('WeeklyCalendar — Example Tests', () => {
     expect(cellsWithLogs.length).toBe(4); // Monday, Wednesday, Thursday, Saturday
 
     // Verify mood indicators exist (indices 0, 2, 4, 5)
-    const cellsWithMoods = container.querySelectorAll('.day-cell__mood');
+    const cellsWithMoods = container.querySelectorAll('.day-cell__mood-dot');
     expect(cellsWithMoods.length).toBe(4); // Monday, Wednesday, Friday, Saturday
 
     // Verify no guilt metrics

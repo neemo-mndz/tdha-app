@@ -55,7 +55,7 @@ export function DailyLogPanel({ date, activeTasks }: DailyLogPanelProps) {
   return (
     <div className="panel">
       <h2 className="panel__title">Registro do dia</h2>
-      <p className="panel__subtitle">Brain dump rápido. O humor terá um espaço próprio, futuramente.</p>
+      <p className="panel__subtitle">Brain dump rápido. O humor? Ali em cima, um toque só.</p>
 
       <div className="capture-box">
         <textarea

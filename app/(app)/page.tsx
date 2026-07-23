@@ -3,12 +3,14 @@ import { getWeekStatus } from '@/lib/db/queries/weeks';
 import { getUserTasks } from '@/lib/db/queries/tasks';
 import { getWeekPlan } from '@/lib/db/queries/weekPlans';
 import { getDayLogs } from '@/lib/db/queries/logs';
+import { getDayMood } from '@/lib/db/queries/mood';
 import { format } from 'date-fns';
 import { getCurrentUserId } from '@/lib/auth';
 import { HomeGreetingLive } from '@/components/home/HomeGreetingLive';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
+import { MoodCard } from '@/components/mood/MoodCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,11 +23,12 @@ export default async function HomePage() {
   const todayStr = format(today, 'yyyy-MM-dd');
   const weekStartStr = format(weekStart, 'yyyy-MM-dd');
 
-  const [days, userTasks, weekPlan, todayLogs] = await Promise.all([
+  const [days, userTasks, weekPlan, todayLogs, dayMood] = await Promise.all([
     getWeekStatus(userId, weekStart),
     getUserTasks(userId),
     getWeekPlan(userId, weekStartStr),
     getDayLogs(userId, todayStr),
+    getDayMood(userId, todayStr),
   ]);
 
   const allTasks = userTasks.map((t) => ({
@@ -44,6 +47,12 @@ export default async function HomePage() {
         days={days}
         today={todayStr}
         initialLogs={todayLogs}
+      />
+
+      <MoodCard
+        date={todayStr}
+        initialMood={dayMood.mood}
+        initialNote={dayMood.moodNote}
       />
 
       <div className="stack">

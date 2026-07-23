@@ -16,14 +16,6 @@ export interface DayCellProps {
   onSelect?: (date: Date) => void;
 }
 
-const MOOD_EMOJI: Record<MoodValue, string> = {
-  great: '😊',
-  good: '🙂',
-  neutral: '😐',
-  bad: '😞',
-  awful: '😢',
-};
-
 export function DayCell({ date, logCount, mood, isToday, isFuture, isSelected, onSelect }: DayCellProps) {
   const href = `/day/${formatDateParam(date)}`;
   const weekday = format(date, 'EEE', { locale: ptBR });
@@ -53,9 +45,7 @@ export function DayCell({ date, logCount, mood, isToday, isFuture, isSelected, o
       )}
 
       {mood !== null && (
-        <span className="day-cell__mood" data-mood={mood} aria-label={`humor: ${mood}`}>
-          {MOOD_EMOJI[mood]}
-        </span>
+        <span className="day-cell__mood-dot" aria-label="Humor registrado" />
       )}
     </Link>
   );

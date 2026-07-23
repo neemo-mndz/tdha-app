@@ -59,6 +59,8 @@ export const days = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     date: date("date").notNull(),
+    mood: text("mood"),          // nullable: 'great'|'good'|'neutral'|'bad'|'awful'
+    moodNote: text("mood_note"), // nullable: max 80 chars (validação no app)
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

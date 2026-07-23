@@ -274,8 +274,11 @@ header.top {
   margin-top: 6px;
 }
 
-.day-cell__mood {
-  font-size: 14px;
+.day-cell__mood-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
   margin-top: 4px;
 }
 
@@ -2963,4 +2966,50 @@ header.top {
   font-size: 13px;
   color: #C6685A;
   margin-top: 10px;
+}
+
+/* ---- Mood Selector ---- */
+.mood-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.mood-selector__option {
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  opacity: 1;
+}
+
+.mood-selector__option:hover:not(:disabled) {
+  transform: scale(1.15);
+}
+
+.mood-selector__option:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.mood-selector__option--active {
+  border-color: var(--today);
+  background: var(--today-soft);
+  transform: scale(1.15);
+}
+
+.mood-selector__option--dimmed {
+  opacity: 0.4;
+}
+
+.mood-selector__option--dimmed:hover:not(:disabled) {
+  opacity: 0.7;
 }

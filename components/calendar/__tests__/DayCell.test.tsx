@@ -71,22 +71,35 @@ describe('DayCell', () => {
   });
 
   describe('Mood indicator', () => {
-    it('renders mood indicator when mood is not null', () => {
-      renderDayCell({ mood: 'great' });
-      expect(screen.getByLabelText('humor: great')).toBeInTheDocument();
+    it('renders mood dot when mood is not null', () => {
+      const { container } = renderDayCell({ mood: 'great' });
+      const dot = container.querySelector('.day-cell__mood-dot');
+      expect(dot).not.toBeNull();
+      expect(dot).toHaveAttribute('aria-label', 'Humor registrado');
     });
 
-    it('does not render mood indicator when mood is null', () => {
-      renderDayCell({ mood: null });
-      expect(screen.queryByLabelText(/humor:/)).not.toBeInTheDocument();
+    it('does not render mood dot when mood is null', () => {
+      const { container } = renderDayCell({ mood: null });
+      expect(container.querySelector('.day-cell__mood-dot')).toBeNull();
+    });
+
+    it('does not render full emoji in the calendar cell', () => {
+      const { container } = renderDayCell({ mood: 'great' });
+      const dot = container.querySelector('.day-cell__mood-dot');
+      expect(dot).not.toBeNull();
+      // Should not contain emoji text
+      expect(dot!.textContent).toBe('');
     });
 
     it.each(['great', 'good', 'neutral', 'bad', 'awful'] as MoodValue[])(
-      'renders mood indicator with data-mood="%s"',
+      'renders mood dot for mood "%s" without revealing specific value',
       (moodValue) => {
-        renderDayCell({ mood: moodValue });
-        const indicator = screen.getByLabelText(`humor: ${moodValue}`);
-        expect(indicator).toHaveAttribute('data-mood', moodValue);
+        const { container } = renderDayCell({ mood: moodValue });
+        const dot = container.querySelector('.day-cell__mood-dot');
+        expect(dot).not.toBeNull();
+        expect(dot).toHaveAttribute('aria-label', 'Humor registrado');
+        // Should NOT have data-mood or reveal specific mood value
+        expect(dot!.textContent).toBe('');
       }
     );
   });
@@ -169,11 +182,13 @@ describe('DayCell — Property-Based Tests', () => {
       fc.property(arbDayCellProps, (props) => {
         cleanup();
         const { container } = render(<DayCell {...props} />);
-        const indicator = container.querySelector('.day-cell__mood');
+        const indicator = container.querySelector('.day-cell__mood-dot');
 
         if (props.mood !== null) {
           expect(indicator).not.toBeNull();
-          expect(indicator!.getAttribute('data-mood')).toBe(props.mood);
+          expect(indicator!.getAttribute('aria-label')).toBe('Humor registrado');
+          // Should not render emoji text
+          expect(indicator!.textContent).toBe('');
         } else {
           expect(indicator).toBeNull();
         }

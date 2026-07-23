@@ -294,6 +294,7 @@ header.top {
     padding: 8px 2px;
     min-width: 0;
     overflow: hidden;
+    border-radius: 12px;
   }
 
   .day-cell__date {

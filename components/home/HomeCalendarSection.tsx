@@ -104,6 +104,8 @@ export function HomeCalendarSection({ weekStart, days, allUserTags = [] }: HomeC
         </span>
       </button>
 
+      <TodayLogsCard allUserTags={allUserTags} />
+
       <div
         style={{
           maxHeight: calendarOpen ? "1200px" : "0",
@@ -128,8 +130,6 @@ export function HomeCalendarSection({ weekStart, days, allUserTags = [] }: HomeC
             mês
           </button>
         </div>
-
-        <TodayLogsCard allUserTags={allUserTags} />
 
         {/* Weekly view */}
         {viewMode === 'week' && (

@@ -51,16 +51,19 @@ export function LogItem({ log, taskName, dispatch, date, allUserTags = [] }: Log
   const time = formatTimeLocal(new Date(log.createdAt));
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(log.content);
+  const [editDate, setEditDate] = useState(date);
   const [editTime, setEditTime] = useState(formatTimeLocal(new Date(log.createdAt)));
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [timeError, setTimeError] = useState<string | null>(null);
+  const [dateError, setDateError] = useState<string | null>(null);
   const [tagsOpen, setTagsOpen] = useState(false);
 
   const originalTime = formatTimeLocal(new Date(log.createdAt));
 
   const handleUpdate = async () => {
     setTimeError(null);
+    setDateError(null);
     setError(null);
 
     // Client-side validation before server call
@@ -70,24 +73,38 @@ export function LogItem({ log, taskName, dispatch, date, allUserTags = [] }: Log
       return;
     }
 
+    if (!editDate || !/^\d{4}-\d{2}-\d{2}$/.test(editDate)) {
+      setDateError("Data inválida");
+      return;
+    }
+
+    const dateChanged = editDate !== date;
+    const timeChanged = editTime !== originalTime;
+
     const result = await updateLog({
       logId: log.id,
       content: editContent,
       date,
+      newDate: dateChanged ? editDate : undefined,
     });
+
     if (result.success) {
-      dispatch({ type: "update", id: log.id, content: editContent });
+      if (dateChanged) {
+        dispatch({ type: "remove", id: log.id });
+      } else {
+        dispatch({ type: "update", id: log.id, content: editContent });
+      }
     } else {
       setEditContent(log.content);
       setError(result.error ?? "Erro ao salvar");
       return;
     }
 
-    if (editTime !== originalTime) {
+    if (timeChanged || dateChanged) {
       const timeResult = await updateLogTime({
         logId: log.id,
         time: editTime,
-        date,
+        date: editDate,
         timezoneOffset: new Date().getTimezoneOffset(),
       });
       if (!timeResult.success) {
@@ -111,13 +128,23 @@ export function LogItem({ log, taskName, dispatch, date, allUserTags = [] }: Log
   if (editing) {
     return (
       <div className="log-item-card">
-        <input
-          type="time"
-          value={editTime}
-          onChange={(e) => setEditTime(e.target.value)}
-          aria-label="Selecionar horário do registro"
-          className="log-item-card__time-input"
-        />
+        <div className="log-item-card__datetime-row">
+          <input
+            type="date"
+            value={editDate}
+            onChange={(e) => setEditDate(e.target.value)}
+            aria-label="Selecionar data do registro"
+            className="log-item-card__date-input"
+          />
+          <input
+            type="time"
+            value={editTime}
+            onChange={(e) => setEditTime(e.target.value)}
+            aria-label="Selecionar horário do registro"
+            className="log-item-card__time-input"
+          />
+        </div>
+        {dateError && <p role="alert" className="log-form__error">{dateError}</p>}
         {timeError && <p role="alert" className="log-form__error">{timeError}</p>}
         <textarea
           value={editContent}
@@ -132,9 +159,11 @@ export function LogItem({ log, taskName, dispatch, date, allUserTags = [] }: Log
             onClick={() => {
               setEditing(false);
               setEditContent(log.content);
+              setEditDate(date);
               setEditTime(formatTimeLocal(new Date(log.createdAt)));
               setError(null);
               setTimeError(null);
+              setDateError(null);
             }}
             className="log-item-card__btn"
           >

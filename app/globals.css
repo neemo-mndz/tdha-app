@@ -850,6 +850,30 @@ header.top {
   min-height: 20px;
 }
 
+.log-item-card__datetime-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.log-item-card__date-input,
+.log-item-card__time-input {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+}
+
+.log-item-card__date-input:focus,
+.log-item-card__time-input:focus {
+  border-color: var(--accent);
+}
+
 .log-item-card__time {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;

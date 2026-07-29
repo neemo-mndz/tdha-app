@@ -22,6 +22,7 @@ export const updateLogSchema = z.object({
   logId: logIdSchema,
   content: contentSchema,
   date: dateSchema,
+  newDate: dateSchema.optional(),
 });
 
 export const deleteLogSchema = z.object({

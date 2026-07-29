@@ -84,8 +84,12 @@ export async function insertLog(input: {
   return log;
 }
 
-export async function updateLogById(logId: string, content: string): Promise<void> {
-  await db.update(logs).set({ content }).where(eq(logs.id, logId));
+export async function updateLogById(logId: string, content: string, newDayId?: string): Promise<void> {
+  const values: { content: string; dayId?: string } = { content };
+  if (newDayId) {
+    values.dayId = newDayId;
+  }
+  await db.update(logs).set(values).where(eq(logs.id, logId));
 }
 
 export async function updateLogCreatedAt(logId: string, newCreatedAt: Date): Promise<void> {

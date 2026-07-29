@@ -114,9 +114,19 @@ export async function updateLog(input: unknown): Promise<ActionResult> {
     return { success: false, error: "Não autorizado" };
   }
 
-  await updateLogById(parsed.data.logId, parsed.data.content);
+  let newDayId: string | undefined = undefined;
+  if (parsed.data.newDate && parsed.data.newDate !== parsed.data.date) {
+    const newDay = await upsertDay(userId, parsed.data.newDate);
+    newDayId = newDay.id;
+  }
+
+  await updateLogById(parsed.data.logId, parsed.data.content, newDayId);
 
   revalidatePath(`/day/${parsed.data.date}`);
+  if (parsed.data.newDate && parsed.data.newDate !== parsed.data.date) {
+    revalidatePath(`/day/${parsed.data.newDate}`);
+  }
+  revalidatePath("/history");
   revalidatePath("/");
 
   return { success: true };

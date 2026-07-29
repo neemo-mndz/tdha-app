@@ -157,7 +157,6 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
   const [selectedTagIds, setSelectedTagIds] = useState<Set<string>>(new Set());
   const [selectedWeek, setSelectedWeek] = useState<Date | null>(null);
   const [viewMode, setViewMode] = useState<"weeks" | "flat">("weeks");
-  const [copiedObsidianId, setCopiedObsidianId] = useState<string | null>(null);
 
   // ── Results & UI state ────────────────────────────────────────────────────
   const [results, setResults] = useState<SearchResult[]>(initialResults);
@@ -275,13 +274,6 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
         }))
       );
     });
-  }
-
-  function handleExportObsidian(result: SearchResult) {
-    const obsidianText = `# ${formatDisplayDate(result.date)} (${result.time})\n\n${result.content}\n\n${result.tags.map((t) => `#${t.name}`).join(" ")}`;
-    navigator.clipboard.writeText(obsidianText);
-    setCopiedObsidianId(result.logId);
-    setTimeout(() => setCopiedObsidianId(null), 2000);
   }
 
   return (
@@ -450,7 +442,7 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
               <ul className="history-page__result-list">
                 {group.results.map((result) => (
                   <li key={result.logId} className="history-result-item">
-                    {/* Date + time + task name + obsidian export button */}
+                    {/* Date + time + task name */}
                     <div className="history-result-item__meta">
                       <time
                         className="history-result-item__date"
@@ -466,15 +458,6 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
                           📋 {result.taskName}
                         </span>
                       )}
-
-                      <button
-                        type="button"
-                        onClick={() => handleExportObsidian(result)}
-                        className="history-result-item__obsidian-btn"
-                        aria-label="Copiar formato Obsidian"
-                      >
-                        {copiedObsidianId === result.logId ? "Copiado! ✓" : "Obsidian"}
-                      </button>
                     </div>
 
                     {/* Content */}
@@ -516,14 +499,6 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
                       📋 {result.taskName}
                     </span>
                   )}
-                  <button
-                    type="button"
-                    onClick={() => handleExportObsidian(result)}
-                    className="history-result-item__obsidian-btn"
-                    aria-label="Copiar formato Obsidian"
-                  >
-                    {copiedObsidianId === result.logId ? "Copiado! ✓" : "Obsidian"}
-                  </button>
                 </div>
                 <p className="history-result-item__content">
                   {result.content}

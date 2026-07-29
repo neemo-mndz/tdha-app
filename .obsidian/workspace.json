@@ -11,10 +11,14 @@
             "id": "4d19fb24fd67eaa8",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Visualização em gráfico"
+              "type": "markdown",
+              "state": {
+                "file": "ANALISE-APP.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ANALISE-APP"
             }
           },
           {
@@ -104,6 +108,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "ANALISE-APP.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +118,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Links inversos"
+              "title": "Links inversos para ANALISE-APP"
             }
           },
           {
@@ -122,11 +127,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "ANALISE-APP.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Links de saída"
+              "title": "Links de saída para ANALISE-APP"
             }
           },
           {
@@ -164,12 +170,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "ANALISE-APP.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Sumário"
+              "title": "Sumário de ANALISE-APP"
             }
           }
         ]
@@ -192,6 +199,10 @@
   },
   "active": "4d19fb24fd67eaa8",
   "lastOpenFiles": [
+    "docs/02 - Decisões de Design.md",
+    "docs/01 - Roadmap e Tarefas.md",
+    "2026-07-29.md",
+    "docs/00 - Dashboard.md",
     "public/sw.js",
     "node_modules/kolorist/dist/types/index.d.ts",
     "node_modules/kolorist/dist/esm/index.mjs",
@@ -202,7 +213,6 @@
     "node_modules/kolorist/dist/module/index.js",
     "node_modules/kolorist/dist/cjs/index.js",
     "node_modules/kolorist/dist/types",
-    "node_modules/kolorist/dist/esm",
     "node_modules/@serwist/webpack-plugin/node_modules/zod/README.md",
     "node_modules/@serwist/next/node_modules/zod/README.md",
     "node_modules/@serwist/next/node_modules/minimatch/LICENSE.md",
@@ -225,9 +235,6 @@
     "node_modules/@serwist/webpack-plugin/README.md",
     "node_modules/@serwist/precaching/README.md",
     "node_modules/@serwist/next/README.md",
-    "node_modules/@serwist/build/README.md",
-    "node_modules/minipass/README.md",
-    "node_modules/minipass/LICENSE.md",
     "Sem título.canvas"
   ]
 }

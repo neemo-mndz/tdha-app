@@ -178,7 +178,7 @@ export function LogItem({ log, taskName, dispatch, date, allUserTags = [] }: Log
   return (
     <div className={`${styles.logItem} log-item`}>
       <span className={styles.logItemTime}>{time}</span>
-      <span className={styles.logItemBody}>
+      <span className={`${styles.logItemBody} log-item__body`}>
         {log.content}
         {taskName && <span className={styles.logItemTag}>{taskName}</span>}
       </span>

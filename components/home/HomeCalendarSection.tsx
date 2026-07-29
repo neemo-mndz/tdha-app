@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import { isSameDay } from "date-fns";
 import WeeklyCalendar from "@/components/calendar/WeeklyCalendar";
 import MonthlyCalendar from "@/components/calendar/MonthlyCalendar";
-import { TodayLogsCard } from "@/components/home/TodayLogsCard";
 import { getMonthStatusAction } from "@/lib/actions/logs";
 import type { DayStatus } from "@/lib/types/calendar";
 import { useLogs } from "@/components/home/LogsProvider";
@@ -21,7 +20,6 @@ type ViewMode = 'week' | 'month';
 interface HomeCalendarSectionProps {
   weekStart: string; // "yyyy-MM-dd" format from server
   days: DayStatus[];
-  allUserTags?: { id: string; name: string }[];
 }
 
 /**
@@ -29,7 +27,7 @@ interface HomeCalendarSectionProps {
  * O card de registros fica sempre visível, independente do calendário
  * estar expandido ou recolhido, e reflete o dia selecionado pelo usuário.
  */
-export function HomeCalendarSection({ weekStart, days, allUserTags = [] }: HomeCalendarSectionProps) {
+export function HomeCalendarSection({ weekStart, days }: HomeCalendarSectionProps) {
   const { selectedDate, setSelectedDate, todayDate } = useLogs();
 
   // Parse date strings as local dates (no timezone shift)
@@ -104,25 +102,6 @@ export function HomeCalendarSection({ weekStart, days, allUserTags = [] }: HomeC
         </span>
       </button>
 
-      <div className="calendar-view-toggle">
-        <button
-          type="button"
-          className={`calendar-view-toggle__btn${viewMode === 'week' ? ' calendar-view-toggle__btn--active' : ''}`}
-          onClick={() => handleViewModeChange('week')}
-        >
-          semana
-        </button>
-        <button
-          type="button"
-          className={`calendar-view-toggle__btn${viewMode === 'month' ? ' calendar-view-toggle__btn--active' : ''}`}
-          onClick={() => handleViewModeChange('month')}
-        >
-          mês
-        </button>
-      </div>
-
-      <TodayLogsCard allUserTags={allUserTags} />
-
       <div
         style={{
           maxHeight: calendarOpen ? "1200px" : "0",
@@ -130,6 +109,23 @@ export function HomeCalendarSection({ weekStart, days, allUserTags = [] }: HomeC
           transition: "max-height 0.28s ease",
         }}
       >
+        {/* View mode toggle */}
+        <div className="calendar-view-toggle">
+          <button
+            type="button"
+            className={`calendar-view-toggle__btn${viewMode === 'week' ? ' calendar-view-toggle__btn--active' : ''}`}
+            onClick={() => handleViewModeChange('week')}
+          >
+            semana
+          </button>
+          <button
+            type="button"
+            className={`calendar-view-toggle__btn${viewMode === 'month' ? ' calendar-view-toggle__btn--active' : ''}`}
+            onClick={() => handleViewModeChange('month')}
+          >
+            mês
+          </button>
+        </div>
         {/* Weekly view */}
         {viewMode === 'week' && (
           <WeeklyCalendar

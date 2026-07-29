@@ -13,6 +13,7 @@ import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
 import { MoodCard } from '@/components/mood/MoodCard';
 import { LogsProvider } from '@/components/home/LogsProvider';
+import { TodayLogsCard } from '@/components/home/TodayLogsCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,8 +50,11 @@ export default async function HomePage() {
         <HomeCalendarSection
           weekStart={weekStartStr}
           days={days}
-          allUserTags={allUserTags}
         />
+
+        <div className="stack">
+          <DailyLogPanel activeTasks={activeTasks} />
+        </div>
 
         <MoodCard
           date={todayStr}
@@ -58,9 +62,7 @@ export default async function HomePage() {
           initialNote={dayMood.moodNote}
         />
 
-        <div className="stack">
-          <DailyLogPanel activeTasks={activeTasks} />
-        </div>
+        <TodayLogsCard allUserTags={allUserTags} />
       </LogsProvider>
 
       <div className="stack">

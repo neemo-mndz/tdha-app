@@ -16,6 +16,8 @@
   "type": "module",
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
+    "@serwist/next": "^9.5.12",
+    "@serwist/precaching": "^9.5.12",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.2",
     "exceljs": "^4.4.0",

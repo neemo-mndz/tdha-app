@@ -1,14 +1,18 @@
-import { eq, and, asc } from "drizzle-orm";
+import { eq, and, asc, inArray } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { days, logs, weekPlanTasks, tasks } from "@/drizzle/schema";
+import { days, logs, weekPlanTasks, tasks, logTags, tags } from "@/drizzle/schema";
 import type { Log, Day } from "@/drizzle/schema";
 
-export type LogWithTask = Log & { taskName: string | null };
+export type LogWithTask = Log & {
+  taskName: string | null;
+  tags: { id: string; name: string }[];
+};
 
 /**
  * Retorna todos os logs de um dia específico para um usuário,
  * em ordem cronológica crescente de criação.
- * Inclui o nome da tarefa vinculada (via weekPlanTasks → tasks) quando presente.
+ * Inclui o nome da tarefa vinculada (via weekPlanTasks → tasks) quando presente,
+ * e as tags associadas a cada log.
  */
 export async function getDayLogs(userId: string, date: string): Promise<LogWithTask[]> {
   const result = await db
@@ -20,7 +24,35 @@ export async function getDayLogs(userId: string, date: string): Promise<LogWithT
     .where(and(eq(days.userId, userId), eq(days.date, date)))
     .orderBy(asc(logs.createdAt));
 
-  return result.map((r) => ({ ...r.log, taskName: r.taskName }));
+  const logIds = result.map((r) => r.log.id);
+
+  // Fetch tags for all logs in a single query
+  const tagRows =
+    logIds.length > 0
+      ? await db
+          .select({
+            logId: logTags.logId,
+            tagId: tags.id,
+            tagName: tags.name,
+          })
+          .from(logTags)
+          .innerJoin(tags, eq(logTags.tagId, tags.id))
+          .where(inArray(logTags.logId, logIds))
+      : [];
+
+  // Group tags by logId
+  const tagsByLogId = new Map<string, { id: string; name: string }[]>();
+  for (const row of tagRows) {
+    const list = tagsByLogId.get(row.logId) ?? [];
+    list.push({ id: row.tagId, name: row.tagName });
+    tagsByLogId.set(row.logId, list);
+  }
+
+  return result.map((r) => ({
+    ...r.log,
+    taskName: r.taskName,
+    tags: tagsByLogId.get(r.log.id) ?? [],
+  }));
 }
 
 /**

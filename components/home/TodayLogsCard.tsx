@@ -1,17 +1,14 @@
 "use client";
 
-import { useEffect, useState, useOptimistic, useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { format, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getLogsForDate } from "@/lib/actions/logs";
 import { LogItem } from "@/components/logs/LogItem";
-import { logsReducer, type OptimisticAction } from "@/components/logs/optimisticLogs";
-import type { LogWithTask } from "@/lib/db/queries/logs";
+import { useLogs } from "@/components/home/LogsProvider";
 
 interface TodayLogsCardProps {
-  selectedDate: Date;
-  today: Date;
-  initialLogs: LogWithTask[];
+  allUserTags?: { id: string; name: string }[];
 }
 
 /**
@@ -21,19 +18,13 @@ interface TodayLogsCardProps {
  * seleciona outro dia no calendário expandido.
  * Inclui botões de editar/excluir para cada log.
  */
-export function TodayLogsCard({ selectedDate, today, initialLogs }: TodayLogsCardProps) {
-  const [logs, setLogs] = useState<LogWithTask[]>(initialLogs);
+export function TodayLogsCard({ allUserTags = [] }: TodayLogsCardProps) {
+  const { selectedDate, todayDate, logs, setLogs, optimisticLogs, dispatchOptimistic } = useLogs();
   const [isPending, startTransition] = useTransition();
   const dateStr = format(selectedDate, "yyyy-MM-dd");
 
-  const [optimisticLogs, dispatchOptimistic] = useOptimistic(
-    logs,
-    logsReducer
-  );
-
   useEffect(() => {
-    // Evita refetch na primeira renderização (já temos initialLogs do servidor)
-    if (isSameDay(selectedDate, today) && logs === initialLogs) return;
+    if (isSameDay(selectedDate, todayDate)) return;
 
     startTransition(async () => {
       const fresh = await getLogsForDate(dateStr);
@@ -42,12 +33,7 @@ export function TodayLogsCard({ selectedDate, today, initialLogs }: TodayLogsCar
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateStr]);
 
-  // Sync when initialLogs change (after revalidation)
-  useEffect(() => {
-    setLogs(initialLogs);
-  }, [initialLogs]);
-
-  const isToday = isSameDay(selectedDate, today);
+  const isToday = isSameDay(selectedDate, todayDate);
   const label = isToday
     ? "Registros de hoje"
     : `Registros de ${format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR })}`;
@@ -69,6 +55,7 @@ export function TodayLogsCard({ selectedDate, today, initialLogs }: TodayLogsCar
               taskName={log.taskName}
               dispatch={dispatchOptimistic}
               date={dateStr}
+              allUserTags={allUserTags}
             />
           ))}
         </div>

@@ -1,3 +1,9 @@
+---
+tipo: feature
+status: ideia
+data: 2026-07-28
+---
+
 # Análise Completa — App "semana." (TDAH Daily)
 
 **Data:** 18 de julho de 2026  
@@ -134,3 +140,77 @@ O app está funcional com boa arquitetura. Os bugs críticos de timezone, atuali
 3. **Duplicação de estado** — DailyLogPanel vs TodayLogsCard na home
 
 Recomendo priorizar os itens de "Prioridade Alta" antes do próximo deploy em produção.
+
+---
+
+# 🔍 Auditoria Técnica do Sistema (Atualização - Fase de Escala)
+
+**Data:** 28 de julho de 2026
+
+## 1. Diagnóstico Geral (Resumo Executivo)
+A aplicação possui uma fundação sólida e moderna, utilizando **Next.js 15 (App Router)** com **Server Actions**, banco de dados serverless (**Neon Postgres**) e ORM *type-safe* (**Drizzle**). A arquitetura atual de separar Server Actions em `lib/actions/` e queries em `lib/db/queries/` demonstra uma boa maturidade na camada de dados.
+
+No entanto, o projeto sofre de **"dores de crescimento rápido"** no frontend. Há gargalos significativos de performance devido ao *bundle size* no *client-side* (importação de bibliotecas pesadas), duplicação de estados (Optimistic UI desalinhados) e um monolito de CSS (Vanilla CSS com quase 3.000 linhas) que dificulta a manutenção e escalabilidade.
+
+O banco de dados está bem modelado, mas já apresenta alguns campos redundantes ("para uso futuro") que podem gerar confusão arquitetural se não padronizados.
+
+## 2. Lista de Problemas por Prioridade
+
+### 🔴 Críticos (Afetam estabilidade, UX base ou regras de negócio)
+- **Duplicação de Estado (Optimistic UI):** `DailyLogPanel` e `TodayLogsCard` renderizam os mesmos logs na mesma página, mas não compartilham o mesmo provedor de estado otimista. Adicionar um log causa "flashes" de duplicação até a revalidação completa do servidor voltar.
+- **Botões Ocultos em Mobile (CSS):** Ações de editar/excluir nos logs utilizam `opacity: 0` e só aparecem no `:hover`. Dispositivos *touch* (mobile) não possuem *hover*, tornando a funcionalidade inacessível para o usuário final no celular.
+- **Gargalo de Performance (Client-side Bloat):** A página de Profile (`app/(app)/profile/page.tsx`) carrega `jspdf` e `exceljs` diretamente no bundle do cliente, aumentando o tamanho de download em quase ~400KB e prejudicando o *Time to Interactive* (TTI).
+
+### 🟠 Médios (Manutenção, integrações e bugs menores)
+- **Campos Redundantes no BD:** A tabela `days` tem um campo `mood`, mas a tabela `logs` também tem um campo `mood` (anotado como *nullable, para uso futuro*). Isso vai gerar inconsistência de fonte de verdade (SSOT). O humor é atrelado ao dia inteiro ou a cada log específico?
+- **Monolito de Estilos (`globals.css`):** Um único arquivo CSS de ~58KB e quase 3000 linhas é insustentável. Há classes globais não utilizadas e alto risco de sobrescritas conflitantes (CSS clash).
+- **Sem Tratamento Global de Erros:** Existe um `error.tsx` genérico, mas erros de *fetch* ou de *actions* dentro dos Server Components vão derrubar a renderização da página toda ao invés de usar Error Boundaries localizados.
+
+### 🟢 Baixos (Melhorias contínuas)
+- **Acessibilidade de Inputs (iOS):** Inputs de horário `<input type="time">` não têm `font-size: 16px` explícito, causando *zoom-in* involuntário em iPhones.
+- **Falta de Suporte Offline (PWA):** Como é um app de registro rápido para TDAH, a falta de um Service Worker torna o app dependente de conexão contínua. 
+- **Warnings em Testes:** `act(...)` warnings no Vitest/RTL poluem os logs durante o desenvolvimento (`LogForm.test.tsx`).
+
+## 3. Sugestões Práticas de Implementação
+
+### A. Resolver Gargalo de Performance (Lazy Loading de PDFs)
+Em vez de importar as bibliotecas no topo do arquivo na página de Profile, importe-as dinamicamente apenas quando o usuário clicar no botão de exportar:
+
+```tsx
+// lib/report/pdf.ts (exemplo de mudança)
+export async function generatePDFReport(data) {
+  // O import dinâmico impede que a lib trave o carregamento da página
+  const { jsPDF } = await import("jspdf");
+  const doc = new jsPDF();
+  // ... resto da lógica
+}
+```
+
+### B. Unificar o Estado Otimista (Lifting State Up)
+Atualmente, se você tiver dois componentes renderizando logs na Home, crie um **Provider** ou suba o estado otimista para o componente pai (`HomeCalendarSection`).
+
+```tsx
+// Exemplo estrutural
+export function HomeClientWrapper({ initialLogs }) {
+  const [optimisticLogs, addOptimisticLog] = useOptimistic(initialLogs, logsReducer);
+
+  return (
+    <>
+      {/* Ambos agora leem da mesma fonte otimista */}
+      <TodayLogsCard logs={optimisticLogs} />
+      <DailyLogPanel onAdd={addOptimisticLog} />
+    </>
+  );
+}
+```
+
+### C. Consertar os Botões Mobile via Media Queries
+No seu arquivo `globals.css`, adicione uma regra garantindo que se o dispositivo não tem hover (telas touch), a opacidade é sempre visível:
+
+```css
+@media (hover: none) {
+  .log-item__actions {
+    opacity: 1; /* Sempre visível em celulares */
+  }
+}
+```

@@ -1,617 +1,1006 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semana — esboço v2</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg: #EEF1EC;
-    --surface: #FFFFFF;
-    --ink: #23302B;
-    --muted: #7C8580;
-    --line: #DCE1DB;
-    --structure: #3F5C53;
-    --accent: #6C86C4;
-    --today: #E3A15B;
-    --today-soft: #FBE9D3;
-    --mood-4: #E4C97E;
-    --radius: 18px;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--ink);
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  .shell{
-    max-width:960px;
-    margin:0 auto;
-    padding:32px 24px 120px;
-  }
-  header.top{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-    margin-bottom:8px;
-  }
-  .brand{
-    font-family:'Outfit',sans-serif;
-    font-weight:600;
-    font-size:22px;
-    color:var(--structure);
-    letter-spacing:-0.02em;
-  }
-  .brand span{color:var(--today);}
-  .month-left{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    color:var(--muted);
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:999px;
-    padding:5px 12px;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semana — esboço v2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #EEF1EC;
+      --surface: #FFFFFF;
+      --ink: #23302B;
+      --muted: #7C8580;
+      --line: #DCE1DB;
+      --structure: #3F5C53;
+      --accent: #6C86C4;
+      --today: #E3A15B;
+      --today-soft: #FBE9D3;
+      --mood-4: #E4C97E;
+      --radius: 18px;
+    }
 
-  /* ---- Greeting block (replaces the always-visible day row) ---- */
-  .greeting{
-    margin:22px 0 18px;
-  }
-  .greeting h1{
-    font-family:'Outfit',sans-serif;
-    font-weight:600;
-    font-size:26px;
-    margin:0 0 4px;
-    letter-spacing:-0.01em;
-  }
-  .greeting p{
-    margin:0;
-    font-size:14px;
-    color:var(--muted);
-  }
+    * {
+      box-sizing: border-box;
+    }
 
-  .calendar-toggle{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:999px;
-    padding:8px 14px;
-    font-size:13px;
-    font-weight:500;
-    color:var(--structure);
-    cursor:pointer;
-    margin:6px 0 22px;
-    transition:background .15s ease;
-  }
-  .calendar-toggle:hover{ background:var(--today-soft); }
-  .calendar-toggle .chev{
-    display:inline-block;
-    transition:transform .2s ease;
-  }
-  .calendar-toggle.open .chev{ transform:rotate(180deg); }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  /* ---- Retractable calendar ---- */
-  .calendar-panel{
-    max-height:0;
-    overflow:hidden;
-    transition:max-height .28s ease;
-  }
-  .calendar-panel.open{ max-height:900px; }
-  .calendar-inner{ padding-bottom:20px; }
+    .shell {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px 120px;
+    }
 
-  .horizon-wrap{ position:relative; padding:22px 0 0; margin-bottom:0; }
-  .horizon-line{
-    position:absolute; top:14px; left:6px; right:6px; height:3px; border-radius:3px;
-    background:linear-gradient(90deg,#9FB8D9 0%,#A9C2C7 22%,#B7C9AE 40%,#D3C793 58%,#E3B77E 74%,#E39472 100%);
-    opacity:.55;
-  }
-  .horizon-marker{
-    position:absolute; top:8px; width:16px; height:16px; border-radius:50%;
-    background:var(--today); box-shadow:0 0 0 5px var(--today-soft); transition:left .3s ease;
-  }
-  .week-row{ display:grid; grid-template-columns:repeat(7,1fr); gap:10px; position:relative; }
-  .day-card{
-    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    padding:14px 10px; text-align:center; cursor:pointer;
-    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-  }
-  .day-card:hover{ transform:translateY(-2px); box-shadow:0 8px 20px -14px rgba(35,48,43,.35); }
-  .day-card .dow{ font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:6px; }
-  .day-card .num{ font-family:'Outfit',sans-serif; font-weight:600; font-size:20px; }
-  .day-card .dots{ display:flex; justify-content:center; gap:4px; margin-top:8px; min-height:8px; }
-  .dot{ width:6px;height:6px;border-radius:50%; }
-  .dot.log{ background:var(--structure); }
-  .dot.mood{ background:var(--mood-4); }
-  .day-card.today{ border-color:var(--today); background:var(--today-soft); }
-  .day-card.today .num{ color:var(--today); }
-  .day-card.selected{ border-color:var(--structure); box-shadow:0 0 0 2px var(--structure) inset; }
-  .day-card.empty .dots{ opacity:.25; }
+    header.top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
 
-  .day-detail{
-    margin-top:16px;
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:16px 18px;
-  }
-  .day-detail h3{ font-family:'Outfit',sans-serif; font-size:14px; margin:0 0 10px; color:var(--structure); }
-  .log-item{ display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); font-size:13px; }
-  .log-item:last-child{ border-bottom:none; }
-  .log-item .time{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); white-space:nowrap; padding-top:1px; }
-  .log-item .tag{
-    font-size:11px; color:var(--structure); background:#E7EFE8; border-radius:999px; padding:2px 8px; margin-left:6px;
-  }
-  .log-empty{ color:var(--muted); font-size:13px; text-align:center; padding:14px 0; }
+    .brand {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 22px;
+      color: var(--structure);
+      letter-spacing: -0.02em;
+    }
 
-  /* ---- Panels grid ---- */
-  .panels{ display:grid; grid-template-columns:1.3fr 1fr; gap:16px; }
-  .panel{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px; }
-  .panel h2{ font-family:'Outfit',sans-serif; font-size:15px; font-weight:600; margin:0 0 4px; color:var(--structure); }
-  .panel h2 small{ display:block; font-family:'Inter',sans-serif; font-weight:400; font-size:12px; color:var(--muted); margin-top:2px; margin-bottom:14px; }
+    .brand span {
+      color: var(--today);
+    }
 
-  .capture-box{ border:1px dashed var(--line); border-radius:14px; padding:14px; margin-bottom:16px; }
-  .capture-box textarea{
-    width:100%; border:none; outline:none; resize:none; font-family:'Inter',sans-serif; font-size:14px;
-    color:var(--ink); background:transparent; min-height:44px;
-  }
-  .capture-box textarea::placeholder{ color:var(--muted); }
+    .month-left {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 12px;
+    }
 
-  .link-task-label{
-    font-size:11px; color:var(--muted); margin:10px 0 6px; text-transform:uppercase; letter-spacing:.04em;
-  }
-  .chip-row{ display:flex; flex-wrap:wrap; gap:6px; }
-  .chip{
-    font-size:12px; padding:5px 11px; border-radius:999px; border:1px solid var(--line);
-    background:var(--surface); color:var(--ink); cursor:pointer; transition:all .12s ease;
-  }
-  .chip:hover{ border-color:var(--structure); }
-  .chip.active{ background:var(--structure); color:#fff; border-color:var(--structure); }
-  .chip.none{ color:var(--muted); }
+    /* ---- Greeting block (replaces the always-visible day row) ---- */
+    .greeting {
+      margin: 22px 0 18px;
+    }
 
-  .capture-actions{ display:flex; align-items:center; justify-content:flex-end; margin-top:12px; }
-  .save-btn{
-    background:var(--structure); color:#fff; border:none; border-radius:999px; padding:8px 16px;
-    font-family:'Inter',sans-serif; font-weight:500; font-size:13px; cursor:pointer;
-  }
-  .save-btn:hover{ opacity:.9; }
-  .ghost-btn{
-    background:none; border:1px solid var(--line); color:var(--structure); border-radius:999px;
-    padding:8px 14px; font-size:13px; font-weight:500; cursor:pointer;
-  }
-  .ghost-btn:hover{ background:var(--today-soft); }
+    .greeting h1 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 26px;
+      margin: 0 0 4px;
+      letter-spacing: -0.01em;
+    }
 
-  /* Tasks panel */
-  .task-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); }
-  .task-row:last-child{ border-bottom:none; }
-  .task-name{ font-size:14px; }
-  .task-count{
-    font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--muted); background:var(--bg);
-    border-radius:999px; padding:4px 10px; cursor:pointer; user-select:none; transition:background .15s ease, color .15s ease;
-  }
-  .task-count:hover{ background:var(--today-soft); color:var(--today); }
-  .task-count.done{ color:var(--structure); background:#E7EFE8; }
-  .task-empty{ color:var(--muted); font-size:13px; text-align:center; padding:14px 0; }
+    .greeting p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
 
-  .panel-actions{ display:flex; gap:8px; margin-top:14px; }
-  .link-btn{
-    background:none; border:none; color:var(--structure); font-size:12px; font-weight:500;
-    text-decoration:underline; cursor:pointer; padding:0;
-  }
+    .calendar-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--structure);
+      cursor: pointer;
+      margin: 6px 0 22px;
+      transition: background .15s ease;
+    }
 
-  /* Floating quick capture */
-  .fab{
-    position:fixed; right:28px; bottom:28px; width:56px; height:56px; border-radius:50%;
-    background:var(--today); color:#fff; border:none; font-size:26px;
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 12px 24px -10px rgba(227,161,91,.6); cursor:pointer; transition:transform .15s ease;
-  }
-  .fab:hover{ transform:scale(1.06); }
+    .calendar-toggle:hover {
+      background: var(--today-soft);
+    }
 
-  /* Modals */
-  .modal-backdrop{
-    position:fixed; inset:0; background:rgba(35,48,43,.35);
-    display:none; align-items:center; justify-content:center; padding:20px; z-index:10;
-  }
-  .modal-backdrop.open{ display:flex; }
-  .modal{
-    background:var(--surface); width:100%; max-width:480px; border-radius:20px; padding:22px;
-    max-height:85vh; overflow-y:auto; animation:pop .18s ease;
-  }
-  @keyframes pop{ from{ transform:scale(.97); opacity:0; } to{ transform:scale(1); opacity:1; } }
-  .modal-title{ font-family:'Outfit',sans-serif; font-weight:600; font-size:17px; margin-bottom:4px; }
-  .modal-sub{ font-size:12px; color:var(--muted); margin-bottom:16px; }
-  .plan-row, .lib-row{
-    display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line);
-  }
-  .plan-row:last-child, .lib-row:last-child{ border-bottom:none; }
-  .plan-row input[type="checkbox"]{ width:16px;height:16px; accent-color:var(--structure); }
-  .plan-row .name{ flex:1; font-size:14px; }
-  .plan-row input[type="number"], .lib-row input[type="number"]{
-    width:48px; text-align:center; border:1px solid var(--line); border-radius:8px; padding:4px; font-family:'IBM Plex Mono',monospace; font-size:12px;
-  }
-  .lib-row input[type="text"]{
-    flex:1; border:1px solid var(--line); border-radius:8px; padding:6px 10px; font-family:'Inter',sans-serif; font-size:13px; outline:none;
-  }
-  .lib-row .remove{
-    background:none; border:none; color:#C6685A; cursor:pointer; font-size:14px; padding:2px 6px;
-  }
-  .add-lib-row{
-    display:flex; gap:8px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
-  }
-  .modal-footer{ display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
-</style>
+    .calendar-toggle .chev {
+      display: inline-block;
+      transition: transform .2s ease;
+    }
+
+    .calendar-toggle.open .chev {
+      transform: rotate(180deg);
+    }
+
+    /* ---- Retractable calendar ---- */
+    .calendar-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .28s ease;
+    }
+
+    .calendar-panel.open {
+      max-height: 900px;
+    }
+
+    .calendar-inner {
+      padding-bottom: 20px;
+    }
+
+    .horizon-wrap {
+      position: relative;
+      padding: 22px 0 0;
+      margin-bottom: 0;
+    }
+
+    .horizon-line {
+      position: absolute;
+      top: 14px;
+      left: 6px;
+      right: 6px;
+      height: 3px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #9FB8D9 0%, #A9C2C7 22%, #B7C9AE 40%, #D3C793 58%, #E3B77E 74%, #E39472 100%);
+      opacity: .55;
+    }
+
+    .horizon-marker {
+      position: absolute;
+      top: 8px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--today);
+      box-shadow: 0 0 0 5px var(--today-soft);
+      transition: left .3s ease;
+    }
+
+    .week-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      position: relative;
+    }
+
+    .day-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .day-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -14px rgba(35, 48, 43, .35);
+    }
+
+    .day-card .dow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .day-card .num {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 20px;
+    }
+
+    .day-card .dots {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 8px;
+      min-height: 8px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .dot.log {
+      background: var(--structure);
+    }
+
+    .dot.mood {
+      background: var(--mood-4);
+    }
+
+    .day-card.today {
+      border-color: var(--today);
+      background: var(--today-soft);
+    }
+
+    .day-card.today .num {
+      color: var(--today);
+    }
+
+    .day-card.selected {
+      border-color: var(--structure);
+      box-shadow: 0 0 0 2px var(--structure) inset;
+    }
+
+    .day-card.empty .dots {
+      opacity: .25;
+    }
+
+    .day-detail {
+      margin-top: 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+
+    .day-detail h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      margin: 0 0 10px;
+      color: var(--structure);
+    }
+
+    .log-item {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .log-item:last-child {
+      border-bottom: none;
+    }
+
+    .log-item .time {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      padding-top: 1px;
+    }
+
+    .log-item .tag {
+      font-size: 11px;
+      color: var(--structure);
+      background: #E7EFE8;
+      border-radius: 999px;
+      padding: 2px 8px;
+      margin-left: 6px;
+    }
+
+    .log-empty {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 14px 0;
+    }
+
+    /* ---- Panels grid ---- */
+    .panels {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .panel h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0 0 4px;
+      color: var(--structure);
+    }
+
+    .panel h2 small {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+      margin-bottom: 14px;
+    }
+
+    .capture-box {
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .capture-box textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: transparent;
+      min-height: 44px;
+    }
+
+    .capture-box textarea::placeholder {
+      color: var(--muted);
+    }
+
+    .link-task-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 10px 0 6px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      font-size: 12px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      transition: all .12s ease;
+    }
+
+    .chip:hover {
+      border-color: var(--structure);
+    }
+
+    .chip.active {
+      background: var(--structure);
+      color: #fff;
+      border-color: var(--structure);
+    }
+
+    .chip.none {
+      color: var(--muted);
+    }
+
+    .capture-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .save-btn {
+      background: var(--structure);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .save-btn:hover {
+      opacity: .9;
+    }
+
+    .ghost-btn {
+      background: none;
+      border: 1px solid var(--line);
+      color: var(--structure);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .ghost-btn:hover {
+      background: var(--today-soft);
+    }
+
+    /* Tasks panel */
+    .task-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .task-row:last-child {
+      border-bottom: none;
+    }
+
+    .task-name {
+      font-size: 14px;
+    }
+
+    .task-count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      color: var(--muted);
+      background: var(--bg);
+      border-radius: 999px;
+      padding: 4px 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: background .15s ease, color .15s ease;
+    }
+
+    .task-count:hover {
+      background: var(--today-soft);
+      color: var(--today);
+    }
+
+    .task-count.done {
+      color: var(--structure);
+      background: #E7EFE8;
+    }
+
+    .task-empty {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 14px 0;
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--structure);
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    /* Floating quick capture */
+    .fab {
+      position: fixed;
+      right: 28px;
+      bottom: 28px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--today);
+      color: #fff;
+      border: none;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 24px -10px rgba(227, 161, 91, .6);
+      cursor: pointer;
+      transition: transform .15s ease;
+    }
+
+    .fab:hover {
+      transform: scale(1.06);
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(35, 48, 43, .35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 10;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 20px;
+      padding: 22px;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: pop .18s ease;
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(.97);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 17px;
+      margin-bottom: 4px;
+    }
+
+    .modal-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .plan-row,
+    .lib-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .plan-row:last-child,
+    .lib-row:last-child {
+      border-bottom: none;
+    }
+
+    .plan-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--structure);
+    }
+
+    .plan-row .name {
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .plan-row input[type="number"],
+    .lib-row input[type="number"] {
+      width: 48px;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+    }
+
+    .lib-row input[type="text"] {
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .lib-row .remove {
+      background: none;
+      border: none;
+      color: #C6685A;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px 6px;
+    }
+
+    .add-lib-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 18px;
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="shell">
+  <div class="shell">
 
-  <header class="top">
-    <div class="brand">semana<span>.</span></div>
-    <div class="month-left" id="monthLeft">faltam 16 dias no mês</div>
-  </header>
+    <header class="top">
+      <div class="brand">semana<span>.</span></div>
+      <div class="month-left" id="monthLeft">faltam 16 dias no mês</div>
+    </header>
 
-  <div class="greeting">
-    <h1 id="greetingTitle">Bom dia. Hoje é quarta-feira, 15 de julho.</h1>
-    <p>Seu espaço para registrar o dia, sem pressão.</p>
-  </div>
-
-  <button class="calendar-toggle" id="calToggle" onclick="toggleCalendar()">
-    <span>Ver calendário da semana</span><span class="chev">⌄</span>
-  </button>
-
-  <div class="calendar-panel" id="calendarPanel">
-    <div class="calendar-inner">
-      <div class="horizon-wrap">
-        <div class="horizon-line"></div>
-        <div class="horizon-marker" id="horizonMarker"></div>
-        <div class="week-row" id="weekRow"></div>
-      </div>
-      <div class="day-detail" id="dayDetail">
-        <h3 id="dayDetailTitle">Registros de hoje</h3>
-        <div id="logList"></div>
-      </div>
+    <div class="greeting">
+      <h1 id="greetingTitle">Bom dia. Hoje é quarta-feira, 15 de julho.</h1>
+      <p>Seu espaço para registrar o dia, sem pressão.</p>
     </div>
-  </div>
 
-  <div class="panels">
-    <div class="panel">
-      <h2>Registro do dia
-        <small>Brain dump rápido. O humor terá um espaço próprio, futuramente.</small>
-      </h2>
+    <button class="calendar-toggle" id="calToggle" onclick="toggleCalendar()">
+      <span>Ver calendário da semana</span><span class="chev">⌄</span>
+    </button>
 
-      <div class="capture-box">
-        <textarea id="quickInput" placeholder="O que aconteceu?"></textarea>
-
-        <div class="link-task-label">Vincular a uma tarefa da semana (opcional)</div>
-        <div class="chip-row" id="taskChips"></div>
-
-        <div class="capture-actions">
-          <button class="save-btn" onclick="saveLog()">Salvar</button>
+    <div class="calendar-panel" id="calendarPanel">
+      <div class="calendar-inner">
+        <div class="horizon-wrap">
+          <div class="horizon-line"></div>
+          <div class="horizon-marker" id="horizonMarker"></div>
+          <div class="week-row" id="weekRow"></div>
+        </div>
+        <div class="day-detail" id="dayDetail">
+          <h3 id="dayDetailTitle">Registros de hoje</h3>
+          <div id="logList"></div>
         </div>
       </div>
     </div>
 
-    <div class="panel">
-      <h2>Tarefas da semana
-        <small>Contagem informativa, sem cobrança</small>
-      </h2>
-      <div id="taskList"></div>
-      <div class="panel-actions">
-        <button class="ghost-btn" onclick="openPlanModal()">Planejar semana</button>
-        <button class="link-btn" onclick="openLibraryModal()">Editar tarefas</button>
+    <div class="panels">
+      <div class="panel">
+        <h2>Registro do dia
+          <small>Brain dump rápido. O humor terá um espaço próprio, futuramente.</small>
+        </h2>
+
+        <div class="capture-box">
+          <textarea id="quickInput" placeholder="O que aconteceu?"></textarea>
+
+          <div class="link-task-label">Vincular a uma tarefa da semana (opcional)</div>
+          <div class="chip-row" id="taskChips"></div>
+
+          <div class="capture-actions">
+            <button class="save-btn" onclick="saveLog()">Salvar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Tarefas da semana
+          <small>Contagem informativa, sem cobrança</small>
+        </h2>
+        <div id="taskList"></div>
+        <div class="panel-actions">
+          <button class="ghost-btn" onclick="openPlanModal()">Planejar semana</button>
+          <button class="link-btn" onclick="openLibraryModal()">Editar tarefas</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="fab" onclick="openSheet()">+</button>
+
+  <!-- Captura instantânea (sheet) -->
+  <div class="modal-backdrop" id="sheetBackdrop" onclick="closeIfBackdrop(event,'sheetBackdrop')">
+    <div class="modal">
+      <div class="modal-title">Captura instantânea</div>
+      <div class="modal-sub">Salve agora, decida o dia depois.</div>
+      <div class="capture-box" style="border:1px solid var(--line);">
+        <textarea placeholder="Digite rápido, sem se preocupar em organizar..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="ghost-btn" onclick="closeModal('sheetBackdrop')">Cancelar</button>
+        <button class="save-btn" onclick="closeModal('sheetBackdrop')">Salvar</button>
       </div>
     </div>
   </div>
 
-</div>
-
-<button class="fab" onclick="openSheet()">+</button>
-
-<!-- Captura instantânea (sheet) -->
-<div class="modal-backdrop" id="sheetBackdrop" onclick="closeIfBackdrop(event,'sheetBackdrop')">
-  <div class="modal">
-    <div class="modal-title">Captura instantânea</div>
-    <div class="modal-sub">Salve agora, decida o dia depois.</div>
-    <div class="capture-box" style="border:1px solid var(--line);">
-      <textarea placeholder="Digite rápido, sem se preocupar em organizar..."></textarea>
-    </div>
-    <div class="modal-footer">
-      <button class="ghost-btn" onclick="closeModal('sheetBackdrop')">Cancelar</button>
-      <button class="save-btn" onclick="closeModal('sheetBackdrop')">Salvar</button>
+  <!-- Planejar Semana -->
+  <div class="modal-backdrop" id="planBackdrop" onclick="closeIfBackdrop(event,'planBackdrop')">
+    <div class="modal">
+      <div class="modal-title">Planejar semana</div>
+      <div class="modal-sub">Escolha, na sua biblioteca de tarefas, o que faz sentido para essa semana e ajuste a
+        quantidade se precisar.</div>
+      <div id="planList"></div>
+      <div class="modal-footer">
+        <button class="ghost-btn" onclick="closeModal('planBackdrop')">Cancelar</button>
+        <button class="save-btn" onclick="savePlan()">Salvar plano</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Planejar Semana -->
-<div class="modal-backdrop" id="planBackdrop" onclick="closeIfBackdrop(event,'planBackdrop')">
-  <div class="modal">
-    <div class="modal-title">Planejar semana</div>
-    <div class="modal-sub">Escolha, na sua biblioteca de tarefas, o que faz sentido para essa semana e ajuste a quantidade se precisar.</div>
-    <div id="planList"></div>
-    <div class="modal-footer">
-      <button class="ghost-btn" onclick="closeModal('planBackdrop')">Cancelar</button>
-      <button class="save-btn" onclick="savePlan()">Salvar plano</button>
+  <!-- Editar tarefas (biblioteca) -->
+  <div class="modal-backdrop" id="libBackdrop" onclick="closeIfBackdrop(event,'libBackdrop')">
+    <div class="modal">
+      <div class="modal-title">Editar tarefas</div>
+      <div class="modal-sub">Essa é sua biblioteca de tarefas. Ela alimenta o "Planejar semana" — editar aqui não muda a
+        semana atual.</div>
+      <div id="libList"></div>
+      <div class="add-lib-row">
+        <input type="text" id="newTaskName" placeholder="Nova tarefa (ex: Regar plantas)">
+        <input type="number" id="newTaskQty" value="3" min="1">
+        <button class="ghost-btn" onclick="addLibraryTask()">Adicionar</button>
+      </div>
+      <div class="modal-footer">
+        <button class="save-btn" onclick="closeModal('libBackdrop')">Concluído</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Editar tarefas (biblioteca) -->
-<div class="modal-backdrop" id="libBackdrop" onclick="closeIfBackdrop(event,'libBackdrop')">
-  <div class="modal">
-    <div class="modal-title">Editar tarefas</div>
-    <div class="modal-sub">Essa é sua biblioteca de tarefas. Ela alimenta o "Planejar semana" — editar aqui não muda a semana atual.</div>
-    <div id="libList"></div>
-    <div class="add-lib-row">
-      <input type="text" id="newTaskName" placeholder="Nova tarefa (ex: Regar plantas)">
-      <input type="number" id="newTaskQty" value="3" min="1">
-      <button class="ghost-btn" onclick="addLibraryTask()">Adicionar</button>
-    </div>
-    <div class="modal-footer">
-      <button class="save-btn" onclick="closeModal('libBackdrop')">Concluído</button>
-    </div>
-  </div>
-</div>
+  <script>
+    // ---- Data ----
+    const days = [
+      { dow: 'seg', num: 13, hasLog: false, mood: null },
+      { dow: 'ter', num: 14, hasLog: true, mood: null },
+      { dow: 'qua', num: 15, hasLog: true, mood: null, today: true },
+      { dow: 'qui', num: 16, hasLog: false, mood: null },
+      { dow: 'sex', num: 17, hasLog: false, mood: null },
+      { dow: 'sáb', num: 18, hasLog: false, mood: null },
+      { dow: 'dom', num: 19, hasLog: false, mood: null },
+    ];
 
-<script>
-  // ---- Data ----
-  const days = [
-    { dow:'seg', num:13, hasLog:false, mood:null },
-    { dow:'ter', num:14, hasLog:true,  mood:null },
-    { dow:'qua', num:15, hasLog:true,  mood:null, today:true },
-    { dow:'qui', num:16, hasLog:false, mood:null },
-    { dow:'sex', num:17, hasLog:false, mood:null },
-    { dow:'sáb', num:18, hasLog:false, mood:null },
-    { dow:'dom', num:19, hasLog:false, mood:null },
-  ];
+    const sampleLogs = {
+      13: [{ time: '19:20', text: 'Dia corrido, mas fechei as pendências do trabalho.' }],
+      14: [{ time: '09:12', text: 'Reunião foi tranquila, consegui focar bem.', task: 'Ligar pra família' }],
+      15: [{ time: '08:03', text: 'Reguei duas vasos antes de sair.', task: 'Regar plantas' }],
+    };
 
-  const sampleLogs = {
-    13: [ { time:'19:20', text:'Dia corrido, mas fechei as pendências do trabalho.' } ],
-    14: [ { time:'09:12', text:'Reunião foi tranquila, consegui focar bem.', task:'Ligar pra família' } ],
-    15: [ { time:'08:03', text:'Reguei duas vasos antes de sair.', task:'Regar plantas' } ],
-  };
+    // Biblioteca (templates reutilizáveis entre semanas)
+    let taskLibrary = [
+      { id: 1, name: 'Regar plantas', defaultQty: 3 },
+      { id: 2, name: 'Ligar pra família', defaultQty: 1 },
+      { id: 3, name: 'Caminhada', defaultQty: 4 },
+      { id: 4, name: 'Organizar mesa de trabalho', defaultQty: 1 },
+    ];
 
-  // Biblioteca (templates reutilizáveis entre semanas)
-  let taskLibrary = [
-    { id:1, name:'Regar plantas', defaultQty:3 },
-    { id:2, name:'Ligar pra família', defaultQty:1 },
-    { id:3, name:'Caminhada', defaultQty:4 },
-    { id:4, name:'Organizar mesa de trabalho', defaultQty:1 },
-  ];
+    // Plano da semana atual (subset da biblioteca, com meta e progresso)
+    let weekPlan = [
+      { id: 1, name: 'Regar plantas', qty: 3, done: 1 },
+      { id: 2, name: 'Ligar pra família', qty: 1, done: 1 },
+      { id: 3, name: 'Caminhada', qty: 4, done: 2 },
+    ];
 
-  // Plano da semana atual (subset da biblioteca, com meta e progresso)
-  let weekPlan = [
-    { id:1, name:'Regar plantas', qty:3, done:1 },
-    { id:2, name:'Ligar pra família', qty:1, done:1 },
-    { id:3, name:'Caminhada', qty:4, done:2 },
-  ];
+    let selectedDayIndex = days.findIndex(d => d.today);
+    let selectedTaskId = null;
 
-  let selectedDayIndex = days.findIndex(d => d.today);
-  let selectedTaskId = null;
+    // ---- Greeting + days left in month ----
+    function renderGreetingAndMonth() {
+      const now = new Date();
+      const hour = now.getHours();
+      const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+      const weekdayNames = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+      const monthNames = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+      const wd = weekdayNames[now.getDay()];
+      const dayNum = now.getDate();
+      const monthName = monthNames[now.getMonth()];
+      document.getElementById('greetingTitle').textContent = `${greeting}. Hoje é ${wd}, ${dayNum} de ${monthName}.`;
 
-  // ---- Greeting + days left in month ----
-  function renderGreetingAndMonth(){
-    const now = new Date();
-    const hour = now.getHours();
-    const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
-    const weekdayNames = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
-    const monthNames = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-    const wd = weekdayNames[now.getDay()];
-    const dayNum = now.getDate();
-    const monthName = monthNames[now.getMonth()];
-    document.getElementById('greetingTitle').textContent = `${greeting}. Hoje é ${wd}, ${dayNum} de ${monthName}.`;
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      const left = lastDay - dayNum;
+      document.getElementById('monthLeft').textContent = left <= 0 ? 'último dia do mês' : `faltam ${left} dias no mês`;
+    }
 
-    const lastDay = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
-    const left = lastDay - dayNum;
-    document.getElementById('monthLeft').textContent = left <= 0 ? 'último dia do mês' : `faltam ${left} dias no mês`;
-  }
+    // ---- Calendar toggle ----
+    function toggleCalendar() {
+      const panel = document.getElementById('calendarPanel');
+      const btn = document.getElementById('calToggle');
+      panel.classList.toggle('open');
+      btn.classList.toggle('open');
+    }
 
-  // ---- Calendar toggle ----
-  function toggleCalendar(){
-    const panel = document.getElementById('calendarPanel');
-    const btn = document.getElementById('calToggle');
-    panel.classList.toggle('open');
-    btn.classList.toggle('open');
-  }
-
-  function renderWeek(){
-    const row = document.getElementById('weekRow');
-    row.innerHTML = '';
-    days.forEach((d, i) => {
-      const card = document.createElement('div');
-      card.className = 'day-card' + (d.today ? ' today' : '') + (i === selectedDayIndex ? ' selected' : '') + (!d.hasLog ? ' empty' : '');
-      card.onclick = () => { selectedDayIndex = i; renderWeek(); renderDayDetail(); };
-      card.innerHTML = `
+    function renderWeek() {
+      const row = document.getElementById('weekRow');
+      row.innerHTML = '';
+      days.forEach((d, i) => {
+        const card = document.createElement('div');
+        card.className = 'day-card' + (d.today ? ' today' : '') + (i === selectedDayIndex ? ' selected' : '') + (!d.hasLog ? ' empty' : '');
+        card.onclick = () => { selectedDayIndex = i; renderWeek(); renderDayDetail(); };
+        card.innerHTML = `
         <div class="dow">${d.dow}</div>
         <div class="num">${d.num}</div>
         <div class="dots">${d.hasLog ? '<span class="dot log"></span>' : ''}</div>
       `;
-      row.appendChild(card);
-    });
-    const marker = document.getElementById('horizonMarker');
-    const todayIdx = days.findIndex(d => d.today);
-    const pct = (todayIdx + 0.5) / 7 * 100;
-    marker.style.left = `calc(${pct}% - 8px)`;
-  }
+        row.appendChild(card);
+      });
+      const marker = document.getElementById('horizonMarker');
+      const todayIdx = days.findIndex(d => d.today);
+      const pct = (todayIdx + 0.5) / 7 * 100;
+      marker.style.left = `calc(${pct}% - 8px)`;
+    }
 
-  function renderDayDetail(){
-    const d = days[selectedDayIndex];
-    const dayNames = { seg:'segunda-feira', ter:'terça-feira', qua:'quarta-feira', qui:'quinta-feira', sex:'sexta-feira', sáb:'sábado', dom:'domingo' };
-    document.getElementById('dayDetailTitle').textContent = `Registros de ${d.today ? 'hoje' : dayNames[d.dow]}`;
-    const list = document.getElementById('logList');
-    const logs = sampleLogs[d.num];
-    if (logs && logs.length){
-      list.innerHTML = logs.map(l => `
+    function renderDayDetail() {
+      const d = days[selectedDayIndex];
+      const dayNames = { seg: 'segunda-feira', ter: 'terça-feira', qua: 'quarta-feira', qui: 'quinta-feira', sex: 'sexta-feira', sáb: 'sábado', dom: 'domingo' };
+      document.getElementById('dayDetailTitle').textContent = `Registros de ${d.today ? 'hoje' : dayNames[d.dow]}`;
+      const list = document.getElementById('logList');
+      const logs = sampleLogs[d.num];
+      if (logs && logs.length) {
+        list.innerHTML = logs.map(l => `
         <div class="log-item">
           <span class="time">${l.time}</span>
           <span>${l.text}${l.task ? `<span class="tag">${l.task}</span>` : ''}</span>
         </div>
       `).join('');
-    } else {
-      list.innerHTML = `<div class="log-empty">Nenhum registro ainda neste dia.</div>`;
+      } else {
+        list.innerHTML = `<div class="log-empty">Nenhum registro ainda neste dia.</div>`;
+      }
     }
-  }
 
-  // ---- Task chips in quick capture ----
-  function renderTaskChips(){
-    const wrap = document.getElementById('taskChips');
-    wrap.innerHTML = '';
-    const noneChip = document.createElement('div');
-    noneChip.className = 'chip none' + (selectedTaskId === null ? ' active' : '');
-    noneChip.textContent = 'nenhuma';
-    noneChip.onclick = () => { selectedTaskId = null; renderTaskChips(); };
-    wrap.appendChild(noneChip);
+    // ---- Task chips in quick capture ----
+    function renderTaskChips() {
+      const wrap = document.getElementById('taskChips');
+      wrap.innerHTML = '';
+      const noneChip = document.createElement('div');
+      noneChip.className = 'chip none' + (selectedTaskId === null ? ' active' : '');
+      noneChip.textContent = 'nenhuma';
+      noneChip.onclick = () => { selectedTaskId = null; renderTaskChips(); };
+      wrap.appendChild(noneChip);
 
-    weekPlan.forEach(t => {
-      const chip = document.createElement('div');
-      chip.className = 'chip' + (selectedTaskId === t.id ? ' active' : '');
-      chip.textContent = t.name;
-      chip.onclick = () => { selectedTaskId = t.id; renderTaskChips(); };
-      wrap.appendChild(chip);
-    });
-  }
-
-  // ---- Weekly tasks panel ----
-  function renderTasks(){
-    const list = document.getElementById('taskList');
-    if (!weekPlan.length){
-      list.innerHTML = `<div class="task-empty">Nenhuma tarefa planejada ainda. Use "Planejar semana".</div>`;
-      return;
+      weekPlan.forEach(t => {
+        const chip = document.createElement('div');
+        chip.className = 'chip' + (selectedTaskId === t.id ? ' active' : '');
+        chip.textContent = t.name;
+        chip.onclick = () => { selectedTaskId = t.id; renderTaskChips(); };
+        wrap.appendChild(chip);
+      });
     }
-    list.innerHTML = weekPlan.map((t,i) => `
+
+    // ---- Weekly tasks panel ----
+    function renderTasks() {
+      const list = document.getElementById('taskList');
+      if (!weekPlan.length) {
+        list.innerHTML = `<div class="task-empty">Nenhuma tarefa planejada ainda. Use "Planejar semana".</div>`;
+        return;
+      }
+      list.innerHTML = weekPlan.map((t, i) => `
       <div class="task-row">
         <span class="task-name">${t.name}</span>
         <span class="task-count ${t.done >= t.qty ? 'done' : ''}" onclick="bumpTask(${i})">${t.done}/${t.qty}</span>
       </div>
     `).join('');
-  }
-
-  function bumpTask(i){
-    if (weekPlan[i].done < weekPlan[i].qty) weekPlan[i].done++;
-    renderTasks();
-    renderTaskChips();
-  }
-
-  // ---- Save daily log (feeds task counter automatically) ----
-  function saveLog(){
-    const input = document.getElementById('quickInput');
-    if (!input.value.trim()) return;
-    const d = days[selectedDayIndex];
-    if (!sampleLogs[d.num]) sampleLogs[d.num] = [];
-    const now = new Date();
-    const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-
-    let linkedTaskName = null;
-    if (selectedTaskId !== null){
-      const t = weekPlan.find(t => t.id === selectedTaskId);
-      if (t){
-        linkedTaskName = t.name;
-        if (t.done < t.qty) t.done++;
-      }
     }
 
-    sampleLogs[d.num].push({ time, text: input.value.trim(), task: linkedTaskName });
-    d.hasLog = true;
-    input.value = '';
-    selectedTaskId = null;
+    function bumpTask(i) {
+      if (weekPlan[i].done < weekPlan[i].qty) weekPlan[i].done++;
+      renderTasks();
+      renderTaskChips();
+    }
 
-    renderWeek();
-    renderDayDetail();
-    renderTasks();
-    renderTaskChips();
-  }
+    // ---- Save daily log (feeds task counter automatically) ----
+    function saveLog() {
+      const input = document.getElementById('quickInput');
+      if (!input.value.trim()) return;
+      const d = days[selectedDayIndex];
+      if (!sampleLogs[d.num]) sampleLogs[d.num] = [];
+      const now = new Date();
+      const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
 
-  // ---- Planejar Semana modal ----
-  function openPlanModal(){
-    const list = document.getElementById('planList');
-    list.innerHTML = taskLibrary.map(lt => {
-      const existing = weekPlan.find(p => p.id === lt.id);
-      return `
+      let linkedTaskName = null;
+      if (selectedTaskId !== null) {
+        const t = weekPlan.find(t => t.id === selectedTaskId);
+        if (t) {
+          linkedTaskName = t.name;
+          if (t.done < t.qty) t.done++;
+        }
+      }
+
+      sampleLogs[d.num].push({ time, text: input.value.trim(), task: linkedTaskName });
+      d.hasLog = true;
+      input.value = '';
+      selectedTaskId = null;
+
+      renderWeek();
+      renderDayDetail();
+      renderTasks();
+      renderTaskChips();
+    }
+
+    // ---- Planejar Semana modal ----
+    function openPlanModal() {
+      const list = document.getElementById('planList');
+      list.innerHTML = taskLibrary.map(lt => {
+        const existing = weekPlan.find(p => p.id === lt.id);
+        return `
         <div class="plan-row">
           <input type="checkbox" data-id="${lt.id}" ${existing ? 'checked' : ''}>
           <span class="name">${lt.name}</span>
           <input type="number" data-qty-for="${lt.id}" min="1" value="${existing ? existing.qty : lt.defaultQty}">
         </div>
       `;
-    }).join('');
-    document.getElementById('planBackdrop').classList.add('open');
-  }
+      }).join('');
+      document.getElementById('planBackdrop').classList.add('open');
+    }
 
-  function savePlan(){
-    const checkboxes = document.querySelectorAll('#planList input[type="checkbox"]');
-    const newPlan = [];
-    checkboxes.forEach(cb => {
-      if (cb.checked){
-        const id = parseInt(cb.dataset.id);
-        const qtyInput = document.querySelector(`#planList input[data-qty-for="${id}"]`);
-        const qty = parseInt(qtyInput.value) || 1;
-        const lib = taskLibrary.find(l => l.id === id);
-        const existing = weekPlan.find(p => p.id === id);
-        newPlan.push({ id, name: lib.name, qty, done: existing ? Math.min(existing.done, qty) : 0 });
-      }
-    });
-    weekPlan = newPlan;
-    renderTasks();
-    renderTaskChips();
-    closeModal('planBackdrop');
-  }
+    function savePlan() {
+      const checkboxes = document.querySelectorAll('#planList input[type="checkbox"]');
+      const newPlan = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const id = parseInt(cb.dataset.id);
+          const qtyInput = document.querySelector(`#planList input[data-qty-for="${id}"]`);
+          const qty = parseInt(qtyInput.value) || 1;
+          const lib = taskLibrary.find(l => l.id === id);
+          const existing = weekPlan.find(p => p.id === id);
+          newPlan.push({ id, name: lib.name, qty, done: existing ? Math.min(existing.done, qty) : 0 });
+        }
+      });
+      weekPlan = newPlan;
+      renderTasks();
+      renderTaskChips();
+      closeModal('planBackdrop');
+    }
 
-  // ---- Editar tarefas (biblioteca) modal ----
-  function openLibraryModal(){
-    renderLibraryList();
-    document.getElementById('libBackdrop').classList.add('open');
-  }
+    // ---- Editar tarefas (biblioteca) modal ----
+    function openLibraryModal() {
+      renderLibraryList();
+      document.getElementById('libBackdrop').classList.add('open');
+    }
 
-  function renderLibraryList(){
-    const list = document.getElementById('libList');
-    list.innerHTML = taskLibrary.map(t => `
+    function renderLibraryList() {
+      const list = document.getElementById('libList');
+      list.innerHTML = taskLibrary.map(t => `
       <div class="lib-row">
         <input type="text" value="${t.name}" onchange="updateLibraryTask(${t.id}, 'name', this.value)">
         <input type="number" value="${t.defaultQty}" min="1" onchange="updateLibraryTask(${t.id}, 'defaultQty', this.value)">
         <button class="remove" onclick="removeLibraryTask(${t.id})">✕</button>
       </div>
     `).join('');
-  }
+    }
 
-  function updateLibraryTask(id, field, value){
-    const t = taskLibrary.find(t => t.id === id);
-    if (!t) return;
-    t[field] = field === 'defaultQty' ? (parseInt(value) || 1) : value;
-  }
+    function updateLibraryTask(id, field, value) {
+      const t = taskLibrary.find(t => t.id === id);
+      if (!t) return;
+      t[field] = field === 'defaultQty' ? (parseInt(value) || 1) : value;
+    }
 
-  function removeLibraryTask(id){
-    taskLibrary = taskLibrary.filter(t => t.id !== id);
-    renderLibraryList();
-  }
+    function removeLibraryTask(id) {
+      taskLibrary = taskLibrary.filter(t => t.id !== id);
+      renderLibraryList();
+    }
 
-  function addLibraryTask(){
-    const nameInput = document.getElementById('newTaskName');
-    const qtyInput = document.getElementById('newTaskQty');
-    if (!nameInput.value.trim()) return;
-    const newId = Math.max(0, ...taskLibrary.map(t => t.id)) + 1;
-    taskLibrary.push({ id:newId, name:nameInput.value.trim(), defaultQty: parseInt(qtyInput.value) || 1 });
-    nameInput.value = '';
-    qtyInput.value = 3;
-    renderLibraryList();
-  }
+    function addLibraryTask() {
+      const nameInput = document.getElementById('newTaskName');
+      const qtyInput = document.getElementById('newTaskQty');
+      if (!nameInput.value.trim()) return;
+      const newId = Math.max(0, ...taskLibrary.map(t => t.id)) + 1;
+      taskLibrary.push({ id: newId, name: nameInput.value.trim(), defaultQty: parseInt(qtyInput.value) || 1 });
+      nameInput.value = '';
+      qtyInput.value = 3;
+      renderLibraryList();
+    }
 
-  // ---- Sheet + modal helpers ----
-  function openSheet(){ document.getElementById('sheetBackdrop').classList.add('open'); }
-  function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-  function closeIfBackdrop(e, id){ if (e.target.id === id) closeModal(id); }
+    // ---- Sheet + modal helpers ----
+    function openSheet() { document.getElementById('sheetBackdrop').classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function closeIfBackdrop(e, id) { if (e.target.id === id) closeModal(id); }
 
-  // ---- Init ----
-  renderGreetingAndMonth();
-  renderWeek();
-  renderDayDetail();
-  renderTaskChips();
-  renderTasks();
-</script>
+    // ---- Init ----
+    renderGreetingAndMonth();
+    renderWeek();
+    renderDayDetail();
+    renderTaskChips();
+    renderTasks();
+  </script>
 
 </body>
+
 </html>

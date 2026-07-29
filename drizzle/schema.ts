@@ -7,6 +7,8 @@ import {
   integer,
   uniqueIndex,
   boolean,
+  primaryKey,
+  index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -135,21 +137,26 @@ export const weekPlanTasks = pgTable("week_plan_tasks", {
  * Associado a um Day via day_id
  * weekPlanTaskId vincula opcionalmente o log a uma tarefa ativa da semana
  */
-export const logs = pgTable("logs", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  dayId: uuid("day_id")
-    .notNull()
-    .references(() => days.id, { onDelete: "cascade" }),
-  content: text("content").notNull(),
-  mood: integer("mood"), // nullable, para uso futuro
-  weekPlanTaskId: uuid("week_plan_task_id").references(
-    () => weekPlanTasks.id,
-    { onDelete: "set null" }
-  ),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const logs = pgTable(
+  "logs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    dayId: uuid("day_id")
+      .notNull()
+      .references(() => days.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    weekPlanTaskId: uuid("week_plan_task_id").references(
+      () => weekPlanTasks.id,
+      { onDelete: "set null" }
+    ),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    dayIdIndex: index("logs_day_id_idx").on(table.dayId),
+  })
+);
 
 /**
  * Tabela reminders — lembretes de notificação diária do usuário
@@ -346,3 +353,78 @@ export type LoginAttempt = typeof loginAttempts.$inferSelect;
 export type Book = typeof books.$inferSelect;
 export type BookReadingLog = typeof bookReadingLogs.$inferSelect;
 export type BookNote = typeof bookNotes.$inferSelect;
+
+
+/**
+ * Tabela tags — tags definidas pelo usuário para categorização de logs
+ * UNIQUE constraint em (user_id, name) para unicidade case-insensitive no nível de aplicação
+ */
+export const tags = pgTable(
+  "tags",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    userNameUnique: uniqueIndex("tags_user_id_name_unique").on(
+      table.userId,
+      table.name
+    ),
+  })
+);
+
+/**
+ * Tabela log_tags — junção many-to-many entre logs e tags
+ * Composite PK (log_id, tag_id), cascade em ambas FKs
+ */
+export const logTags = pgTable(
+  "log_tags",
+  {
+    logId: uuid("log_id")
+      .notNull()
+      .references(() => logs.id, { onDelete: "cascade" }),
+    tagId: uuid("tag_id")
+      .notNull()
+      .references(() => tags.id, { onDelete: "cascade" }),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.logId, table.tagId] }),
+  })
+);
+
+/**
+ * Relações Drizzle para tags
+ */
+export const tagsRelations = relations(tags, ({ one, many }) => ({
+  user: one(users, {
+    fields: [tags.userId],
+    references: [users.id],
+  }),
+  logTags: many(logTags),
+}));
+
+/**
+ * Relações Drizzle para log_tags
+ */
+export const logTagsRelations = relations(logTags, ({ one }) => ({
+  log: one(logs, {
+    fields: [logTags.logId],
+    references: [logs.id],
+  }),
+  tag: one(tags, {
+    fields: [logTags.tagId],
+    references: [tags.id],
+  }),
+}));
+
+/**
+ * Tipos TypeScript inferidos para tags
+ */
+export type Tag = typeof tags.$inferSelect;
+export type LogTag = typeof logTags.$inferSelect;

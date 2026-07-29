@@ -1053,6 +1053,47 @@ header.top {
   border-color: var(--structure);
 }
 
+/* ---- Tag Chips (multi-select) ---- */
+.tag-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag-chip {
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  color: var(--structure);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.tag-chip--md {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.tag-chip--sm {
+  padding: 3px 10px;
+  font-size: 11px;
+}
+
+.tag-chip:hover {
+  background: var(--today-soft);
+  border-color: var(--today);
+}
+
+.tag-chip.active {
+  background: var(--structure);
+  color: #fff;
+  border-color: var(--structure);
+}
+
 
 /* ---- Log Item Task Badge ---- */
 .log-item-card__tag {
@@ -1782,94 +1823,7 @@ header.top {
 }
 
 
-/* ---- Log Item (compact inline) ---- */
-.log-item {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--line);
-  position: relative;
-}
 
-.log-item:last-child {
-  border-bottom: none;
-}
-
-.log-item__time {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-.log-item__body {
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--ink);
-  flex: 1;
-  min-width: 0;
-}
-
-.log-item__tag {
-  display: inline-block;
-  font-family: 'Inter', sans-serif;
-  font-size: 10px;
-  font-weight: 500;
-  color: #3F5C53;
-  background: #E7EFE8;
-  border-radius: 999px;
-  padding: 2px 8px;
-  margin-left: 8px;
-  vertical-align: middle;
-}
-
-.log-item__actions {
-  display: flex;
-  gap: 4px;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-  flex-shrink: 0;
-}
-
-.log-item:hover .log-item__actions {
-  opacity: 1;
-}
-
-/* Mobile: always show edit/delete actions (no hover on touch) */
-@media (hover: none) {
-  .log-item__actions {
-    opacity: 1;
-  }
-}
-
-@media (max-width: 640px) {
-  .log-item__actions {
-    opacity: 1;
-  }
-}
-
-.log-item__action-btn {
-  background: none;
-  border: none;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: 'Inter', sans-serif;
-  transition: color 0.12s ease;
-}
-
-.log-item__action-btn:hover {
-  color: var(--structure);
-}
-
-.log-item__action-btn--danger:hover {
-  color: #C6685A;
-}
 
 
 /* ---- Reading Companion Page ---- */

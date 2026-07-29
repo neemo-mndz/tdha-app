@@ -12,9 +12,10 @@ export type { OptimisticAction };
 interface LogListProps {
   initialLogs: LogWithTask[];
   date: string;
+  allUserTags?: { id: string; name: string }[];
 }
 
-export function LogList({ initialLogs, date }: LogListProps) {
+export function LogList({ initialLogs, date, allUserTags = [] }: LogListProps) {
   const [optimisticLogs, dispatchOptimistic] = useOptimistic(
     initialLogs,
     logsReducer
@@ -31,6 +32,7 @@ export function LogList({ initialLogs, date }: LogListProps) {
       weekPlanTaskId: null,
       createdAt: new Date(),
       taskName: null,
+      tags: [],
     };
     startTransition(async () => {
       dispatchOptimistic({ type: "add", log: tempLog });
@@ -62,6 +64,7 @@ export function LogList({ initialLogs, date }: LogListProps) {
             taskName={log.taskName}
             dispatch={dispatchOptimistic}
             date={date}
+            allUserTags={allUserTags}
           />
         ))}
       </ul>

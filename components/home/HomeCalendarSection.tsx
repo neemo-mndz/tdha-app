@@ -7,7 +7,7 @@ import MonthlyCalendar from "@/components/calendar/MonthlyCalendar";
 import { TodayLogsCard } from "@/components/home/TodayLogsCard";
 import { getMonthStatusAction } from "@/lib/actions/logs";
 import type { DayStatus } from "@/lib/types/calendar";
-import type { LogWithTask } from "@/lib/db/queries/logs";
+import { useLogs } from "@/components/home/LogsProvider";
 
 /** Parse "yyyy-MM-dd" as local date without timezone shift */
 function parseDateString(s: string | Date): Date {
@@ -21,8 +21,7 @@ type ViewMode = 'week' | 'month';
 interface HomeCalendarSectionProps {
   weekStart: string; // "yyyy-MM-dd" format from server
   days: DayStatus[];
-  today: string; // "yyyy-MM-dd" format from server
-  initialLogs: LogWithTask[]; // logs do dia de hoje, buscados no servidor
+  allUserTags?: { id: string; name: string }[];
 }
 
 /**
@@ -30,14 +29,14 @@ interface HomeCalendarSectionProps {
  * O card de registros fica sempre visível, independente do calendário
  * estar expandido ou recolhido, e reflete o dia selecionado pelo usuário.
  */
-export function HomeCalendarSection({ weekStart, days, today, initialLogs }: HomeCalendarSectionProps) {
+export function HomeCalendarSection({ weekStart, days, allUserTags = [] }: HomeCalendarSectionProps) {
+  const { selectedDate, setSelectedDate, todayDate } = useLogs();
+
   // Parse date strings as local dates (no timezone shift)
   const weekStartDate = parseDateString(weekStart);
-  const todayDate = parseDateString(today);
 
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('week');
-  const [selectedDate, setSelectedDate] = useState<Date>(todayDate);
 
   // Month view state
   const [monthYear, setMonthYear] = useState(weekStartDate.getFullYear());
@@ -164,11 +163,7 @@ export function HomeCalendarSection({ weekStart, days, today, initialLogs }: Hom
         )}
       </div>
 
-      <TodayLogsCard
-        selectedDate={selectedDate}
-        today={todayDate}
-        initialLogs={isSameDay(selectedDate, todayDate) ? initialLogs : []}
-      />
+      <TodayLogsCard allUserTags={allUserTags} />
     </>
   );
 }

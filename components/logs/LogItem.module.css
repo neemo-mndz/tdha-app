@@ -1,0 +1,86 @@
+.logItem {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+
+.logItem:last-child {
+  border-bottom: none;
+}
+
+.logItemTime {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.logItemBody {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+}
+
+.logItemTag {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #3F5C53;
+  background: #E7EFE8;
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.logItemActions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.logItem:hover .logItemActions {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .logItemActions {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .logItemActions {
+    opacity: 1;
+  }
+}
+
+.logItemActionBtn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.12s ease;
+}
+
+.logItemActionBtn:hover {
+  color: var(--structure);
+}
+
+.logItemActionBtnDanger:hover {
+  color: #C6685A;
+}

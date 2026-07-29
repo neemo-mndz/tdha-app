@@ -1,0 +1,233 @@
+{
+  "main": {
+    "id": "2f6dbe222864bb21",
+    "type": "split",
+    "children": [
+      {
+        "id": "3c8f7a7dc1fcbcc0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4d19fb24fd67eaa8",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Visualização em gráfico"
+            }
+          },
+          {
+            "id": "01b5ce3b765b85f9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Teste de Bug.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Teste de Bug"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "8867dca2deeb1f20",
+    "type": "split",
+    "children": [
+      {
+        "id": "397196e189e0afd6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "099111308e644c97",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Explorador de arquivos"
+            }
+          },
+          {
+            "id": "4b557e9f709954fd",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Procurar"
+            }
+          },
+          {
+            "id": "875faddf5d821891",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Marcadores"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "7f7621284c4747b3",
+    "type": "split",
+    "children": [
+      {
+        "id": "eefed8334ab29664",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ac9794040ff8bc99",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Links inversos"
+            }
+          },
+          {
+            "id": "020c4ad9be9494ac",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Links de saída"
+            }
+          },
+          {
+            "id": "c7923dbdd7f5adfb",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Etiquetas"
+            }
+          },
+          {
+            "id": "9b86015f53da98e1",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Todas as propriedades"
+            }
+          },
+          {
+            "id": "55afc632a00cfcb1",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Sumário"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Abrir a troca rápida": false,
+      "graph:Abrir visualização em gráfico": false,
+      "canvas:Criar novo canvas": false,
+      "daily-notes:Abrir a nota de hoje": false,
+      "templates:Inserir modelo": false,
+      "command-palette:Abrir paleta de comandos": false,
+      "bases:Criar nova base": false
+    }
+  },
+  "active": "4d19fb24fd67eaa8",
+  "lastOpenFiles": [
+    "node_modules/kolorist/dist/types/index.d.ts",
+    "node_modules/kolorist/dist/esm/index.mjs",
+    "node_modules/kolorist/dist/esm/index.js.map",
+    "node_modules/kolorist/dist/esm/index.js",
+    "node_modules/kolorist/dist/module/index.js.map",
+    "node_modules/kolorist/dist/cjs/index.js.map",
+    "node_modules/kolorist/dist/module/index.js",
+    "node_modules/kolorist/dist/cjs/index.js",
+    "node_modules/kolorist/dist/types",
+    "node_modules/kolorist/dist/esm",
+    "node_modules/kolorist/dist/module",
+    "node_modules/@serwist/webpack-plugin/node_modules/zod/README.md",
+    "node_modules/@serwist/next/node_modules/zod/README.md",
+    "node_modules/@serwist/next/node_modules/minimatch/LICENSE.md",
+    "node_modules/@serwist/next/node_modules/minimatch/README.md",
+    "node_modules/@serwist/next/node_modules/glob/README.md",
+    "node_modules/@serwist/next/node_modules/glob/LICENSE.md",
+    "node_modules/@serwist/next/node_modules/brace-expansion/README.md",
+    "node_modules/@serwist/next/node_modules/balanced-match/README.md",
+    "node_modules/@serwist/next/node_modules/balanced-match/LICENSE.md",
+    "node_modules/@serwist/build/node_modules/zod/README.md",
+    "node_modules/@serwist/build/node_modules/source-map/README.md",
+    "node_modules/@serwist/build/node_modules/minimatch/README.md",
+    "node_modules/@serwist/build/node_modules/glob/LICENSE.md",
+    "node_modules/@serwist/build/node_modules/minimatch/LICENSE.md",
+    "node_modules/@serwist/build/node_modules/glob/README.md",
+    "node_modules/@serwist/build/node_modules/brace-expansion/README.md",
+    "node_modules/@serwist/build/node_modules/balanced-match/README.md",
+    "node_modules/@serwist/build/node_modules/balanced-match/LICENSE.md",
+    "node_modules/@serwist/window/README.md",
+    "node_modules/@serwist/webpack-plugin/README.md",
+    "node_modules/@serwist/precaching/README.md",
+    "node_modules/@serwist/next/README.md",
+    "node_modules/@serwist/build/README.md",
+    "node_modules/minipass/README.md",
+    "node_modules/minipass/LICENSE.md",
+    "Sem título.canvas"
+  ]
+}

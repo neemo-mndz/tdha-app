@@ -24,6 +24,7 @@ function createMockLog(overrides: Partial<LogWithTask> = {}): LogWithTask {
     weekPlanTaskId: null,
     createdAt: new Date("2024-07-14T10:00:00Z"),
     taskName: null,
+    tags: [],
     ...overrides,
   };
 }
@@ -251,6 +252,7 @@ const arbLog = fc.record({
   weekPlanTaskId: fc.constant(null),
   createdAt: fc.date({ min: new Date("2000-01-01"), max: new Date("2030-12-31") }).filter(d => !isNaN(d.getTime())),
   taskName: fc.constant(null),
+  tags: fc.constant([] as { id: string; name: string }[]),
 });
 
 // Generates valid date strings in yyyy-MM-dd format

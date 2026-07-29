@@ -29,6 +29,9 @@ export default async function AppLayout({
         <Link href="/" className="brand">semana<span>.</span></Link>
         <div className="app-header__right">
           <MonthBadge />
+          <Link href="/history" className="top__settings-link" aria-label="Histórico">
+            🕐
+          </Link>
           <Link href="/reading" className="top__settings-link" aria-label="Leitura">
             📖
           </Link>

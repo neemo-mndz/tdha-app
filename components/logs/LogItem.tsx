@@ -4,12 +4,16 @@ import { useState } from "react";
 import type { LogWithTask } from "@/lib/db/queries/logs";
 import { updateLog, deleteLog, updateLogTime } from "@/lib/actions/logs";
 import type { OptimisticAction } from "./optimisticLogs";
+import { TagChips } from "./TagChips";
+import { TagEditor } from "./TagEditor";
+import styles from "./LogItem.module.css";
 
 interface LogItemProps {
   log: LogWithTask;
   taskName?: string | null;
   dispatch: (action: OptimisticAction) => void;
   date: string;
+  allUserTags?: { id: string; name: string }[];
 }
 
 /**
@@ -43,7 +47,7 @@ function formatTimeLocal(date: Date): string {
   return `${hh}:${mm}`;
 }
 
-export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
+export function LogItem({ log, taskName, dispatch, date, allUserTags = [] }: LogItemProps) {
   const time = formatTimeLocal(new Date(log.createdAt));
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState(log.content);
@@ -51,6 +55,7 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [timeError, setTimeError] = useState<string | null>(null);
+  const [tagsOpen, setTagsOpen] = useState(false);
 
   const originalTime = formatTimeLocal(new Date(log.createdAt));
 
@@ -142,23 +147,47 @@ export function LogItem({ log, taskName, dispatch, date }: LogItemProps) {
   }
 
   return (
-    <div className="log-item">
-      <span className="log-item__time">{time}</span>
-      <span className="log-item__body">
+    <div className={styles.logItem}>
+      <span className={styles.logItemTime}>{time}</span>
+      <span className={styles.logItemBody}>
         {log.content}
-        {taskName && <span className="log-item__tag">{taskName}</span>}
+        {taskName && <span className={styles.logItemTag}>{taskName}</span>}
       </span>
-      <span className="log-item__actions">
-        <button onClick={() => setEditing(true)} className="log-item__action-btn">Editar</button>
+      {log.tags.length > 0 && (
+        <TagChips
+          tags={log.tags}
+          selectedTagIds={new Set<string>()}
+          onToggle={() => {}}
+          size="sm"
+        />
+      )}
+      <span className={styles.logItemActions}>
+        <button onClick={() => setEditing(true)} className={styles.logItemActionBtn}>Editar</button>
+        <button
+          onClick={() => setTagsOpen((open) => !open)}
+          className={styles.logItemActionBtn}
+          aria-expanded={tagsOpen}
+          aria-label="Editar tags do registro"
+        >
+          Tags
+        </button>
         {confirmingDelete ? (
           <>
-            <button onClick={handleDelete} className="log-item__action-btn log-item__action-btn--danger">Confirmar</button>
-            <button onClick={() => setConfirmingDelete(false)} className="log-item__action-btn">×</button>
+            <button onClick={handleDelete} className={`${styles.logItemActionBtn} ${styles.logItemActionBtnDanger}`}>Confirmar</button>
+            <button onClick={() => setConfirmingDelete(false)} className={styles.logItemActionBtn}>×</button>
           </>
         ) : (
-          <button onClick={() => setConfirmingDelete(true)} className="log-item__action-btn log-item__action-btn--danger">Excluir</button>
+          <button onClick={() => setConfirmingDelete(true)} className={`${styles.logItemActionBtn} ${styles.logItemActionBtnDanger}`}>Excluir</button>
         )}
       </span>
+      {tagsOpen && (
+        <TagEditor
+          logId={log.id}
+          currentTags={log.tags}
+          allUserTags={allUserTags}
+          date={date}
+        />
+      )}
       {error && <p role="alert" className="log-form__error">{error}</p>}
     </div>
   );

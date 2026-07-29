@@ -4,13 +4,18 @@ import { useState } from "react";
 import { createLog } from "@/lib/actions/logs";
 import { TaskChips } from "@/components/logs/TaskChips";
 import type { ActiveTaskDisplay } from "@/lib/types/tasks";
+import { useLogs } from "@/components/home/LogsProvider";
+import { format, isSameDay } from "date-fns";
+import type { LogWithTask } from "@/lib/db/queries/logs";
 
 interface DailyLogPanelProps {
-  date: string;
   activeTasks: ActiveTaskDisplay[];
 }
 
-export function DailyLogPanel({ date, activeTasks }: DailyLogPanelProps) {
+export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
+  const { dispatchOptimistic, selectedDate, todayDate } = useLogs();
+  const dateStr = format(todayDate, "yyyy-MM-dd");
+  
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -30,9 +35,24 @@ export function DailyLogPanel({ date, activeTasks }: DailyLogPanelProps) {
 
     const trimmed = content.trim();
 
+    // Optimistic Update
+    if (isSameDay(selectedDate, todayDate)) {
+      const optimisticLog: LogWithTask = {
+        id: `optimistic-${Date.now()}`,
+        content: trimmed,
+        dayId: "optimistic",
+        createdAt: new Date().toISOString(),
+        mood: null,
+        weekPlanTaskId: selectedTaskId,
+        taskName: activeTasks.find((t) => t.weekPlanTaskId === selectedTaskId)?.name ?? null,
+        tags: [],
+      };
+      dispatchOptimistic({ action: "add", log: optimisticLog });
+    }
+
     const result = await createLog({
       content: trimmed,
-      date,
+      date: dateStr,
       weekPlanTaskId: selectedTaskId,
     });
     setSubmitting(false);

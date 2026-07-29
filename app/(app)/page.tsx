@@ -4,6 +4,7 @@ import { getUserTasks } from '@/lib/db/queries/tasks';
 import { getWeekPlan } from '@/lib/db/queries/weekPlans';
 import { getDayLogs } from '@/lib/db/queries/logs';
 import { getDayMood } from '@/lib/db/queries/mood';
+import { getUserTags } from '@/lib/db/queries/tags';
 import { format } from 'date-fns';
 import { getCurrentUserId } from '@/lib/auth';
 import { HomeGreetingLive } from '@/components/home/HomeGreetingLive';
@@ -11,6 +12,7 @@ import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
 import { MoodCard } from '@/components/mood/MoodCard';
+import { LogsProvider } from '@/components/home/LogsProvider';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,12 +25,13 @@ export default async function HomePage() {
   const todayStr = format(today, 'yyyy-MM-dd');
   const weekStartStr = format(weekStart, 'yyyy-MM-dd');
 
-  const [days, userTasks, weekPlan, todayLogs, dayMood] = await Promise.all([
+  const [days, userTasks, weekPlan, todayLogs, dayMood, allUserTags] = await Promise.all([
     getWeekStatus(userId, weekStart),
     getUserTasks(userId),
     getWeekPlan(userId, weekStartStr),
     getDayLogs(userId, todayStr),
     getDayMood(userId, todayStr),
+    getUserTags(userId),
   ]);
 
   const allTasks = userTasks.map((t) => ({
@@ -42,22 +45,23 @@ export default async function HomePage() {
     <div className="shell">
       <HomeGreetingLive initialTime={today.toISOString()} />
 
-      <HomeCalendarSection
-        weekStart={weekStartStr}
-        days={days}
-        today={todayStr}
-        initialLogs={todayLogs}
-      />
+      <LogsProvider initialLogs={todayLogs} todayStr={todayStr}>
+        <HomeCalendarSection
+          weekStart={weekStartStr}
+          days={days}
+          allUserTags={allUserTags}
+        />
 
-      <MoodCard
-        date={todayStr}
-        initialMood={dayMood.mood}
-        initialNote={dayMood.moodNote}
-      />
+        <MoodCard
+          date={todayStr}
+          initialMood={dayMood.mood}
+          initialNote={dayMood.moodNote}
+        />
 
-      <div className="stack">
-        <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
-      </div>
+        <div className="stack">
+          <DailyLogPanel activeTasks={activeTasks} />
+        </div>
+      </LogsProvider>
 
       <div className="stack">
         <WeeklyTasksPanel

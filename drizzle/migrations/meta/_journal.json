@@ -22,6 +22,13 @@
       "when": 1784839330308,
       "tag": "0002_smooth_hawkeye",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784857803620,
+      "tag": "0003_lush_blindfold",
+      "breakpoints": true
     }
   ]
 }

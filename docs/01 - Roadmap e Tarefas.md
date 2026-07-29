@@ -59,7 +59,7 @@ Aqui acompanhamos o que precisa ser feito. Dividimos o roadmap em 3 Fases com ba
 - **Captura por Voz (Ditado Local):** Botão de microfone na captura rápida usando a Web Speech API para transcrição instantânea sem precisar digitar (ideal para momentos de hiperfoco ou desatenção).
 - **Command Palette (`Cmd/Ctrl + K`):** Menu rápido de navegação global para buscar logs, trocar de semana ou criar nota instantânea de qualquer lugar do app.
 
-### 📱 6. Modo Offline Avançado (IndexedDB + Sync Queue)
+### 📱 6. Modo Offline Avançado (IndexedDB + Sync Queue) [x]
 - **Fila de Sincronização em Background:** Salvar registros offline no `IndexedDB` caso a conexão caia e sincronizar silenciosamente quando a internet retornar.
-- **Notificações Gentis Locais:** Notificação opcional no navegador/PWA em horário configurável (ex: 20h: "Que tal registrar 1 frase sobre o seu dia?").
+- **Notificações Gentis Locais & Banner Offline:** Banner de status offline (`OfflineBanner.tsx`) integrado ao layout da aplicação informando alterações salvas no dispositivo.
 

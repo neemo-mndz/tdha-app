@@ -3096,6 +3096,56 @@ header.top {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   ── OFFLINE BANNER & SYNC ──
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.offline-banner {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  transition: all 0.2s ease;
+}
+
+.offline-banner--offline {
+  background: #FDF3E7;
+  border-color: #F7D4B2;
+  color: #7A4B19;
+}
+
+.offline-banner--syncing {
+  background: #EBF3FA;
+  border-color: #C3DBF2;
+  color: #1E4F7C;
+}
+
+.offline-banner__inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.offline-banner__icon {
+  font-size: 14px;
+}
+
+.offline-banner__btn {
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    ── MODAL GENÉRICO (overlay, card, header, close) ──
    ═══════════════════════════════════════════════════════════════════════════ */
 

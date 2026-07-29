@@ -2,6 +2,7 @@ import Link from "next/link";
 import { QuickCaptureButton } from "@/components/logs/QuickCaptureButton";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { MonthBadge } from "@/components/home/MonthBadge";
+import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { getCurrentUserId } from "@/lib/auth";
 import { getWeekPlan } from "@/lib/db/queries/weekPlans";
 import { getUserProfile } from "@/lib/db/queries/profile";
@@ -25,6 +26,7 @@ export default async function AppLayout({
 
   return (
     <>
+      <OfflineBanner />
       <header className="app-header" aria-label="Navegação principal">
         <Link href="/" className="brand">semana<span>.</span></Link>
         <div className="app-header__right">

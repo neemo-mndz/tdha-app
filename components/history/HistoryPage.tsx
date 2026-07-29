@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition, useCallback, useMemo } from "react";
+import { useState, useEffect, useTransition, useCallback, useMemo, useRef } from "react";
 import { searchLogs } from "@/lib/actions/search";
 import { getUserTags, getTagsWithLogCount } from "@/lib/actions/tags";
 import { TagChips } from "@/components/logs/TagChips";
@@ -17,7 +17,7 @@ interface HistoryPageProps {
 // ── Helpers ──────────────────────────────────────────────────────────────
 
 /**
- * Formats a "yyyy-MM-dd" string into a localised short date like "2 jul. 2025".
+ * Formats a "yyyy-MM-dd" string into a localised short date like "23 jul. 2025".
  */
 function formatDisplayDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
@@ -48,7 +48,7 @@ function getWeekStartKey(dateStr: string): string {
 
 /**
  * Formats a week label from a Monday date string.
- * e.g., "2025-07-14" → "14 – 20 jul. 2025"
+ * e.g., "2025-07-14" → "Semana de 14 – 20 jul. 2025"
  */
 function formatWeekLabel(weekStartStr: string): string {
   const [year, month, day] = weekStartStr.split("-").map(Number);
@@ -108,6 +108,7 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
   const [debouncedText, setDebouncedText] = useState("");
   const [selectedTagIds, setSelectedTagIds] = useState<Set<string>>(new Set());
   const [selectedWeek, setSelectedWeek] = useState<Date | null>(null);
+  const [viewMode, setViewMode] = useState<"weeks" | "flat">("weeks");
 
   // ── Results & UI state ────────────────────────────────────────────────────
   const [results, setResults] = useState<SearchResult[]>(initialResults);
@@ -118,8 +119,22 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
   >([]);
   const [isPending, startTransition] = useTransition();
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
   // ── Grouped results (by week) ─────────────────────────────────────────────
   const weekGroups = useMemo(() => groupByWeek(results), [results]);
+
+  // ── Shortcut: Ctrl + K / Cmd + K to focus search ─────────────────────────
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // ── Debounce searchText → debouncedText (300ms) ───────────────────────────
   useEffect(() => {
@@ -221,18 +236,39 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
     <div className="history-page">
       {/* ── Header row ── */}
       <div className="history-page__header">
-        <h1 className="history-page__title">Histórico</h1>
-        <button
-          type="button"
-          className="history-page__manage-tags-btn"
-          onClick={handleOpenTagManager}
-          aria-label="Gerenciar tags"
-        >
-          Gerenciar tags
-        </button>
+        <div>
+          <h1 className="history-page__title">Sua Memória Semanal</h1>
+          <p className="history-page__subtitle">
+            Navegue pelos seus registros organizados por semana. Sem pressão, no seu ritmo.
+          </p>
+        </div>
+        <div className="history-page__header-actions">
+          <span className="history-page__count-pill">
+            📅 {results.length} {results.length === 1 ? "registro" : "registros"} ({weekGroups.length} {weekGroups.length === 1 ? "semana" : "semanas"})
+          </span>
+          <button
+            type="button"
+            className="history-page__manage-tags-btn"
+            onClick={handleOpenTagManager}
+            aria-label="Gerenciar tags"
+          >
+            🏷️ Gerenciar tags
+          </button>
+        </div>
       </div>
 
-      {/* ── Filters ── */}
+      {/* ── Activity / Presence Banner ── */}
+      <div className="history-page__activity-banner">
+        <div className="history-page__activity-info">
+          <h3>Consciência Semanal</h3>
+          <p>Seus registros são organizados em semanas para reduzir a cegueira temporal.</p>
+        </div>
+        <div className="history-page__activity-badge">
+          <span>{weekGroups.length > 0 ? `${weekGroups.length} semanas ativas` : "Sem registros"}</span>
+        </div>
+      </div>
+
+      {/* ── Sticky Toolbar (Search, Filters, View Modes) ── */}
       <div className="history-page__filters">
         {/* Search field */}
         <div className="history-page__search-wrapper">
@@ -240,55 +276,81 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
             Buscar registros
           </label>
           <input
+            ref={searchInputRef}
             id="history-search"
             type="search"
             className="history-page__search-input"
-            placeholder="Buscar em registros e notas..."
+            placeholder="Buscar em registros, tarefas e notas..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             aria-label="Buscar registros"
           />
+          <span className="history-page__shortcut-badge">Ctrl K</span>
         </div>
 
-        {/* Tag filter chips */}
-        {tags.length > 0 && (
-          <TagChips
-            tags={tags}
-            selectedTagIds={selectedTagIds}
-            onToggle={handleTagToggle}
-            size="md"
-          />
-        )}
+        {/* Tag filter chips + View Mode toggle */}
+        <div className="history-page__toolbar-row">
+          {tags.length > 0 && (
+            <div className="history-page__tags-wrapper">
+              <span className="history-page__filter-label">Tags:</span>
+              <TagChips
+                tags={tags}
+                selectedTagIds={selectedTagIds}
+                onToggle={handleTagToggle}
+                size="md"
+              />
+            </div>
+          )}
 
-        {/* Week filter */}
-        <WeekFilter
-          selectedWeek={selectedWeek}
-          onWeekChange={handleWeekChange}
-        />
+          {/* Week Filter Selector */}
+          <WeekFilter
+            selectedWeek={selectedWeek}
+            onWeekChange={handleWeekChange}
+          />
+
+          {/* View mode toggle */}
+          <div className="history-page__view-toggle" role="group" aria-label="Modo de visualização">
+            <button
+              type="button"
+              className={`history-page__view-btn ${viewMode === "weeks" ? "active" : ""}`}
+              onClick={() => setViewMode("weeks")}
+            >
+              Semanal
+            </button>
+            <button
+              type="button"
+              className={`history-page__view-btn ${viewMode === "flat" ? "active" : ""}`}
+              onClick={() => setViewMode("flat")}
+            >
+              Lista Contínua
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* ── Results (grouped by week) ── */}
+      {/* ── Results Feed ── */}
       <div
         className="history-page__results"
         aria-live="polite"
         aria-busy={isPending}
       >
         {isPending ? (
-          <p className="history-page__loading">Buscando...</p>
+          <p className="history-page__loading">Buscando registros...</p>
         ) : results.length === 0 ? (
           <p className="history-page__empty">
             Nenhum registro encontrado.
             <br />
             Seus registros aparecerão aqui organizados por semana.
           </p>
-        ) : (
+        ) : viewMode === "weeks" ? (
+          /* View Mode: Grouped by Week */
           weekGroups.map((group) => (
             <div key={group.weekStart} className="history-page__week-group">
               {/* Week header */}
               <div className="history-page__week-label">
-                <span>{group.label}</span>
+                <span className="history-page__week-title">{group.label}</span>
                 <span className="history-page__week-count">
-                  {group.results.length}
+                  {group.results.length} {group.results.length === 1 ? "registro" : "registros"}
                 </span>
               </div>
 
@@ -314,7 +376,7 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
                       {result.content}
                     </p>
 
-                    {/* Tags (read-only display) */}
+                    {/* Tags */}
                     {result.tags.length > 0 && (
                       <TagChips
                         tags={result.tags}
@@ -328,6 +390,36 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
               </ul>
             </div>
           ))
+        ) : (
+          /* View Mode: Flat List */
+          <ul className="history-page__result-list">
+            {results.map((result) => (
+              <li key={result.logId} className="history-result-item">
+                <div className="history-result-item__meta">
+                  <time
+                    className="history-result-item__date"
+                    dateTime={result.date}
+                  >
+                    {formatDisplayDate(result.date)}
+                  </time>
+                  <span className="history-result-item__time">
+                    {result.time}
+                  </span>
+                </div>
+                <p className="history-result-item__content">
+                  {result.content}
+                </p>
+                {result.tags.length > 0 && (
+                  <TagChips
+                    tags={result.tags}
+                    selectedTagIds={new Set<string>()}
+                    onToggle={() => {}}
+                    size="sm"
+                  />
+                )}
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 

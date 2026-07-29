@@ -41,6 +41,9 @@ export async function searchLogs(
   const hasTags = tagIds.length > 0;
   const hasWeek = weekStart !== null;
 
+  // Format array for Postgres literal e.g., '{id1,id2}'
+  const tagIdsPgArray = hasTags ? '{' + tagIds.join(',') + '}' : '{}';
+
   // Use Drizzle's sql tagged template for the full query
   // to leverage unaccent() and flexible filtering with parameterized inputs
   const result = await db.execute<SearchRow>(sql`
@@ -74,7 +77,7 @@ export async function searchLogs(
           ${hasTags ? sql`
             OR l.id IN (
               SELECT lt.log_id FROM log_tags lt
-              WHERE lt.tag_id = ANY(${tagIds}::uuid[])
+              WHERE lt.tag_id = ANY(${tagIdsPgArray}::uuid[])
             )
           ` : sql``}
         )

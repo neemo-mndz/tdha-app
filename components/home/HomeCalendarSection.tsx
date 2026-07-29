@@ -129,6 +129,8 @@ export function HomeCalendarSection({ weekStart, days, allUserTags = [] }: HomeC
           </button>
         </div>
 
+        <TodayLogsCard allUserTags={allUserTags} />
+
         {/* Weekly view */}
         {viewMode === 'week' && (
           <WeeklyCalendar
@@ -163,7 +165,6 @@ export function HomeCalendarSection({ weekStart, days, allUserTags = [] }: HomeC
         )}
       </div>
 
-      <TodayLogsCard allUserTags={allUserTags} />
     </>
   );
 }

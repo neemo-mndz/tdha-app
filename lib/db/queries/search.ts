@@ -66,8 +66,8 @@ export async function searchLogs(
       WHERE d.user_id = ${userId}
         AND (
           ${!hasText}::boolean
-          OR unaccent(lower(l.content)) LIKE '%' || unaccent(lower(${text})) || '%'
-          OR unaccent(lower(COALESCE(d.mood_note, ''))) LIKE '%' || unaccent(lower(${text})) || '%'
+          OR l.content ILIKE '%' || ${text} || '%'
+          OR COALESCE(d.mood_note, '') ILIKE '%' || ${text} || '%'
         )
         AND (
           ${!hasTags}::boolean

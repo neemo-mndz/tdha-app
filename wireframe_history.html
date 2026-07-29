@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semana — Wireframe da Página de Histórico (v2 SaaS Redesign)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #EEF1EC;
+      --surface: #FFFFFF;
+      --ink: #23302B;
+      --muted: #7C8580;
+      --line: #DCE1DB;
+      --structure: #3F5C53;
+      --structure-light: #E7EFE8;
+      --accent: #6C86C4;
+      --today: #E3A15B;
+      --today-soft: #FBE9D3;
+      --danger: #C6685A;
+      --danger-soft: rgba(198, 104, 90, 0.08);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .shell {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 24px 120px;
+    }
+
+    /* ---- Header Navigation ---- */
+    header.top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--structure);
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand span {
+      color: var(--today);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      outline: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      border-color: var(--line);
+      color: var(--structure);
+    }
+
+    .btn-secondary:hover {
+      background: var(--today-soft);
+      border-color: var(--today);
+      color: var(--ink);
+    }
+
+    .btn-primary {
+      background: var(--structure);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    /* ---- Page Header Section ---- */
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      margin: 0 0 6px;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .page-header p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* ---- Heatmap / Temporal Consciousness Banner ---- */
+    .activity-banner {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .activity-info h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 4px;
+      color: var(--structure);
+    }
+
+    .activity-info p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .weeks-heatmap {
+      display: flex;
+      gap: 8px;
+    }
+
+    .week-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .week-col-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .day-dots-grid {
+      display: grid;
+      grid-template-rows: repeat(7, 1fr);
+      gap: 3px;
+    }
+
+    .heatmap-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: var(--line);
+    }
+
+    .heatmap-dot.lvl-1 { background: #D5E2D7; }
+    .heatmap-dot.lvl-2 { background: #96B89D; }
+    .heatmap-dot.lvl-3 { background: var(--structure); }
+
+    /* ---- Sticky Filter Toolbar ---- */
+    .toolbar-sticky {
+      position: sticky;
+      top: 16px;
+      z-index: 50;
+      background: rgba(238, 241, 236, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(220, 225, 219, 0.7);
+      box-shadow: 0 4px 20px -8px rgba(35, 48, 43, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-box {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px 10px 38px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(108, 134, 196, 0.15);
+    }
+
+    .search-box::before {
+      content: '🔍';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      opacity: 0.5;
+    }
+
+    .shortcut-badge {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 2px 6px;
+      pointer-events: none;
+    }
+
+    .tags-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-right: 4px;
+    }
+
+    .tag-chip {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.12s ease;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tag-chip:hover {
+      border-color: var(--structure);
+    }
+
+    .tag-chip.active {
+      background: var(--structure);
+      color: #fff;
+      border-color: var(--structure);
+    }
+
+    .view-toggle-group {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+      margin-left: auto;
+    }
+
+    .view-btn {
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      padding: 4px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .view-btn.active {
+      background: var(--bg);
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* ---- Results Container ---- */
+    .history-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ---- Week Group Accordion ---- */
+    .week-group {
+      background: transparent;
+    }
+
+    .week-header {
+      position: sticky;
+      top: 110px;
+      z-index: 10;
+      background: var(--bg);
+      padding: 8px 0;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .week-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .week-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--structure);
+      margin: 0;
+    }
+
+    .week-count {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .week-summary-moods {
+      display: flex;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    /* ---- Log Cards Grid / Timeline ---- */
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .log-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .log-card:hover {
+      border-color: var(--structure);
+      box-shadow: 0 6px 16px -8px rgba(35, 48, 43, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .log-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .log-meta-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .date-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--structure);
+      background: var(--structure-light);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .time-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .task-tag-badge {
+      font-size: 11px;
+      color: var(--today);
+      background: var(--today-soft);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-weight: 500;
+    }
+
+    .log-actions {
+      display: flex;
+      gap: 6px;
+      opacity: 0.7;
+      transition: opacity 0.15s ease;
+    }
+
+    .log-card:hover .log-actions {
+      opacity: 1;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.12s ease;
+    }
+
+    .action-btn:hover {
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .action-btn.danger:hover {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .log-body {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink);
+      margin: 0 0 10px;
+      word-break: break-word;
+    }
+
+    .log-tags-footer {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .log-tag-pill {
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--bg);
+      border-radius: 999px;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+    }
+
+    /* ---- Edit Form Inline Mockup ---- */
+    .edit-inline-card {
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 8px 24px -10px rgba(108, 134, 196, 0.25);
+    }
+
+    .edit-datetime-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .edit-input {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--ink);
+      outline: none;
+      background: var(--surface);
+    }
+
+    .edit-input:focus {
+      border-color: var(--accent);
+    }
+
+    .edit-textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 70px;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    .edit-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* ---- Modal Styling ---- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(35, 48, 43, 0.4);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--surface);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 24px 48px -12px rgba(35, 48, 43, 0.25);
+      animation: pop 0.18s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.96); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+    }
+
+    /* ---- Helper Banner ---- */
+    .concept-banner {
+      background: #F0F4F8;
+      border: 1px solid #D0DFEE;
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #2D486B;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="shell">
+
+    <!-- Top Brand Nav -->
+    <header class="top">
+      <a href="#" class="brand">semana<span>.</span> <small style="font-size: 12px; color: var(--muted); font-weight: 400;">/ histórico</small></a>
+      <div class="nav-actions">
+        <div class="badge-pill">📅 42 registros em 8 semanas</div>
+        <button class="btn btn-secondary" onclick="openModal('tagModal')">🏷️ Gerenciar Tags</button>
+      </div>
+    </header>
+
+    <!-- Page Title & Guidance -->
+    <div class="page-header">
+      <h1>Sua Memória Semanal</h1>
+      <p>Navegue pelas suas anotações e momentos vividos organizados por semana. Sem pressão, no seu ritmo.</p>
+    </div>
+
+    <!-- Concept Explanation Note -->
+    <div class="concept-banner">
+      💡 <strong>Proposta deste Wireframe SaaS (v2):</strong> Agrupamento temporal por semana (segunda a domingo), filtro rápido por tags, busca instantânea e mini-heatmap de consciência temporal. Para usuários com TDAH, visualizar a memória em blocos semanais reduz a desorientação e a cegueira de tempo.
+    </div>
+
+    <!-- Heatmap & Activity Widget -->
+    <div class="activity-banner">
+      <div class="activity-info">
+        <h3>Presença nas últimas semanas</h3>
+        <p>Cada coluna é uma semana. As bolinhas representam registros nos dias.</p>
+      </div>
+      <div class="weeks-heatmap">
+        <div class="week-col">
+          <span class="week-col-label">jun</span>
+          <div class="day-dots-grid">
+            <div class="heatmap-dot lvl-2"></div>
+            <div class="heatmap-dot lvl-3"></div>
+            <div class="heatmap-dot lvl-1"></div>
+            <div class="heatmap-dot"></div>
+            <div class="heatmap-dot lvl-2"></div>
+            <div class="heatmap-dot"></div>
+            <div class="heatmap-dot lvl-1"></div>
+          </div>
+        </div>
+        <div class="week-col">
+          <span class="week-col-label">jul</span>
+          <div class="day-dots-grid">
+            <div class="heatmap-dot lvl-3"></div>
+            <div class="heatmap-dot lvl-3"></div>
+            <div class="heatmap-dot lvl-2"></div>
+            <div class="heatmap-dot lvl-2"></div>
+            <div class="heatmap-dot lvl-3"></div>
+            <div class="heatmap-dot lvl-1"></div>
+            <div class="heatmap-dot"></div>
+          </div>
+        </div>
+        <div class="week-col">
+          <span class="week-col-label">atual</span>
+          <div class="day-dots-grid">
+            <div class="heatmap-dot lvl-3"></div>
+            <div class="heatmap-dot lvl-2"></div>
+            <div class="heatmap-dot lvl-3"></div>
+            <div class="heatmap-dot lvl-1"></div>
+            <div class="heatmap-dot"></div>
+            <div class="heatmap-dot"></div>
+            <div class="heatmap-dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky Toolbar (Search + Filters + View Toggle) -->
+    <div class="toolbar-sticky">
+      <div class="search-row">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Buscar em notas, tarefas e memórias..." onkeyup="filterFeed()">
+          <span class="shortcut-badge">Ctrl K</span>
+        </div>
+      </div>
+      <div class="tags-row">
+        <span class="filter-label">Filtrar:</span>
+        <div class="tag-chip active" onclick="toggleTagFilter(this)">Todas as Tags</div>
+        <div class="tag-chip" onclick="toggleTagFilter(this)">#trabalho</div>
+        <div class="tag-chip" onclick="toggleTagFilter(this)">#saúde</div>
+        <div class="tag-chip" onclick="toggleTagFilter(this)">#estudos</div>
+        <div class="tag-chip" onclick="toggleTagFilter(this)">#leitura</div>
+
+        <div class="view-toggle-group">
+          <button class="view-btn active" onclick="setViewMode('weeks')">Semanal</button>
+          <button class="view-btn" onclick="setViewMode('timeline')">Lista Contínua</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Feed (Grouped by Weeks) -->
+    <div class="history-feed" id="historyFeed">
+
+      <!-- Week Group 1 -->
+      <div class="week-group">
+        <div class="week-header">
+          <div class="week-title-wrap">
+            <h2 class="week-title">Semana 29 (21 – 27 de Julho de 2025)</h2>
+            <span class="week-count">3 registros</span>
+          </div>
+          <div class="week-summary-moods" title="Humor predominante na semana">
+            😊 🌿 ⚡
+          </div>
+        </div>
+
+        <div class="log-list">
+          <!-- Log Card 1 -->
+          <div class="log-card">
+            <div class="log-card-header">
+              <div class="log-meta-left">
+                <span class="date-badge">23 jul. 2025</span>
+                <span class="time-text">14:30</span>
+                <span class="task-tag-badge">Regar plantas 1/3</span>
+              </div>
+              <div class="log-actions">
+                <button class="action-btn" onclick="toggleEdit('edit-1')">Editar</button>
+                <button class="action-btn" onclick="exportObsidian('Reunião com equipe')">Obsidian</button>
+                <button class="action-btn danger">Excluir</button>
+              </div>
+            </div>
+            <p class="log-body">Consegui concluir a apresentação do projeto e enviei o resumo no grupo. Sentimento de dever cumprido antes das 16h.</p>
+            <div class="log-tags-footer">
+              <span class="log-tag-pill">#trabalho</span>
+              <span class="log-tag-pill">#foco</span>
+            </div>
+          </div>
+
+          <!-- Inline Edit Form Demo (hidden by default) -->
+          <div class="edit-inline-card" id="edit-1" style="display: none;">
+            <div class="edit-datetime-row">
+              <input type="date" class="edit-input" value="2025-07-23">
+              <input type="time" class="edit-input" value="14:30">
+            </div>
+            <textarea class="edit-textarea">Consegui concluir a apresentação do projeto e enviei o resumo no grupo. Sentimento de dever cumprido antes das 16h.</textarea>
+            <div class="edit-actions">
+              <button class="btn btn-secondary" onclick="toggleEdit('edit-1')">Cancelar</button>
+              <button class="btn btn-primary" onclick="toggleEdit('edit-1')">Salvar Alterações</button>
+            </div>
+          </div>
+
+          <!-- Log Card 2 -->
+          <div class="log-card">
+            <div class="log-card-header">
+              <div class="log-meta-left">
+                <span class="date-badge">21 jul. 2025</span>
+                <span class="time-text">09:15</span>
+              </div>
+              <div class="log-actions">
+                <button class="action-btn">Editar</button>
+                <button class="action-btn">Obsidian</button>
+                <button class="action-btn danger">Excluir</button>
+              </div>
+            </div>
+            <p class="log-body">Caminhada matinal de 20 minutos. O ar frio ajudou a despertar a mente para o início da semana.</p>
+            <div class="log-tags-footer">
+              <span class="log-tag-pill">#saúde</span>
+              <span class="log-tag-pill">#bem-estar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Week Group 2 -->
+      <div class="week-group">
+        <div class="week-header">
+          <div class="week-title-wrap">
+            <h2 class="week-title">Semana 28 (14 – 20 de Julho de 2025)</h2>
+            <span class="week-count">4 registros</span>
+          </div>
+          <div class="week-summary-moods">
+            😌 📖
+          </div>
+        </div>
+
+        <div class="log-list">
+          <!-- Log Card 3 -->
+          <div class="log-card">
+            <div class="log-card-header">
+              <div class="log-meta-left">
+                <span class="date-badge">18 jul. 2025</span>
+                <span class="time-text">21:40</span>
+                <span class="task-tag-badge">Leitura 25 pág</span>
+              </div>
+              <div class="log-actions">
+                <button class="action-btn">Editar</button>
+                <button class="action-btn">Obsidian</button>
+                <button class="action-btn danger">Excluir</button>
+              </div>
+            </div>
+            <p class="log-body">Li 30 páginas do livro sobre hábitos. Ideia principal: "Foco no sistema, não apenas no objetivo final".</p>
+            <div class="log-tags-footer">
+              <span class="log-tag-pill">#leitura</span>
+              <span class="log-tag-pill">#estudos</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Modal Gerenciar Tags -->
+  <div class="modal-backdrop" id="tagModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Gerenciar Tags</h2>
+        <button class="close-btn" onclick="closeModal('tagModal')">✕</button>
+      </div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">Adicione ou remova tags usadas para categorizar seus registros.</p>
+      
+      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+        <input type="text" class="edit-input" style="flex: 1;" placeholder="Nome da nova tag (ex: #finanças)">
+        <button class="btn btn-primary">Criar Tag</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--bg); border-radius: 8px;">
+          <span style="font-weight: 500; font-size: 14px;">#trabalho</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted);">14 registros</span>
+          <button class="action-btn danger">Excluir</button>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--bg); border-radius: 8px;">
+          <span style="font-weight: 500; font-size: 14px;">#saúde</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted);">8 registros</span>
+          <button class="action-btn danger">Excluir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleEdit(id) {
+      const el = document.getElementById(id);
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function toggleTagFilter(chip) {
+      chip.classList.toggle('active');
+    }
+
+    function setViewMode(mode) {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function exportObsidian(text) {
+      alert(`Simulação: Nota exportada para o Obsidian via URI ("${text}")`);
+    }
+
+    function filterFeed() {
+      // Live search simulation
+    }
+  </script>
+</body>
+
+</html>

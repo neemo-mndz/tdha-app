@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ANALISE-APP.md",
+                "file": "docs/01 - Roadmap e Tarefas.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ANALISE-APP"
+              "title": "01 - Roadmap e Tarefas"
             }
           },
           {
@@ -108,7 +108,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ANALISE-APP.md",
+                "file": "docs/01 - Roadmap e Tarefas.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +118,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Links inversos para ANALISE-APP"
+              "title": "Links inversos para 01 - Roadmap e Tarefas"
             }
           },
           {
@@ -127,12 +127,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ANALISE-APP.md",
+                "file": "docs/01 - Roadmap e Tarefas.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Links de saída para ANALISE-APP"
+              "title": "Links de saída para 01 - Roadmap e Tarefas"
             }
           },
           {
@@ -170,13 +170,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ANALISE-APP.md",
+                "file": "docs/01 - Roadmap e Tarefas.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Sumário de ANALISE-APP"
+              "title": "Sumário de 01 - Roadmap e Tarefas"
             }
           }
         ]
@@ -199,10 +199,12 @@
   },
   "active": "4d19fb24fd67eaa8",
   "lastOpenFiles": [
+    "wireframe_history.html",
+    "docs/00 - Dashboard.md",
     "docs/02 - Decisões de Design.md",
     "docs/01 - Roadmap e Tarefas.md",
+    "ANALISE-APP.md",
     "2026-07-29.md",
-    "docs/00 - Dashboard.md",
     "public/sw.js",
     "node_modules/kolorist/dist/types/index.d.ts",
     "node_modules/kolorist/dist/esm/index.mjs",
@@ -233,8 +235,6 @@
     "node_modules/@serwist/build/node_modules/balanced-match/LICENSE.md",
     "node_modules/@serwist/window/README.md",
     "node_modules/@serwist/webpack-plugin/README.md",
-    "node_modules/@serwist/precaching/README.md",
-    "node_modules/@serwist/next/README.md",
     "Sem título.canvas"
   ]
 }

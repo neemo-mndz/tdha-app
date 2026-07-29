@@ -33,6 +33,7 @@ import { MoodCard } from '@/components/mood/MoodCard';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { TodayLogsCard } from '@/components/home/TodayLogsCard';
+import { LogsProvider } from '@/components/home/LogsProvider';
 
 /**
  * Integration tests for HomePage section order and separation.
@@ -60,30 +61,32 @@ const mockDays = Array.from({ length: 7 }, (_, i) => ({
 function renderHomePageLayout() {
   return render(
     <div className="shell">
-      <HomeCalendarSection
-        weekStart={WEEK_START}
-        days={mockDays}
-      />
-
-      <div className="stack">
-        <DailyLogPanel activeTasks={[]} />
-      </div>
-
-      <MoodCard
-        date={TODAY}
-        initialMood={null}
-        initialNote={null}
-      />
-
-      <TodayLogsCard allUserTags={[]} />
-
-      <div className="stack">
-        <WeeklyTasksPanel
+      <LogsProvider initialLogs={[]} todayStr={TODAY}>
+        <HomeCalendarSection
           weekStart={WEEK_START}
-          activeTasks={[]}
-          allTasks={[]}
+          days={mockDays}
         />
-      </div>
+
+        <div className="stack">
+          <DailyLogPanel activeTasks={[]} />
+        </div>
+
+        <MoodCard
+          date={TODAY}
+          initialMood={null}
+          initialNote={null}
+        />
+
+        <TodayLogsCard allUserTags={[]} />
+
+        <div className="stack">
+          <WeeklyTasksPanel
+            weekStart={WEEK_START}
+            activeTasks={[]}
+            allTasks={[]}
+          />
+        </div>
+      </LogsProvider>
     </div>
   );
 }

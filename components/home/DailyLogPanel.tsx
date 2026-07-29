@@ -41,13 +41,12 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
         id: `optimistic-${Date.now()}`,
         content: trimmed,
         dayId: "optimistic",
-        createdAt: new Date().toISOString(),
-        mood: null,
+        createdAt: new Date(),
         weekPlanTaskId: selectedTaskId,
         taskName: activeTasks.find((t) => t.weekPlanTaskId === selectedTaskId)?.name ?? null,
         tags: [],
       };
-      dispatchOptimistic({ action: "add", log: optimisticLog });
+      dispatchOptimistic({ type: "add", log: optimisticLog });
     }
 
     const result = await createLog({

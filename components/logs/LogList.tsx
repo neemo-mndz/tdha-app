@@ -28,7 +28,6 @@ export function LogList({ initialLogs, date, allUserTags = [] }: LogListProps) {
       id: tempId,
       dayId: "optimistic",
       content,
-      mood: null,
       weekPlanTaskId: null,
       createdAt: new Date(),
       taskName: null,

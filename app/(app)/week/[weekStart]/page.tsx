@@ -13,6 +13,8 @@ import { HomeGreetingLive } from '@/components/home/HomeGreetingLive';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
+import { LogsProvider } from '@/components/home/LogsProvider';
+import { getUserTags } from '@/lib/db/queries/tags';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,11 +51,12 @@ export default async function WeekPage({
 
   const userId = await getCurrentUserId();
 
-  const [days, userTasks, weekPlan, todayLogs] = await Promise.all([
+  const [days, userTasks, weekPlan, todayLogs, allUserTags] = await Promise.all([
     getWeekStatus(userId, weekStartDate),
     getUserTasks(userId),
     getWeekPlan(userId, weekStartStr),
     isCurrentWeek ? getDayLogs(userId, todayStr) : Promise.resolve([]),
+    getUserTags(userId),
   ]);
 
   const allTasks = userTasks.map((t) => ({
@@ -73,23 +76,24 @@ export default async function WeekPage({
         </div>
       )}
 
-      <HomeCalendarSection
-        weekStart={weekStartStr}
-        days={days}
-        today={todayStr}
-        initialLogs={isCurrentWeek ? todayLogs : []}
-      />
-
-      <div className="stack">
-        {isCurrentWeek && (
-          <DailyLogPanel date={todayStr} activeTasks={activeTasks} />
-        )}
-        <WeeklyTasksPanel
+      <LogsProvider initialLogs={isCurrentWeek ? todayLogs : []} todayStr={todayStr}>
+        <HomeCalendarSection
           weekStart={weekStartStr}
-          activeTasks={activeTasks}
-          allTasks={allTasks}
+          days={days}
+          allUserTags={allUserTags}
         />
-      </div>
+
+        <div className="stack">
+          {isCurrentWeek && (
+            <DailyLogPanel activeTasks={activeTasks} />
+          )}
+          <WeeklyTasksPanel
+            weekStart={weekStartStr}
+            activeTasks={activeTasks}
+            allTasks={allTasks}
+          />
+        </div>
+      </LogsProvider>
     </div>
   );
 }

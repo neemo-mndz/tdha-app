@@ -192,6 +192,7 @@
   },
   "active": "4d19fb24fd67eaa8",
   "lastOpenFiles": [
+    "public/sw.js",
     "node_modules/kolorist/dist/types/index.d.ts",
     "node_modules/kolorist/dist/esm/index.mjs",
     "node_modules/kolorist/dist/esm/index.js.map",
@@ -202,7 +203,6 @@
     "node_modules/kolorist/dist/cjs/index.js",
     "node_modules/kolorist/dist/types",
     "node_modules/kolorist/dist/esm",
-    "node_modules/kolorist/dist/module",
     "node_modules/@serwist/webpack-plugin/node_modules/zod/README.md",
     "node_modules/@serwist/next/node_modules/zod/README.md",
     "node_modules/@serwist/next/node_modules/minimatch/LICENSE.md",

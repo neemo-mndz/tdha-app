@@ -7,6 +7,8 @@ import { TagChips } from "@/components/logs/TagChips";
 import { WeekFilter } from "@/components/history/WeekFilter";
 import { TagManager } from "@/components/history/TagManager";
 import { formatDateParam } from "@/lib/utils/date";
+import { getMoodEmoji } from "@/components/mood/moodConstants";
+import type { MoodValue } from "@/lib/types/calendar";
 import type { SearchResult } from "@/lib/db/queries/search";
 
 interface HistoryPageProps {
@@ -72,13 +74,16 @@ interface WeekGroup {
   weekStart: string;
   label: string;
   results: SearchResult[];
+  moodEmojis: string[];
 }
 
 /**
  * Groups results by week (Monday–Sunday) in reverse chronological order.
+ * Collects distinct mood emojis for each week.
  */
 function groupByWeek(results: SearchResult[]): WeekGroup[] {
   const map = new Map<string, SearchResult[]>();
+  const moodMap = new Map<string, Set<string>>();
 
   for (const result of results) {
     const key = getWeekStartKey(result.date);
@@ -88,16 +93,59 @@ function groupByWeek(results: SearchResult[]): WeekGroup[] {
     } else {
       map.set(key, [result]);
     }
+
+    if (result.mood) {
+      const emojiSet = moodMap.get(key) ?? new Set<string>();
+      const emoji = getMoodEmoji(result.mood as MoodValue);
+      if (emoji) emojiSet.add(emoji);
+      moodMap.set(key, emojiSet);
+    }
   }
 
-  // Sort weeks descending
   const sortedKeys = Array.from(map.keys()).sort((a, b) => b.localeCompare(a));
 
   return sortedKeys.map((key) => ({
     weekStart: key,
     label: formatWeekLabel(key),
     results: map.get(key)!,
+    moodEmojis: Array.from(moodMap.get(key) ?? []),
   }));
+}
+
+/**
+ * Computes 3 recent weeks for the Activity Heatmap banner based on current date.
+ */
+function computeHeatmapData(results: SearchResult[]) {
+  const logCountByDate = new Map<string, number>();
+  for (const r of results) {
+    logCountByDate.set(r.date, (logCountByDate.get(r.date) ?? 0) + 1);
+  }
+
+  const today = new Date();
+  const currentMonKey = getWeekStartKey(formatDateParam(today));
+  const [cy, cm, cd] = currentMonKey.split("-").map(Number);
+  const currentMon = new Date(cy, cm - 1, cd);
+
+  const weeks = [];
+  for (let w = 2; w >= 0; w--) {
+    const mon = new Date(currentMon);
+    mon.setDate(mon.getDate() - w * 7);
+    const monStr = formatDateParam(mon);
+    const monthLabel = mon.toLocaleDateString("pt-BR", { month: "short" });
+
+    const days = [];
+    for (let d = 0; d < 7; d++) {
+      const day = new Date(mon);
+      day.setDate(day.getDate() + d);
+      const dayStr = formatDateParam(day);
+      const count = logCountByDate.get(dayStr) ?? 0;
+      days.push({ dayStr, count });
+    }
+
+    weeks.push({ monStr, monthLabel, days, isCurrent: w === 0 });
+  }
+
+  return weeks;
 }
 
 // ── Component ────────────────────────────────────────────────────────────
@@ -109,6 +157,7 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
   const [selectedTagIds, setSelectedTagIds] = useState<Set<string>>(new Set());
   const [selectedWeek, setSelectedWeek] = useState<Date | null>(null);
   const [viewMode, setViewMode] = useState<"weeks" | "flat">("weeks");
+  const [copiedObsidianId, setCopiedObsidianId] = useState<string | null>(null);
 
   // ── Results & UI state ────────────────────────────────────────────────────
   const [results, setResults] = useState<SearchResult[]>(initialResults);
@@ -121,8 +170,9 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // ── Grouped results (by week) ─────────────────────────────────────────────
+  // ── Grouped results & Heatmap ─────────────────────────────────────────────
   const weekGroups = useMemo(() => groupByWeek(results), [results]);
+  const heatmapWeeks = useMemo(() => computeHeatmapData(results), [results]);
 
   // ── Shortcut: Ctrl + K / Cmd + K to focus search ─────────────────────────
   useEffect(() => {
@@ -160,13 +210,11 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
     []
   );
 
-  // Re-run when debounced text changes
   useEffect(() => {
     runSearch(debouncedText, selectedTagIds, selectedWeek);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedText]);
 
-  // ── Tag toggle ────────────────────────────────────────────────────────────
   function handleTagToggle(tagId: string) {
     setSelectedTagIds((prev) => {
       const next = new Set(prev);
@@ -180,13 +228,11 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
     });
   }
 
-  // ── Week change ───────────────────────────────────────────────────────────
   function handleWeekChange(week: Date | null) {
     setSelectedWeek(week);
     runSearch(debouncedText, selectedTagIds, week);
   }
 
-  // ── Tag deleted in TagManager ─────────────────────────────────────────────
   function handleTagDeleted(tagId: string) {
     setTags((prev) => prev.filter((t) => t.id !== tagId));
     setTagManagerTags((prev) => prev.filter((t) => t.id !== tagId));
@@ -217,7 +263,6 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
     });
   }
 
-  // ── Open TagManager (fetch real logCounts from server) ────────────────────
   function handleOpenTagManager() {
     setTagManagerOpen(true);
     startTransition(async () => {
@@ -232,6 +277,13 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
     });
   }
 
+  function handleExportObsidian(result: SearchResult) {
+    const obsidianText = `# ${formatDisplayDate(result.date)} (${result.time})\n\n${result.content}\n\n${result.tags.map((t) => `#${t.name}`).join(" ")}`;
+    navigator.clipboard.writeText(obsidianText);
+    setCopiedObsidianId(result.logId);
+    setTimeout(() => setCopiedObsidianId(null), 2000);
+  }
+
   return (
     <div className="history-page">
       {/* ── Header row ── */}
@@ -239,7 +291,7 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
         <div>
           <h1 className="history-page__title">Sua Memória Semanal</h1>
           <p className="history-page__subtitle">
-            Navegue pelos seus registros organizados por semana. Sem pressão, no seu ritmo.
+            Navegue pelas suas anotações e momentos vividos organizados por semana. Sem pressão, no seu ritmo.
           </p>
         </div>
         <div className="history-page__header-actions">
@@ -257,14 +309,44 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
         </div>
       </div>
 
-      {/* ── Activity / Presence Banner ── */}
+      {/* ── Concept Explanation Banner ── */}
+      <div className="history-page__concept-banner">
+        💡 <strong>Proposta do Histórico SaaS:</strong> Agrupamento temporal por semana (segunda a domingo), filtro rápido por tags, busca instantânea e mini-heatmap de consciência temporal. Para pessoas com TDAH, visualizar a memória em blocos semanais reduz a desorientação e a cegueira de tempo.
+      </div>
+
+      {/* ── Heatmap & Activity Widget ── */}
       <div className="history-page__activity-banner">
         <div className="history-page__activity-info">
-          <h3>Consciência Semanal</h3>
-          <p>Seus registros são organizados em semanas para reduzir a cegueira temporal.</p>
+          <h3>Presença nas últimas semanas</h3>
+          <p>Cada coluna é uma semana (seg a dom). As bolinhas destacam a presença de registros.</p>
         </div>
-        <div className="history-page__activity-badge">
-          <span>{weekGroups.length > 0 ? `${weekGroups.length} semanas ativas` : "Sem registros"}</span>
+        <div className="history-page__weeks-heatmap">
+          {heatmapWeeks.map((w, idx) => (
+            <div key={w.monStr} className="history-page__week-col">
+              <span className="history-page__week-col-label">
+                {w.isCurrent ? "atual" : w.monthLabel}
+              </span>
+              <div className="history-page__day-dots-grid">
+                {w.days.map((d) => {
+                  const lvlClass =
+                    d.count === 0
+                      ? ""
+                      : d.count === 1
+                      ? "lvl-1"
+                      : d.count === 2
+                      ? "lvl-2"
+                      : "lvl-3";
+                  return (
+                    <div
+                      key={d.dayStr}
+                      className={`history-page__heatmap-dot ${lvlClass}`}
+                      title={`${d.dayStr}: ${d.count} registro(s)`}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -292,7 +374,7 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
         <div className="history-page__toolbar-row">
           {tags.length > 0 && (
             <div className="history-page__tags-wrapper">
-              <span className="history-page__filter-label">Tags:</span>
+              <span className="history-page__filter-label">Filtrar:</span>
               <TagChips
                 tags={tags}
                 selectedTagIds={selectedTagIds}
@@ -346,19 +428,29 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
           /* View Mode: Grouped by Week */
           weekGroups.map((group) => (
             <div key={group.weekStart} className="history-page__week-group">
-              {/* Week header */}
+              {/* Week header with emoji summary */}
               <div className="history-page__week-label">
-                <span className="history-page__week-title">{group.label}</span>
-                <span className="history-page__week-count">
-                  {group.results.length} {group.results.length === 1 ? "registro" : "registros"}
-                </span>
+                <div className="history-page__week-title-wrap">
+                  <span className="history-page__week-title">{group.label}</span>
+                  <span className="history-page__week-count">
+                    {group.results.length} {group.results.length === 1 ? "registro" : "registros"}
+                  </span>
+                </div>
+                {group.moodEmojis.length > 0 && (
+                  <div
+                    className="history-page__week-summary-moods"
+                    title="Humor registrado na semana"
+                  >
+                    {group.moodEmojis.join(" ")}
+                  </div>
+                )}
               </div>
 
               {/* Results within this week */}
               <ul className="history-page__result-list">
                 {group.results.map((result) => (
                   <li key={result.logId} className="history-result-item">
-                    {/* Date + time */}
+                    {/* Date + time + task name + obsidian export button */}
                     <div className="history-result-item__meta">
                       <time
                         className="history-result-item__date"
@@ -369,6 +461,20 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
                       <span className="history-result-item__time">
                         {result.time}
                       </span>
+                      {result.taskName && (
+                        <span className="history-result-item__task-badge">
+                          📋 {result.taskName}
+                        </span>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleExportObsidian(result)}
+                        className="history-result-item__obsidian-btn"
+                        aria-label="Copiar formato Obsidian"
+                      >
+                        {copiedObsidianId === result.logId ? "Copiado! ✓" : "Obsidian"}
+                      </button>
                     </div>
 
                     {/* Content */}
@@ -405,6 +511,19 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
                   <span className="history-result-item__time">
                     {result.time}
                   </span>
+                  {result.taskName && (
+                    <span className="history-result-item__task-badge">
+                      📋 {result.taskName}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleExportObsidian(result)}
+                    className="history-result-item__obsidian-btn"
+                    aria-label="Copiar formato Obsidian"
+                  >
+                    {copiedObsidianId === result.logId ? "Copiado! ✓" : "Obsidian"}
+                  </button>
                 </div>
                 <p className="history-result-item__content">
                   {result.content}

@@ -3286,6 +3286,19 @@ header.top {
   color: var(--ink);
 }
 
+/* ── Concept Banner ──────────────────────────────────────────────────────── */
+
+.history-page__concept-banner {
+  background: #F0F4F8;
+  border: 1px solid #D0DFEE;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: #2D486B;
+  line-height: 1.5;
+}
+
 /* ── Activity / Presence Banner ─────────────────────────────────────────── */
 
 .history-page__activity-banner {
@@ -3314,15 +3327,83 @@ header.top {
   color: var(--muted);
 }
 
-.history-page__activity-badge {
+.history-page__weeks-heatmap {
+  display: flex;
+  gap: 12px;
+}
+
+.history-page__week-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.history-page__week-col-label {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--structure);
-  background: rgba(63, 92, 83, 0.08);
-  padding: 6px 12px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.history-page__day-dots-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.history-page__heatmap-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--line);
+}
+
+.history-page__heatmap-dot.lvl-1 { background: #D5E2D7; }
+.history-page__heatmap-dot.lvl-2 { background: #96B89D; }
+.history-page__heatmap-dot.lvl-3 { background: var(--structure); }
+
+/* ── Week Header title & Moods ─────────────────────────────────────────── */
+
+.history-page__week-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-page__week-summary-moods {
+  display: flex;
+  gap: 4px;
+  font-size: 13px;
+  margin-left: auto;
+}
+
+.history-result-item__task-badge {
+  font-size: 11px;
+  color: var(--today);
+  background: var(--today-soft);
   border-radius: 999px;
-  white-space: nowrap;
+  padding: 2px 8px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.history-result-item__obsidian-btn {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 2px 8px;
+  margin-left: auto;
+  transition: all 0.12s ease;
+}
+
+.history-result-item__obsidian-btn:hover {
+  background: var(--bg);
+  color: var(--ink);
+  border-color: var(--structure);
 }
 
 /* ── Filters stack ──────────────────────────────────────────────────────── */

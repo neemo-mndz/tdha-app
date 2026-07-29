@@ -8,6 +8,8 @@ export interface SearchResult {
   time: string;
   tags: { id: string; name: string }[];
   source: "log" | "mood_note";
+  mood?: string | null;
+  taskName?: string | null;
 }
 
 interface SearchRow {
@@ -17,6 +19,8 @@ interface SearchRow {
   date: string;
   time: string;
   source: string;
+  mood: string | null;
+  task_name: string | null;
   tag_ids: string[] | null;
   tag_names: string[] | null;
 }
@@ -52,6 +56,8 @@ export async function searchLogs(
       sub.date,
       sub.time,
       sub.source,
+      sub.mood,
+      sub.task_name,
       array_agg(DISTINCT t.id) FILTER (WHERE t.id IS NOT NULL) AS tag_ids,
       array_agg(DISTINCT t.name) FILTER (WHERE t.id IS NOT NULL) AS tag_names
     FROM (
@@ -61,10 +67,14 @@ export async function searchLogs(
         d.date::text AS date,
         to_char(l.created_at AT TIME ZONE 'UTC', 'HH24:MI') AS time,
         'log'::text AS source,
+        d.mood AS mood,
+        tk.name AS task_name,
         l.created_at,
         l.id AS join_log_id
       FROM logs l
       INNER JOIN days d ON l.day_id = d.id
+      LEFT JOIN week_plan_tasks wpt ON l.week_plan_task_id = wpt.id
+      LEFT JOIN tasks tk ON wpt.task_id = tk.id
       WHERE d.user_id = ${userId}
         AND (
           ${!hasText}::boolean
@@ -90,7 +100,7 @@ export async function searchLogs(
     ) sub
     LEFT JOIN log_tags lt2 ON lt2.log_id = sub.join_log_id
     LEFT JOIN tags t ON t.id = lt2.tag_id
-    GROUP BY sub.log_id, sub.content, sub.date, sub.time, sub.source, sub.created_at
+    GROUP BY sub.log_id, sub.content, sub.date, sub.time, sub.source, sub.mood, sub.task_name, sub.created_at
     ORDER BY sub.created_at DESC
   `);
 
@@ -111,6 +121,8 @@ export async function searchLogs(
       time: row.time,
       tags: resultTags,
       source: (row.source === "mood_note" ? "mood_note" : "log") as "log" | "mood_note",
+      mood: row.mood,
+      taskName: row.task_name,
     };
   });
 }

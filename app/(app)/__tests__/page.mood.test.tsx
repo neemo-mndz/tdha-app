@@ -32,6 +32,7 @@ import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
 import { MoodCard } from '@/components/mood/MoodCard';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
+import { TodayLogsCard } from '@/components/home/TodayLogsCard';
 
 /**
  * Integration tests for HomePage section order and separation.
@@ -62,9 +63,11 @@ function renderHomePageLayout() {
       <HomeCalendarSection
         weekStart={WEEK_START}
         days={mockDays}
-        today={TODAY}
-        initialLogs={[]}
       />
+
+      <div className="stack">
+        <DailyLogPanel activeTasks={[]} />
+      </div>
 
       <MoodCard
         date={TODAY}
@@ -72,9 +75,7 @@ function renderHomePageLayout() {
         initialNote={null}
       />
 
-      <div className="stack">
-        <DailyLogPanel date={TODAY} activeTasks={[]} />
-      </div>
+      <TodayLogsCard allUserTags={[]} />
 
       <div className="stack">
         <WeeklyTasksPanel
@@ -112,25 +113,26 @@ describe('HomePage Integration — Section Order and Separation', () => {
     // WeeklyTasksPanel has heading "Tarefas da semana"
     const weeklyHeading = screen.getByText('Tarefas da semana');
 
-    // Use compareDocumentPosition to verify DOM order
-    // Calendar toggle must come before TodayLogsCard
+    // 1. Calendar toggle
+    // 2. DailyLogPanel
+    // 3. MoodCard
+    // 4. TodayLogsCard
+    // 5. WeeklyTasksPanel
+
     expect(
-      calendarToggle.compareDocumentPosition(todayLogsHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+      calendarToggle.compareDocumentPosition(dailyLogHeading) & Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();
 
-    // TodayLogsCard (inside HomeCalendarSection) must come before MoodCard
     expect(
-      todayLogsHeading.compareDocumentPosition(moodHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+      dailyLogHeading.compareDocumentPosition(moodHeading) & Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();
 
-    // MoodCard heading must come before DailyLogPanel heading
     expect(
-      moodHeading.compareDocumentPosition(dailyLogHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+      moodHeading.compareDocumentPosition(todayLogsHeading) & Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();
 
-    // DailyLogPanel heading must come before WeeklyTasksPanel heading
     expect(
-      dailyLogHeading.compareDocumentPosition(weeklyHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+      todayLogsHeading.compareDocumentPosition(weeklyHeading) & Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();
   });
 

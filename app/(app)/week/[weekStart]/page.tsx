@@ -15,6 +15,7 @@ import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
 import { LogsProvider } from '@/components/home/LogsProvider';
 import { getUserTags } from '@/lib/db/queries/tags';
+import { TodayLogsCard } from '@/components/home/TodayLogsCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -80,8 +81,9 @@ export default async function WeekPage({
         <HomeCalendarSection
           weekStart={weekStartStr}
           days={days}
-          allUserTags={allUserTags}
         />
+
+        {isCurrentWeek && <TodayLogsCard allUserTags={allUserTags} />}
 
         <div className="stack">
           {isCurrentWeek && (

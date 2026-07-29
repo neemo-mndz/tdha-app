@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { isSameDay } from "date-fns";
 import WeeklyCalendar from "@/components/calendar/WeeklyCalendar";
 import MonthlyCalendar from "@/components/calendar/MonthlyCalendar";
 import { getMonthStatusAction } from "@/lib/actions/logs";

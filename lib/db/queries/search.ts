@@ -24,8 +24,7 @@ interface SearchRow {
 /**
  * Busca combinada de logs com filtros de texto, tags e semana.
  *
- * - Texto: busca case-insensitive e accent-insensitive via unaccent(lower()) + ILIKE
- *   em logs.content e days.mood_note
+ * - Texto: busca case-insensitive via ILIKE em logs.content e days.mood_note
  * - Tags: OR logic (ANY) — retorna logs que tenham pelo menos uma das tags selecionadas
  * - Semana: restringe a [weekStart, weekStart + 7 days)
  * - AND entre tipos de filtro distintos

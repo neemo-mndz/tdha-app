@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition, useCallback } from "react";
+import { useState, useEffect, useTransition, useCallback, useMemo } from "react";
 import { searchLogs } from "@/lib/actions/search";
 import { getUserTags, getTagsWithLogCount } from "@/lib/actions/tags";
 import { TagChips } from "@/components/logs/TagChips";
@@ -13,6 +13,94 @@ interface HistoryPageProps {
   userTags: { id: string; name: string }[];
   initialResults: SearchResult[];
 }
+
+// ── Helpers ──────────────────────────────────────────────────────────────
+
+/**
+ * Formats a "yyyy-MM-dd" string into a localised short date like "2 jul. 2025".
+ */
+function formatDisplayDate(dateStr: string): string {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.toLocaleDateString("pt-BR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+/**
+ * Gets the Monday (start of week) for a given "yyyy-MM-dd" date string.
+ */
+function getWeekStartKey(dateStr: string): string {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  const dayOfWeek = date.getDay();
+  // Adjust to Monday (0=Sun → offset 6, 1=Mon → 0, 2=Tue → 1, etc.)
+  const offset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  const monday = new Date(date);
+  monday.setDate(monday.getDate() - offset);
+  const yy = monday.getFullYear();
+  const mm = String(monday.getMonth() + 1).padStart(2, "0");
+  const dd = String(monday.getDate()).padStart(2, "0");
+  return `${yy}-${mm}-${dd}`;
+}
+
+/**
+ * Formats a week label from a Monday date string.
+ * e.g., "2025-07-14" → "14 – 20 jul. 2025"
+ */
+function formatWeekLabel(weekStartStr: string): string {
+  const [year, month, day] = weekStartStr.split("-").map(Number);
+  const start = new Date(year, month - 1, day);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 6);
+
+  const startDay = start.getDate();
+  const endDay = end.getDate();
+  const endMonth = end.toLocaleDateString("pt-BR", { month: "short" });
+  const endYear = end.getFullYear();
+
+  if (start.getMonth() === end.getMonth()) {
+    return `${startDay} – ${endDay} ${endMonth} ${endYear}`;
+  }
+  const startMonth = start.toLocaleDateString("pt-BR", { month: "short" });
+  return `${startDay} ${startMonth} – ${endDay} ${endMonth} ${endYear}`;
+}
+
+interface WeekGroup {
+  weekStart: string;
+  label: string;
+  results: SearchResult[];
+}
+
+/**
+ * Groups results by week (Monday–Sunday) in reverse chronological order.
+ */
+function groupByWeek(results: SearchResult[]): WeekGroup[] {
+  const map = new Map<string, SearchResult[]>();
+
+  for (const result of results) {
+    const key = getWeekStartKey(result.date);
+    const existing = map.get(key);
+    if (existing) {
+      existing.push(result);
+    } else {
+      map.set(key, [result]);
+    }
+  }
+
+  // Sort weeks descending
+  const sortedKeys = Array.from(map.keys()).sort((a, b) => b.localeCompare(a));
+
+  return sortedKeys.map((key) => ({
+    weekStart: key,
+    label: formatWeekLabel(key),
+    results: map.get(key)!,
+  }));
+}
+
+// ── Component ────────────────────────────────────────────────────────────
 
 export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
   // ── Filter state ──────────────────────────────────────────────────────────
@@ -29,6 +117,9 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
     { id: string; name: string; logCount: number }[]
   >([]);
   const [isPending, startTransition] = useTransition();
+
+  // ── Grouped results (by week) ─────────────────────────────────────────────
+  const weekGroups = useMemo(() => groupByWeek(results), [results]);
 
   // ── Debounce searchText → debouncedText (300ms) ───────────────────────────
   useEffect(() => {
@@ -82,16 +173,12 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
 
   // ── Tag deleted in TagManager ─────────────────────────────────────────────
   function handleTagDeleted(tagId: string) {
-    // Remove tag from local list
     setTags((prev) => prev.filter((t) => t.id !== tagId));
     setTagManagerTags((prev) => prev.filter((t) => t.id !== tagId));
 
-    // Remove from selected filter if it was selected
     setSelectedTagIds((prev) => {
       const next = new Set(prev);
       next.delete(tagId);
-      // Re-run search with updated tag selection (after state settles)
-      // We compute new ids inline to avoid stale closure
       startTransition(async () => {
         const weekStart = selectedWeek ? formatDateParam(selectedWeek) : null;
         const data = await searchLogs({
@@ -100,7 +187,6 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
           weekStart,
         });
         setResults(data);
-        // Refresh tags from server to reflect accurate logCount
         const freshTags = await getUserTags();
         setTags(freshTags.map(({ id, name }) => ({ id, name })));
         const freshTagsWithCount = await getTagsWithLogCount();
@@ -181,7 +267,7 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
         />
       </div>
 
-      {/* ── Result list ── */}
+      {/* ── Results (grouped by week) ── */}
       <div
         className="history-page__results"
         aria-live="polite"
@@ -190,37 +276,58 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
         {isPending ? (
           <p className="history-page__loading">Buscando...</p>
         ) : results.length === 0 ? (
-          <p className="history-page__empty">Nada encontrado ainda</p>
+          <p className="history-page__empty">
+            Nenhum registro encontrado.
+            <br />
+            Seus registros aparecerão aqui organizados por semana.
+          </p>
         ) : (
-          <ul className="history-page__result-list">
-            {results.map((result) => (
-              <li key={result.logId} className="history-result-item">
-                {/* Date + time */}
-                <div className="history-result-item__meta">
-                  <time
-                    className="history-result-item__date"
-                    dateTime={result.date}
-                  >
-                    {formatDisplayDate(result.date)}
-                  </time>
-                  <span className="history-result-item__time">{result.time}</span>
-                </div>
+          weekGroups.map((group) => (
+            <div key={group.weekStart} className="history-page__week-group">
+              {/* Week header */}
+              <div className="history-page__week-label">
+                <span>{group.label}</span>
+                <span className="history-page__week-count">
+                  {group.results.length}
+                </span>
+              </div>
 
-                {/* Content */}
-                <p className="history-result-item__content">{result.content}</p>
+              {/* Results within this week */}
+              <ul className="history-page__result-list">
+                {group.results.map((result) => (
+                  <li key={result.logId} className="history-result-item">
+                    {/* Date + time */}
+                    <div className="history-result-item__meta">
+                      <time
+                        className="history-result-item__date"
+                        dateTime={result.date}
+                      >
+                        {formatDisplayDate(result.date)}
+                      </time>
+                      <span className="history-result-item__time">
+                        {result.time}
+                      </span>
+                    </div>
 
-                {/* Tags (read-only display) */}
-                {result.tags.length > 0 && (
-                  <TagChips
-                    tags={result.tags}
-                    selectedTagIds={new Set<string>()}
-                    onToggle={() => {}}
-                    size="sm"
-                  />
-                )}
-              </li>
-            ))}
-          </ul>
+                    {/* Content */}
+                    <p className="history-result-item__content">
+                      {result.content}
+                    </p>
+
+                    {/* Tags (read-only display) */}
+                    {result.tags.length > 0 && (
+                      <TagChips
+                        tags={result.tags}
+                        selectedTagIds={new Set<string>()}
+                        onToggle={() => {}}
+                        size="sm"
+                      />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
         )}
       </div>
 
@@ -256,19 +363,4 @@ export function HistoryPage({ userTags, initialResults }: HistoryPageProps) {
       )}
     </div>
   );
-}
-
-// ── Helpers ────────────────────────────────────────────────────────────────
-
-/**
- * Formats a "yyyy-MM-dd" string into a localised short date like "2 jul. 2025".
- */
-function formatDisplayDate(dateStr: string): string {
-  const [year, month, day] = dateStr.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
-  return date.toLocaleDateString("pt-BR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }

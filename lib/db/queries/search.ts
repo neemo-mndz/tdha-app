@@ -71,10 +71,12 @@ export async function searchLogs(
         )
         AND (
           ${!hasTags}::boolean
-          OR l.id IN (
-            SELECT lt.log_id FROM log_tags lt
-            WHERE lt.tag_id = ANY(${hasTags ? tagIds : []}::uuid[])
-          )
+          ${hasTags ? sql`
+            OR l.id IN (
+              SELECT lt.log_id FROM log_tags lt
+              WHERE lt.tag_id = ANY(${tagIds}::uuid[])
+            )
+          ` : sql``}
         )
         AND (
           ${!hasWeek}::boolean

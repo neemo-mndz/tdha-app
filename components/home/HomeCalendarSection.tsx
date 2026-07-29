@@ -104,6 +104,23 @@ export function HomeCalendarSection({ weekStart, days, allUserTags = [] }: HomeC
         </span>
       </button>
 
+      <div className="calendar-view-toggle">
+        <button
+          type="button"
+          className={`calendar-view-toggle__btn${viewMode === 'week' ? ' calendar-view-toggle__btn--active' : ''}`}
+          onClick={() => handleViewModeChange('week')}
+        >
+          semana
+        </button>
+        <button
+          type="button"
+          className={`calendar-view-toggle__btn${viewMode === 'month' ? ' calendar-view-toggle__btn--active' : ''}`}
+          onClick={() => handleViewModeChange('month')}
+        >
+          mês
+        </button>
+      </div>
+
       <TodayLogsCard allUserTags={allUserTags} />
 
       <div
@@ -113,24 +130,6 @@ export function HomeCalendarSection({ weekStart, days, allUserTags = [] }: HomeC
           transition: "max-height 0.28s ease",
         }}
       >
-        {/* View mode toggle */}
-        <div className="calendar-view-toggle">
-          <button
-            type="button"
-            className={`calendar-view-toggle__btn${viewMode === 'week' ? ' calendar-view-toggle__btn--active' : ''}`}
-            onClick={() => handleViewModeChange('week')}
-          >
-            semana
-          </button>
-          <button
-            type="button"
-            className={`calendar-view-toggle__btn${viewMode === 'month' ? ' calendar-view-toggle__btn--active' : ''}`}
-            onClick={() => handleViewModeChange('month')}
-          >
-            mês
-          </button>
-        </div>
-
         {/* Weekly view */}
         {viewMode === 'week' && (
           <WeeklyCalendar

@@ -15,11 +15,12 @@ interface DailyLogPanelProps {
 export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
   const { dispatchOptimistic, selectedDate, todayDate } = useLogs();
   const dateStr = format(todayDate, "yyyy-MM-dd");
-  
+
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleSave = async () => {
     if (!content.trim()) {
@@ -81,9 +82,21 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => {
+            if (!content.trim()) {
+              setIsFocused(false);
+            }
+          }}
           placeholder="O que aconteceu?"
           maxLength={2000}
           aria-label="Novo registro do dia"
+          style={{
+            height: isFocused || content.trim() ? 'auto' : 44,
+            minHeight: isFocused || content.trim() ? 44 : 44,
+            transition: 'height 0.15s ease',
+            overflowY: isFocused || content.trim() ? 'auto' : 'hidden'
+          }}
         />
         {activeTasks.length > 0 && (
           <>

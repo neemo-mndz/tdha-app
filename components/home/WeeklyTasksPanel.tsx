@@ -37,7 +37,7 @@ export function WeeklyTasksPanel({
   };
 
   return (
-    <div className="panel">
+    <div className="panel panel-weekly-tasks">
       <h2 className="panel__title">Tarefas da semana</h2>
       <p className="panel__subtitle">Contagem informativa, sem cobrança</p>
 

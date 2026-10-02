@@ -557,6 +557,22 @@ header.top {
   padding: 20px;
 }
 
+/* MoodCard specific styling - reduced vertical padding */
+.panel.mood-card {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+/* WeeklyTasksPanel specific styling - more compact when empty */
+.panel.panel-weekly-tasks {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.panel.panel-weekly-tasks .task-empty {
+  padding: 8px 0;
+}
+
 .panel__title {
   font-family: 'Outfit', sans-serif;
   font-size: 15px;
@@ -1545,11 +1561,12 @@ header.top {
   color: var(--structure);
 }
 
+/* Enhanced empty state - more compact when no logs */
 .today-logs-card__empty {
   color: var(--muted);
   font-size: 13px;
   text-align: center;
-  padding: 10px 0;
+  padding: 6px 0;
   margin: 0;
 }
 

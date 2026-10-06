@@ -12,10 +12,10 @@ import { HomeGreetingLive } from '@/components/home/HomeGreetingLive';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
-import { MoodCard } from '@/components/mood/MoodCard';
-import { LogsProvider } from '@/components/home/LogsProvider';
-import { TodayLogsCard } from '@/components/home/TodayLogsCard';
-import { InsightPanel } from '@/components/home/InsightPanel';
+import { MoodCard } from "@/components/mood/MoodCard";
+import { TodayLogsCard } from "@/components/home/TodayLogsCard";
+import { InsightPanel } from "@/components/home/InsightPanel";
+import { LogsProvider } from "@/components/home/LogsProvider";
 
 export const dynamic = 'force-dynamic';
 
@@ -47,19 +47,19 @@ export default async function HomePage() {
 
   return (
     <div className="shell">
-      {/* CONTEXTO */}
-      <div className="context-section">
-        <HomeGreetingLive initialTime={today.toISOString()} />
-        <div className="context-date">{format(today, "EEEE, d 'de' MMMM")}</div>
-        <HomeCalendarSection
-          weekStart={weekStartStr}
-          days={days}
-        />
-      </div>
+      <LogsProvider initialLogs={todayLogs} todayStr={todayStr}>
+        {/* CONTEXTO */}
+        <div className="context-section">
+          <HomeGreetingLive initialTime={today.toISOString()} />
+          <div className="context-date">{format(today, "EEEE, d 'de' MMMM")}</div>
+          <HomeCalendarSection
+            weekStart={weekStartStr}
+            days={days}
+          />
+        </div>
 
-      {/* AGORA / MEU DIA */}
-      <div className="now-section">
-        <LogsProvider initialLogs={todayLogs} todayStr={todayStr}>
+        {/* AGORA / MEU DIA */}
+        <div className="now-section">
           <DailyLogPanel activeTasks={activeTasks} />
           <MoodCard
             date={todayStr}
@@ -67,8 +67,8 @@ export default async function HomePage() {
             initialNote={dayMood.moodNote}
           />
           <TodayLogsCard allUserTags={allUserTags} />
-        </LogsProvider>
-      </div>
+        </div>
+      </LogsProvider>
 
       {/* REFLEXÃO */}
       <div className="reflection-section">

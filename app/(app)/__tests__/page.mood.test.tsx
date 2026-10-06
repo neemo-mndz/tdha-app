@@ -33,8 +33,8 @@ import { MoodCard } from "@/components/mood/MoodCard";
 import { DailyLogPanel } from "@/components/home/DailyLogPanel";
 import { WeeklyTasksPanel } from "@/components/home/WeeklyTasksPanel";
 import { TodayLogsCard } from "@/components/home/TodayLogsCard";
-import { LogsProvider } from "@/components/home/LogsProvider";
-import { InsightPanel } from "@/components/home/InsightPanel";
+import { LogsProvider } from "@/components/home/LogsProvider;
+import { InsightPanel } from "@/components/home/InsightPanel;
 
 /**
  * Integration tests for HomePage section order and separation.
@@ -60,17 +60,17 @@ const mockDays = Array.from({ length: 7 }, (_, i) => ({
 function renderHomePageLayout() {
   return render(
     <div className="shell">
-      {/* CONTEXTO */}
-      <div className="context-section">
-        <HomeCalendarSection
-          weekStart={WEEK_START}
-          days={mockDays}
-        />
-      </div>
+      <LogsProvider initialLogs={[]} todayStr={TODAY}>
+        {/* CONTEXTO */}
+        <div className="context-section">
+          <HomeCalendarSection
+            weekStart={WEEK_START}
+            days={mockDays}
+          />
+        </div>
 
-      {/* AGORA / MEU DIA */}
-      <div className="now-section">
-        <LogsProvider initialLogs={[]} todayStr={TODAY}>
+        {/* AGORA / MEU DIA */}
+        <div className="now-section">
           <DailyLogPanel activeTasks={[]} />
           <MoodCard
             date={TODAY}
@@ -78,8 +78,8 @@ function renderHomePageLayout() {
             initialNote={null}
           />
           <TodayLogsCard allUserTags={[]} />
-        </LogsProvider>
-      </div>
+        </div>
+      </LogsProvider>
 
       {/* REFLEXÃO */}
       <div className="reflection-section">

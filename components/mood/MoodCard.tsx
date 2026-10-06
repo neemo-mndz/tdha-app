@@ -46,9 +46,9 @@ export function MoodCard({ date, initialMood, initialNote }: MoodCardProps) {
   };
 
   return (
-    <section className="panel mood-card">
-      <h2 className="panel__title">Humor de hoje</h2>
-      <p className="panel__subtitle">
+    <section className="mood-card">
+      <h2 className="mood-card__title">Humor de hoje</h2>
+      <p className="mood-card__subtitle">
         Um toque só. Independente do que você escrever no registro do dia.
       </p>
 

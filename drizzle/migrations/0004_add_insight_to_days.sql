@@ -1,0 +1,1 @@
+alter table "days" add column "insight" text;

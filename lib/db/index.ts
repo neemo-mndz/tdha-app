@@ -1,4 +1,5 @@
 import { neon } from '@neondatabase/serverless';
+import { db } from "./client";
 
 /**
  * Cliente SQL do Neon Serverless.
@@ -12,3 +13,5 @@ export function getSQL() {
   }
   return neon(url);
 }
+
+export { db };

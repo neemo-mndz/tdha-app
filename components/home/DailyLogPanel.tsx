@@ -73,9 +73,11 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
   };
 
   return (
-    <div className="panel">
-      <h2 className="panel__title">Registro do dia</h2>
-      <p className="panel__subtitle">Brain dump rápido. O humor? Ali em cima, um toque só.</p>
+    <div className="daily-log-panel">
+      <h2 className="daily-log-panel__title">Registro do dia</h2>
+      <p className="daily-log-panel__subtitle">
+        Brain dump rápido. O humor? Ali em cima, um toque só.
+      </p>
 
       <div className="capture-box">
         <textarea
@@ -110,9 +112,14 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
         )}
         {error && <p style={{ color: "#C6685A", fontSize: "13px", marginTop: "8px" }}>{error}</p>}
         <div className="capture-actions">
-          <button className="save-btn" onClick={handleSave} disabled={submitting}>
-            {submitting ? "Salvando..." : "Salvar"}
-          </button>
+          <div>
+            <button className="save-btn" onClick={handleSave} disabled={submitting}>
+              {submitting ? "Salvando..." : "Salvar"}
+            </button>
+          </div>
+          <span className="capture-actions__hint">
+            Enter + Ctrl/Cmd para salvar
+          </span>
         </div>
       </div>
     </div>

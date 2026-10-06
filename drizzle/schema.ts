@@ -63,6 +63,7 @@ export const days = pgTable(
     date: date("date").notNull(),
     mood: text("mood"),          // nullable: 'great'|'good'|'neutral'|'bad'|'awful'
     moodNote: text("mood_note"), // nullable: max 80 chars (validação no app)
+    insight: text("insight"),    // nullable: insight do dia
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

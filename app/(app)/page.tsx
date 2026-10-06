@@ -4,6 +4,7 @@ import { getUserTasks } from '@/lib/db/queries/tasks';
 import { getWeekPlan } from '@/lib/db/queries/weekPlans';
 import { getDayLogs } from '@/lib/db/queries/logs';
 import { getDayMood } from '@/lib/db/queries/mood';
+import { getDayInsight } from '@/lib/db/queries/insights';
 import { getUserTags } from '@/lib/db/queries/tags';
 import { format } from 'date-fns';
 import { getCurrentUserId } from '@/lib/auth';
@@ -14,6 +15,7 @@ import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
 import { MoodCard } from '@/components/mood/MoodCard';
 import { LogsProvider } from '@/components/home/LogsProvider';
 import { TodayLogsCard } from '@/components/home/TodayLogsCard';
+import { InsightPanel } from '@/components/home/InsightPanel';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,13 +28,14 @@ export default async function HomePage() {
   const todayStr = format(today, 'yyyy-MM-dd');
   const weekStartStr = format(weekStart, 'yyyy-MM-dd');
 
-  const [days, userTasks, weekPlan, todayLogs, dayMood, allUserTags] = await Promise.all([
+  const [days, userTasks, weekPlan, todayLogs, dayMood, allUserTags, todayInsight] = await Promise.all([
     getWeekStatus(userId, weekStart),
     getUserTasks(userId),
     getWeekPlan(userId, weekStartStr),
     getDayLogs(userId, todayStr),
     getDayMood(userId, todayStr),
     getUserTags(userId),
+    getDayInsight(userId, todayStr),
   ]);
 
   const allTasks = userTasks.map((t) => ({
@@ -44,28 +47,36 @@ export default async function HomePage() {
 
   return (
     <div className="shell">
-      <HomeGreetingLive initialTime={today.toISOString()} />
-
-      <LogsProvider initialLogs={todayLogs} todayStr={todayStr}>
+      {/* CONTEXTO */}
+      <div className="context-section">
+        <HomeGreetingLive initialTime={today.toISOString()} />
+        <div className="context-date">{format(today, "EEEE, d 'de' MMMM")}</div>
         <HomeCalendarSection
           weekStart={weekStartStr}
           days={days}
         />
+      </div>
 
-        <div className="stack">
+      {/* AGORA / MEU DIA */}
+      <div className="now-section">
+        <LogsProvider initialLogs={todayLogs} todayStr={todayStr}>
           <DailyLogPanel activeTasks={activeTasks} />
-        </div>
+          <MoodCard
+            date={todayStr}
+            initialMood={dayMood.mood}
+            initialNote={dayMood.moodNote}
+          />
+          <TodayLogsCard allUserTags={allUserTags} />
+        </LogsProvider>
+      </div>
 
-        <MoodCard
-          date={todayStr}
-          initialMood={dayMood.mood}
-          initialNote={dayMood.moodNote}
-        />
+      {/* REFLEXÃO */}
+      <div className="reflection-section">
+        <InsightPanel date={todayStr} />
+      </div>
 
-        <TodayLogsCard allUserTags={allUserTags} />
-      </LogsProvider>
-
-      <div className="stack">
+      {/* ACOMPANHAMENTO */}
+      <div className="accompaniment-section">
         <WeeklyTasksPanel
           weekStart={weekStartStr}
           activeTasks={activeTasks}

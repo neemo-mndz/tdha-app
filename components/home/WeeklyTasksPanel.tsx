@@ -37,9 +37,9 @@ export function WeeklyTasksPanel({
   };
 
   return (
-    <div className="panel panel-weekly-tasks">
-      <h2 className="panel__title">Tarefas da semana</h2>
-      <p className="panel__subtitle">Contagem informativa, sem cobrança</p>
+    <div className="weekly-tasks-panel">
+      <h2 className="weekly-tasks-panel__title">Tarefas da semana</h2>
+      <p className="weekly-tasks-panel__subtitle">Contagem informativa, sem cobrança</p>
 
       {optimisticTasks.length === 0 ? (
         <div className="task-empty">

@@ -159,9 +159,20 @@ export const logs = pgTable(
   })
 );
 
-/**
- * Tabela reminders — lembretes de notificação diária do usuário
- */
+/** Pensamentos independentes, agrupados por usuário e dia. */
+export const dayThoughts = pgTable("day_thoughts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  date: date("date").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => ({
+  userDateIndex: index("day_thoughts_user_date_idx").on(table.userId, table.date),
+}));
+
+export type DayThought = typeof dayThoughts.$inferSelect;
+
+/** Lembretes de notificação diária do usuário. */
 export const reminders = pgTable("reminders", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")

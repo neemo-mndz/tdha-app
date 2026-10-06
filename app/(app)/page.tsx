@@ -14,7 +14,8 @@ import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
 import { HomeCalendarSection } from '@/components/home/HomeCalendarSection';
 import { MoodCard } from "@/components/mood/MoodCard";
 import { TodayLogsCard } from "@/components/home/TodayLogsCard";
-import { InsightPanel } from "@/components/home/InsightPanel";
+import { DayThoughtsPanel } from "@/components/home/DayThoughtsPanel";
+import { getDayThoughts } from "@/lib/db/queries/dayThoughts";
 import { LogsProvider } from "@/components/home/LogsProvider";
 
 export const dynamic = 'force-dynamic';
@@ -28,7 +29,7 @@ export default async function HomePage() {
   const todayStr = format(today, 'yyyy-MM-dd');
   const weekStartStr = format(weekStart, 'yyyy-MM-dd');
 
-  const [days, userTasks, weekPlan, todayLogs, dayMood, allUserTags, todayInsight] = await Promise.all([
+  const [days, userTasks, weekPlan, todayLogs, dayMood, allUserTags, todayInsight, todayThoughts] = await Promise.all([
     getWeekStatus(userId, weekStart),
     getUserTasks(userId),
     getWeekPlan(userId, weekStartStr),
@@ -36,6 +37,7 @@ export default async function HomePage() {
     getDayMood(userId, todayStr),
     getUserTags(userId),
     getDayInsight(userId, todayStr),
+    getDayThoughts(userId, todayStr),
   ]);
 
   const allTasks = userTasks.map((t) => ({
@@ -72,7 +74,7 @@ export default async function HomePage() {
 
       {/* REFLEXÃO */}
       <div className="reflection-section">
-        <InsightPanel date={todayStr} />
+        <DayThoughtsPanel key={todayStr} date={todayStr} initialEntries={todayThoughts} legacyInsight={todayInsight} />
       </div>
 
       {/* ACOMPANHAMENTO */}

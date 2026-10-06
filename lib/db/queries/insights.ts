@@ -1,31 +1,13 @@
 import { db } from "@/lib/db";
 import { days } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
+import { upsertDay as upsertDayByDate } from "@/lib/db/queries/logs";
 
 /**
  * Cria ou retorna o dia existente para (userId, date)
  */
 export async function upsertDay(userId: string, date: string) {
-  // Verificar se o dia já existe
-  const existingDay = await db.query.days.findFirst({
-    where: eq(days.userId, userId),
-    columns: { id: true },
-  });
-
-  if (existingDay) {
-    return existingDay;
-  }
-
-  // Criar novo dia
-  const [newDay] = await db
-    .insert(days)
-    .values({
-      userId,
-      date,
-    })
-    .returning();
-
-  return newDay;
+  return upsertDayByDate(userId, date);
 }
 
 /**
@@ -33,7 +15,7 @@ export async function upsertDay(userId: string, date: string) {
  */
 export async function getDayInsight(userId: string, date: string) {
   const day = await db.query.days.findFirst({
-    where: eq(days.userId, userId),
+    where: and(eq(days.userId, userId), eq(days.date, date)),
     columns: { id: true, insight: true },
   });
 

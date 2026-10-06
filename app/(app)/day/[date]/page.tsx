@@ -6,6 +6,9 @@ import { getDayLogs } from "@/lib/db/queries/logs";
 import { getWeekStart, getBrazilNow } from "@/lib/utils/date";
 import { LogList } from "@/components/logs/LogList";
 import { getCurrentUserId } from "@/lib/auth";
+import { DayThoughtsPanel } from "@/components/home/DayThoughtsPanel";
+import { getDayThoughts } from "@/lib/db/queries/dayThoughts";
+import { getDayInsight } from "@/lib/db/queries/insights";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +34,9 @@ export default async function DayPage({ params }: DayPageProps) {
 
   const dateString = parsed.data;
   const userId = await getCurrentUserId();
-  const logs = await getDayLogs(userId, dateString);
+  const [logs, thoughts, insight] = await Promise.all([
+    getDayLogs(userId, dateString), getDayThoughts(userId, dateString), getDayInsight(userId, dateString),
+  ]);
   const weekStart = getWeekStart(dateString);
   const isToday = dateString === format(getBrazilNow(), "yyyy-MM-dd");
   const displayDate = format(parseISO(dateString), "EEEE, d 'de' MMMM", { locale: ptBR });
@@ -43,6 +48,7 @@ export default async function DayPage({ params }: DayPageProps) {
         <h1 className="day-view__title">{isToday ? "Hoje" : displayDate}</h1>
       </header>
       <LogList initialLogs={logs} date={dateString} />
+      <DayThoughtsPanel key={dateString} date={dateString} initialEntries={thoughts} legacyInsight={insight} />
     </main>
   );
 }

@@ -1637,6 +1637,30 @@ header.top {
   color: var(--today);
 }
 
+/* Diário de pensamentos ao longo do dia */
+.day-thoughts { margin-top: 24px; padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.day-thoughts__title { font-family: 'Outfit', sans-serif; font-size: 20px; color: var(--structure); margin-bottom: 6px; }
+.day-thoughts__subtitle, .day-thoughts__empty { font-size: 13px; line-height: 1.6; color: var(--muted); margin-bottom: 20px; }
+.day-thoughts__timeline { list-style: none; padding: 0; margin: 0 0 24px; }
+.day-thoughts__entry { padding: 16px 0 16px 16px; margin-bottom: 12px; border-left: 2px solid var(--line); }
+.day-thoughts__entry-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.day-thoughts__time { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--structure); }
+.day-thoughts__entry p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.7; color: var(--ink); margin-top: 8px; }
+.day-thoughts__entry-actions { display: flex; gap: 12px; }
+.day-thoughts button { cursor: pointer; }
+.day-thoughts button:disabled { cursor: not-allowed; opacity: .5; }
+.day-thoughts__entry-actions button, .day-thoughts__confirmation button, .day-thoughts__form-actions > button:not(.save-btn) { background: none; border: none; padding: 6px 2px; color: var(--structure); font: inherit; font-size: 12px; text-decoration: underline; }
+.day-thoughts__form label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--structure); }
+.day-thoughts__form textarea { display: block; width: 100%; resize: vertical; min-height: 112px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: inherit; font-size: 16px; line-height: 1.6; }
+.day-thoughts__form textarea:focus-visible { outline: 2px solid var(--structure); outline-offset: 2px; }
+.day-thoughts__form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.day-thoughts__form-actions span { font-size: 11px; color: var(--muted); margin-left: auto; }
+.day-thoughts__error { color: #a94335; font-size: 13px; margin-top: 10px; }
+.day-thoughts__notice { color: var(--structure); font-size: 12px; margin-top: 8px; }
+.day-thoughts__notice:empty { display: none; }
+.day-thoughts__confirmation { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 13px; padding: 12px; margin-top: 12px; background: var(--bg); border-radius: 8px; }
+@media (max-width: 480px) { .day-thoughts { padding: 18px 14px; } .day-thoughts__form-actions span { width: 100%; margin-left: 0; } }
+
 /* ---- Log Item Meta (horário + tag da tarefa) ---- */
 .log-item-card__meta {
   display: flex;

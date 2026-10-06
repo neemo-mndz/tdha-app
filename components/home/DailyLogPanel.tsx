@@ -76,7 +76,7 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
     <div className="daily-log-panel">
       <h2 className="daily-log-panel__title">Registro do dia</h2>
       <p className="daily-log-panel__subtitle">
-        Brain dump rápido. O humor? Ali em cima, um toque só.
+        Registre os momentos da rotina: acordar, trabalhar, almoçar…
       </p>
 
       <div className="capture-box">
@@ -90,7 +90,7 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
               setIsFocused(false);
             }
           }}
-          placeholder="O que aconteceu?"
+          placeholder="O que você fez? Ex.: saí para almoçar."
           maxLength={2000}
           aria-label="Novo registro do dia"
           style={{

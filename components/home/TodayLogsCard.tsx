@@ -6,6 +6,7 @@ import { ptBR } from "date-fns/locale";
 import { getLogsForDate } from "@/lib/actions/logs";
 import { LogItem } from "@/components/logs/LogItem";
 import { useLogs } from "@/components/home/LogsProvider";
+import Link from "next/link";
 
 interface TodayLogsCardProps {
   allUserTags?: { id: string; name: string }[];
@@ -41,6 +42,7 @@ export function TodayLogsCard({ allUserTags = [] }: TodayLogsCardProps) {
   return (
     <div className="today-logs-card">
       <h3 className="today-logs-card__title">{label}</h3>
+      {!isToday && <Link href={`/day/${dateStr}`} className="task-panel-link">Ver pensamentos sobre esse dia</Link>}
 
       {isPending ? (
         <p className="today-logs-card__empty">Carregando...</p>

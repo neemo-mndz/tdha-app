@@ -27,7 +27,7 @@ describe('Home — composição do protótipo com recursos existentes', () => {
       screen.getByRole('heading', { name: 'Tarefas da semana' }),
       screen.getByRole('heading', { name: 'Registrar agora' }),
       screen.getByRole('heading', { name: 'Humor de hoje' }),
-      screen.getByRole('heading', { name: 'Sobre o dia' }),
+      screen.getByRole('heading', { name: 'Insight diário' }),
     ];
     for (let i=1; i<elements.length; i++) expect(elements[i-1].compareDocumentPosition(elements[i]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });

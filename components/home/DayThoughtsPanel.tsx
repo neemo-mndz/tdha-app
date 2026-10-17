@@ -4,10 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { createDayThought, editDayThought, deleteDayThought } from "@/lib/actions/dayThoughts";
 import type { DayThought } from "@/drizzle/schema";
 
-const timeFormatter = new Intl.DateTimeFormat("pt-BR", {
-  hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo",
-});
-
 interface Props {
   date: string;
   initialEntries: DayThought[];
@@ -44,7 +40,7 @@ export function DayThoughtsPanel({ date, initialEntries, legacyInsight }: Props)
         : [...prev.filter((entry) => entry.id !== result.entry.id), result.entry]);
       setContent("");
       setEditingId(null);
-      setNotice("Pensamento salvo.");
+      setNotice("Reflexão salva.");
     } catch {
       setError("Não foi possível salvar. Seu texto foi mantido; tente novamente.");
     } finally {
@@ -75,28 +71,25 @@ export function DayThoughtsPanel({ date, initialEntries, legacyInsight }: Props)
 
   return (
     <section className="day-thoughts" aria-labelledby="day-thoughts-title">
-      <h2 id="day-thoughts-title" className="day-thoughts__title">Sobre o dia</h2>
-      <p className="day-thoughts__time">{new Intl.DateTimeFormat("pt-BR", {
+      <h2 id="day-thoughts-title" className="day-thoughts__title">Insight diário</h2>
+      <p className="day-thoughts__date">{new Intl.DateTimeFormat("pt-BR", {
         day: "numeric", month: "long", year: "numeric", timeZone: "America/Sao_Paulo",
       }).format(new Date(`${date}T12:00:00-03:00`))}</p>
-      <p className="day-thoughts__subtitle">Como o dia está sendo para você? Volte aqui para escrever ao longo do dia.</p>
+      <p className="day-thoughts__subtitle">Um espaço de diário para seus pensamentos, ideias e reflexões. Escreva livremente, no seu ritmo.</p>
       {legacyInsight && <article className="day-thoughts__entry">
-        <span className="day-thoughts__time">Reflexão já registrada</span>
+        <span className="day-thoughts__date">Reflexão salva anteriormente</span>
         <p>{legacyInsight}</p>
       </article>}
-      {entries.length > 0 ? <ol className="day-thoughts__timeline">
-        {entries.map((entry) => <li key={entry.id} className="day-thoughts__entry">
+      {entries.length > 0 ? <div className="day-thoughts__notes">
+        {entries.map((entry, index) => <article key={entry.id} className="day-thoughts__entry">
           <div className="day-thoughts__entry-header">
-            <time className="day-thoughts__time" dateTime={new Date(entry.createdAt).toISOString()}>
-              {timeFormatter.format(new Date(entry.createdAt))}
-            </time>
             <div className="day-thoughts__entry-actions">
               <button type="button" disabled={saving || editingId !== null} onClick={() => {
                 setContent(entry.content); setEditingId(entry.id); setError(null); setNotice("");
                 setConfirmDelete(null); textarea.current?.focus();
-              }} aria-label={`Editar pensamento das ${timeFormatter.format(new Date(entry.createdAt))}`}>Editar</button>
+              }} aria-label={`Editar reflexão ${index + 1}`}>Editar</button>
               <button type="button" disabled={saving || editingId !== null} onClick={() => setConfirmDelete(entry.id)}
-                aria-label={`Excluir pensamento das ${timeFormatter.format(new Date(entry.createdAt))}`}>Excluir</button>
+                aria-label={`Excluir reflexão ${index + 1}`}>Excluir</button>
             </div>
           </div>
           <p>{entry.content}</p>
@@ -105,21 +98,21 @@ export function DayThoughtsPanel({ date, initialEntries, legacyInsight }: Props)
             <button type="button" disabled={saving} onClick={() => remove(entry.id)}>Sim, excluir</button>
             <button type="button" disabled={saving} onClick={() => setConfirmDelete(null)}>Cancelar</button>
           </div>}
-        </li>)}
-      </ol> : !legacyInsight && <p className="day-thoughts__empty">Uma percepção, algo que deu certo ou uma ideia para depois. Comece por onde quiser.</p>}
+        </article>)}
+      </div> : !legacyInsight && <p className="day-thoughts__empty">O que ficou com você hoje? Uma ideia solta, uma descoberta ou algo que queira colocar em palavras.</p>}
       <form className="day-thoughts__form" onSubmit={(event) => { event.preventDefault(); void save(); }}>
-        <label htmlFor="day-thought-content">{editingId ? "Editar pensamento" : "Um pensamento agora"}</label>
+        <label htmlFor="day-thought-content">{editingId ? "Editar reflexão" : "Escrever no diário"}</label>
         <textarea id="day-thought-content" ref={textarea} value={content} disabled={saving}
           onChange={(event) => { setContent(event.target.value); setError(null); setNotice(""); }}
-          placeholder="Hoje cheguei mais cedo e me senti mais focado. Percebi que…"
-          rows={4} maxLength={5000} aria-invalid={!!error} aria-describedby={error ? "day-thought-error" : "day-thought-hint"}
+          placeholder={"Hoje fiquei pensando em…\nUma ideia que quero guardar…"}
+          rows={6} maxLength={5000} aria-invalid={!!error} aria-describedby={error ? "day-thought-error" : "day-thought-hint"}
           onKeyDown={(event) => {
             if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) { event.preventDefault(); void save(); }
           }} />
         {error && <p id="day-thought-error" role="alert" className="day-thoughts__error">{error}</p>}
         <div className="day-thoughts__form-actions">
           <button type="submit" className="save-btn" disabled={saving || !content.trim()}>
-            {saving ? "Salvando..." : editingId ? "Salvar alteração" : "Guardar pensamento"}
+            {saving ? "Salvando..." : editingId ? "Salvar alteração" : "Guardar reflexão"}
           </button>
           {editingId && <button type="button" disabled={saving} onClick={() => {
             setContent(""); setEditingId(null); setError(null);

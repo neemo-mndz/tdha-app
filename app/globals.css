@@ -160,11 +160,11 @@ header.top {
 
 .weekly-calendar__grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 10px;
   position: relative;
   z-index: 1;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Timeline gradient bar */
@@ -214,17 +214,21 @@ header.top {
   text-align: center;
   cursor: pointer;
   min-width: 0;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .day-cell:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px -14px rgba(35, 48, 43, 0.35);
+  background: #FAFBF9;
+}
+
+.day-cell:focus-visible {
+  outline: 2px solid var(--structure);
+  outline-offset: -3px;
 }
 
 .day-cell--today {
   border-color: var(--today);
-  box-shadow: 0 0 0 2px var(--today);
+  box-shadow: inset 0 0 0 2px var(--today);
 }
 
 .day-cell--today .day-cell__date {
@@ -290,7 +294,7 @@ header.top {
 
   .weekly-calendar__grid {
     gap: 3px;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .day-cell {
@@ -1641,17 +1645,18 @@ header.top {
 .day-thoughts { margin-top: 24px; padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
 .day-thoughts__title { font-family: 'Outfit', sans-serif; font-size: 20px; color: var(--structure); margin-bottom: 6px; }
 .day-thoughts__subtitle, .day-thoughts__empty { font-size: 13px; line-height: 1.6; color: var(--muted); margin-bottom: 20px; }
-.day-thoughts__timeline { list-style: none; padding: 0; margin: 0 0 24px; }
-.day-thoughts__entry { padding: 16px 0 16px 16px; margin-bottom: 12px; border-left: 2px solid var(--line); }
-.day-thoughts__entry-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-.day-thoughts__time { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--structure); }
+.day-thoughts__notes { margin: 0 0 24px; }
+.day-thoughts__entry { padding: 18px 0; border-bottom: 1px solid var(--line); }
+.day-thoughts__entry:last-child { border-bottom: none; }
+.day-thoughts__entry-header { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-bottom: 8px; }
+.day-thoughts__date { font-size: 12px; color: var(--muted); margin: 0 0 12px; }
 .day-thoughts__entry p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.7; color: var(--ink); margin-top: 8px; }
 .day-thoughts__entry-actions { display: flex; gap: 12px; }
 .day-thoughts button { cursor: pointer; }
 .day-thoughts button:disabled { cursor: not-allowed; opacity: .5; }
 .day-thoughts__entry-actions button, .day-thoughts__confirmation button, .day-thoughts__form-actions > button:not(.save-btn) { background: none; border: none; padding: 6px 2px; color: var(--structure); font: inherit; font-size: 12px; text-decoration: underline; }
 .day-thoughts__form label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--structure); }
-.day-thoughts__form textarea { display: block; width: 100%; resize: vertical; min-height: 112px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: inherit; font-size: 16px; line-height: 1.6; }
+.day-thoughts__form textarea { display: block; width: 100%; resize: vertical; min-height: 180px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: inherit; font-size: 16px; line-height: 1.6; }
 .day-thoughts__form textarea:focus-visible { outline: 2px solid var(--structure); outline-offset: 2px; }
 .day-thoughts__form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
 .day-thoughts__form-actions span { font-size: 11px; color: var(--muted); margin-left: auto; }
@@ -1792,7 +1797,7 @@ header.top {
 
 .monthly-calendar__weekdays {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 6px;
   margin-bottom: 8px;
 }
@@ -1807,7 +1812,7 @@ header.top {
 
 .monthly-calendar__grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 6px;
 }
 

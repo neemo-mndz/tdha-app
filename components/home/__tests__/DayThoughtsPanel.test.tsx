@@ -13,35 +13,37 @@ const entry = {
 beforeEach(() => vi.clearAllMocks());
 afterEach(cleanup);
 
-describe("Sobre o dia — interface", () => {
-  it("adiciona outro pensamento preservando o da manhã e mostra horário de Brasília", async () => {
+describe("Insight diário — interface", () => {
+  it("guarda reflexões como texto de diário, sem horários ou lista numerada", async () => {
     vi.mocked(createDayThought).mockResolvedValue({ success: true, entry: { ...entry, id: "second", content: "Almocei bem." } });
     render(<DayThoughtsPanel date={entry.date} initialEntries={[entry]} />);
-    expect(screen.getByText("08:00")).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("Um pensamento agora"), { target: { value: "Almocei bem." } });
-    fireEvent.click(screen.getByRole("button", { name: "Guardar pensamento" }));
+    expect(screen.queryByText("08:00")).not.toBeInTheDocument();
+    expect(document.querySelector(".day-thoughts time")).toBeNull();
+    expect(document.querySelector(".day-thoughts ol")).toBeNull();
+    fireEvent.change(screen.getByLabelText("Escrever no diário"), { target: { value: "Almocei bem." } });
+    fireEvent.click(screen.getByRole("button", { name: "Guardar reflexão" }));
     await screen.findByText("Almocei bem.");
     expect(screen.getByText(entry.content)).toBeInTheDocument();
-    expect(screen.getByLabelText("Um pensamento agora")).toHaveValue("");
+    expect(screen.getByLabelText("Escrever no diário")).toHaveValue("");
   });
   it("preserva o rascunho quando o servidor falha", async () => {
     vi.mocked(createDayThought).mockRejectedValue(new Error("Network"));
     render(<DayThoughtsPanel date={entry.date} initialEntries={[]} />);
-    fireEvent.change(screen.getByLabelText("Um pensamento agora"), { target: { value: "Quero testar uma receita." } });
-    fireEvent.click(screen.getByRole("button", { name: "Guardar pensamento" }));
+    fireEvent.change(screen.getByLabelText("Escrever no diário"), { target: { value: "Quero testar uma receita." } });
+    fireEvent.click(screen.getByRole("button", { name: "Guardar reflexão" }));
     await screen.findByRole("alert");
-    expect(screen.getByLabelText("Um pensamento agora")).toHaveValue("Quero testar uma receita.");
-    expect(screen.getByRole("button", { name: "Guardar pensamento" })).toBeEnabled();
+    expect(screen.getByLabelText("Escrever no diário")).toHaveValue("Quero testar uma receita.");
+    expect(screen.getByRole("button", { name: "Guardar reflexão" })).toBeEnabled();
   });
   it("edita uma entrada e pede confirmação antes de excluir", async () => {
     vi.mocked(editDayThought).mockResolvedValue({ success: true, entry: { ...entry, content: "O dia correu bem." } });
     vi.mocked(deleteDayThought).mockResolvedValue({ success: true, entry });
     render(<DayThoughtsPanel date={entry.date} initialEntries={[entry]} />);
-    fireEvent.click(screen.getByRole("button", { name: "Editar pensamento das 08:00" }));
-    fireEvent.change(screen.getByLabelText("Editar pensamento"), { target: { value: "O dia correu bem." } });
+    fireEvent.click(screen.getByRole("button", { name: "Editar reflexão 1" }));
+    fireEvent.change(screen.getByLabelText("Editar reflexão"), { target: { value: "O dia correu bem." } });
     fireEvent.click(screen.getByRole("button", { name: "Salvar alteração" }));
     await screen.findByText("O dia correu bem.");
-    fireEvent.click(screen.getByRole("button", { name: "Excluir pensamento das 08:00" }));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir reflexão 1" }));
     expect(deleteDayThought).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Sim, excluir" }));
     await waitFor(() => expect(screen.queryByText("O dia correu bem.")).not.toBeInTheDocument());

@@ -59,6 +59,8 @@ async function run() {
   )`;
   console.log("✓ week_plan_tasks table");
 
+  await sql`ALTER TABLE week_plan_tasks ADD COLUMN IF NOT EXISTS completed_dates text[] NOT NULL DEFAULT '{}'`;
+
   // 8. Logs table
   await sql`CREATE TABLE IF NOT EXISTS logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

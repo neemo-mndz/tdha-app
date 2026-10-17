@@ -3974,3 +3974,35 @@ header.top {
 .task-panel-link:hover {
   color: var(--today);
 }
+
+/* Mapa de ritmo semanal — presença sem cobrança */
+.rhythm-overview-bar { display: flex; align-items: center; gap: 12px; background: var(--bg); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; }
+.rhythm-overview-bar__track { flex: 1; height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.rhythm-overview-bar__fill { height: 100%; background: linear-gradient(90deg, var(--structure), var(--today)); border-radius: 999px; transition: width 0.3s ease; }
+.rhythm-overview-bar__label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--structure); white-space: nowrap; }
+.task-row--rhythm { display: flex; flex-direction: column; gap: 10px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.task-row--rhythm:last-child { border-bottom: none; }
+.task-row__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.task-row__top .task-name { min-width: 0; overflow-wrap: anywhere; }
+.task-row__info { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.task-progress-track { width: 44px; height: 5px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+.task-progress-fill { height: 100%; background: var(--structure); border-radius: 999px; transition: width 0.25s ease; }
+.task-progress-fill--done { background: var(--today); }
+.task-week-dots { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.task-day-pill { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 6px 4px; min-height: 34px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.15s ease; }
+.task-day-pill:hover:not(:disabled) { border-color: var(--structure); background: var(--surface); color: var(--structure); transform: translateY(-1px); }
+.task-day-pill:disabled { cursor: not-allowed; }
+.task-day-pill--future { opacity: 0.45; }
+.task-day-pill--today { border-color: var(--today); background: var(--today-soft); color: var(--ink); font-weight: 600; }
+.task-day-pill--active { background: var(--structure); border-color: var(--structure); color: #fff; }
+.task-day-pill--active.task-day-pill--today { background: var(--today); border-color: var(--today); color: #fff; }
+.task-day-pill__dot { width: 5px; height: 5px; flex-shrink: 0; border-radius: 50%; background: currentColor; opacity: 0.35; }
+.task-day-pill--active .task-day-pill__dot { opacity: 1; }
+.task-day-pill:focus-visible { outline: 2px solid var(--structure); outline-offset: 3px; }
+@media (max-width: 640px) {
+  .task-day-pill { font-size: 10px; padding: 5px 2px; gap: 3px; }
+  .task-row__top { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .task-day-pill, .task-progress-fill, .rhythm-overview-bar__fill { transition: none; }
+}

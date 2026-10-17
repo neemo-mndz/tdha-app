@@ -128,10 +128,13 @@ export const weekPlanTasks = pgTable("week_plan_tasks", {
     .references(() => tasks.id, { onDelete: "restrict" }),
   goal: integer("goal").notNull().default(1),
   done: integer("done").notNull().default(0),
+  completedDates: text("completed_dates").array().notNull().default([]),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (table) => ({
+  planTaskUnique: uniqueIndex("week_plan_tasks_week_plan_id_task_id_unique").on(table.weekPlanId, table.taskId),
+}));
 
 /**
  * Tabela logs — registros de texto criados pelo usuário

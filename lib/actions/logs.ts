@@ -25,6 +25,7 @@ import {
 } from "@/lib/db/queries/weekPlans";
 import { getMonthStatus } from "@/lib/db/queries/months";
 import { getCurrentUserId } from "@/lib/auth";
+import { isDateInWeek, rhythmToday } from "@/lib/utils/taskRhythm";
 import type { DayStatus } from "@/lib/types/calendar";
 
 type ActionResult = { success: true } | { success: false; error: string };
@@ -64,7 +65,7 @@ export async function createLog(input: unknown): Promise<ActionResult> {
   const weekPlanTaskId = parsed.data.weekPlanTaskId ?? null;
   if (weekPlanTaskId) {
     const taskOwner = await getWeekPlanTaskOwner(weekPlanTaskId);
-    if (!taskOwner || taskOwner.userId !== userId) {
+    if (!taskOwner || taskOwner.userId !== userId || !isDateInWeek(parsed.data.date, taskOwner.weekStart) || parsed.data.date > rhythmToday()) {
       return { success: false, error: "Tarefa inválida para esta semana" };
     }
   }
@@ -78,11 +79,12 @@ export async function createLog(input: unknown): Promise<ActionResult> {
 
   // Incrementar contador da tarefa vinculada
   if (weekPlanTaskId) {
-    await bumpWeekPlanTask(weekPlanTaskId);
+    await bumpWeekPlanTask(weekPlanTaskId, parsed.data.date);
   }
 
   revalidatePath(`/day/${parsed.data.date}`);
   revalidatePath("/");
+  revalidatePath("/week/[weekStart]", "page");
 
   return { success: true };
 }
@@ -128,6 +130,7 @@ export async function updateLog(input: unknown): Promise<ActionResult> {
   }
   revalidatePath("/history");
   revalidatePath("/");
+  revalidatePath("/week/[weekStart]", "page");
 
   return { success: true };
 }
@@ -171,6 +174,7 @@ export async function deleteLog(input: unknown): Promise<ActionResult> {
 
   revalidatePath(`/day/${parsed.data.date}`);
   revalidatePath("/");
+  revalidatePath("/week/[weekStart]", "page");
 
   return { success: true };
 }
@@ -222,6 +226,7 @@ export async function updateLogTime(input: unknown): Promise<ActionResult> {
   await updateLogCreatedAt(parsed.data.logId, newCreatedAt);
   revalidatePath(`/day/${parsed.data.date}`);
   revalidatePath("/");
+  revalidatePath("/week/[weekStart]", "page");
 
   return { success: true };
 }

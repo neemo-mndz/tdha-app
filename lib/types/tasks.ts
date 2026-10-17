@@ -10,6 +10,7 @@ export interface ActiveTaskDisplay {
   name: string;
   goal: number;
   done: number;
+  completedDates: string[];
 }
 
 export interface WeekPlanSummary {

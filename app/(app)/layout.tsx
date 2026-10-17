@@ -6,7 +6,7 @@ import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { getCurrentUserId } from "@/lib/auth";
 import { getWeekPlan } from "@/lib/db/queries/weekPlans";
 import { getUserProfile } from "@/lib/db/queries/profile";
-import { currentWeekStart } from "@/lib/utils/date";
+import { currentWeekStart, getBrazilNow } from "@/lib/utils/date";
 import { format } from "date-fns";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const userId = await getCurrentUserId();
-  const weekStart = format(currentWeekStart(), "yyyy-MM-dd");
+  const weekStart = format(currentWeekStart(getBrazilNow()), "yyyy-MM-dd");
   const [plan, profile] = await Promise.all([
     getWeekPlan(userId, weekStart),
     getUserProfile(userId),

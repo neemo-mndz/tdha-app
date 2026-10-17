@@ -1,8 +1,10 @@
 import { z } from "zod";
+import { isValid, parseISO } from "date-fns";
 
 const weekStartSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Data deve estar no formato yyyy-MM-dd");
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Data deve estar no formato yyyy-MM-dd")
+  .refine((date) => isValid(parseISO(date)), "Data inválida");
 
 const planTaskSchema = z.object({
   taskId: z.string().uuid("taskId deve ser um UUID válido"),
@@ -11,11 +13,20 @@ const planTaskSchema = z.object({
 
 export const saveWeekPlanSchema = z.object({
   weekStart: weekStartSchema,
-  tasks: z.array(planTaskSchema),
+  tasks: z.array(planTaskSchema).refine(
+    (tasks) => new Set(tasks.map((task) => task.taskId)).size === tasks.length,
+    "Cada tarefa pode aparecer apenas uma vez",
+  ),
 });
 
 export const bumpTaskSchema = z.object({
   weekPlanTaskId: z.string().uuid("weekPlanTaskId deve ser um UUID válido"),
+  todayDate: weekStartSchema.optional(),
+});
+
+export const toggleTaskDaySchema = z.object({
+  weekPlanTaskId: z.string().uuid("weekPlanTaskId deve ser um UUID válido"),
+  date: weekStartSchema,
 });
 
 export type SaveWeekPlanInput = z.infer<typeof saveWeekPlanSchema>;

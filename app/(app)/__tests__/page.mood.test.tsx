@@ -26,6 +26,7 @@ vi.mock('@/lib/actions/logs', () => ({
 
 vi.mock('@/lib/actions/weekPlans', () => ({
   bumpTask: vi.fn(async () => ({ success: true })),
+  toggleTaskDay: vi.fn(async () => ({ success: true })),
 }));
 
 import { HomeCalendarSection } from "@/components/home/HomeCalendarSection";
@@ -33,8 +34,8 @@ import { MoodCard } from "@/components/mood/MoodCard";
 import { DailyLogPanel } from "@/components/home/DailyLogPanel";
 import { WeeklyTasksPanel } from "@/components/home/WeeklyTasksPanel";
 import { TodayLogsCard } from "@/components/home/TodayLogsCard";
-import { LogsProvider } from "@/components/home/LogsProvider;
-import { InsightPanel } from "@/components/home/InsightPanel;
+import { LogsProvider } from "@/components/home/LogsProvider";
+import { DayThoughtsPanel } from "@/components/home/DayThoughtsPanel";
 
 /**
  * Integration tests for HomePage section order and separation.
@@ -83,13 +84,14 @@ function renderHomePageLayout() {
 
       {/* REFLEXÃO */}
       <div className="reflection-section">
-        <InsightPanel date={TODAY} />
+        <DayThoughtsPanel date={TODAY} initialEntries={[]} />
       </div>
 
       {/* ACOMPANHAMENTO */}
       <div className="accompaniment-section">
         <WeeklyTasksPanel
           weekStart={WEEK_START}
+          today={TODAY}
           activeTasks={[]}
           allTasks={[]}
         />
@@ -122,7 +124,7 @@ describe('HomePage Integration — Section Order and Separation', () => {
 
     // InsightPanel has heading "Insight do dia" (in empty state) or the insight text
     // We'll use the empty state text for now
-    const insightHeading = screen.getByText('Como foi seu dia no geral?');
+    const insightHeading = screen.getByText('Sobre o dia');
 
     // WeeklyTasksPanel has heading "Tarefas da semana"
     const weeklyHeading = screen.getByText('Tarefas da semana');
@@ -177,8 +179,8 @@ describe('HomePage Integration — Section Order and Separation', () => {
     // Additionally, we can check that they are both inside the now-section.
     const nowSection = container.querySelector('div.now-section');
     expect(nowSection).not.toBeNull();
-    expect(nowSection.contains(moodSection)).toBeTruthy();
-    expect(nowSection.contains(dailyLogPanel)).toBeTruthy();
+    expect(nowSection!.contains(moodSection)).toBeTruthy();
+    expect(nowSection!.contains(dailyLogPanel)).toBeTruthy();
   });
 
   // **Validates: Requirements 5.3**
@@ -190,7 +192,7 @@ describe('HomePage Integration — Section Order and Separation', () => {
     expect(moodSection).not.toBeNull();
 
     // MoodCard should NOT contain a textarea element
-    const textareas = moodSection.querySelectorAll('textarea');
+    const textareas = moodSection!.querySelectorAll('textarea');
     expect(textareas).toHaveLength(0);
 
     // MoodCard should NOT contain an input with aria-label "Novo registro do dia"
@@ -207,11 +209,11 @@ describe('HomePage Integration — Section Order and Separation', () => {
     const dailyLogPanel = dailyLogHeading.parentElement;
 
     // DailyLogPanel should NOT contain a radiogroup (mood selector)
-    const radiogroups = dailyLogPanel.querySelectorAll('[role="radiogroup"]');
+    const radiogroups = dailyLogPanel!.querySelectorAll('[role="radiogroup"]');
     expect(radiogroups).toHaveLength(0);
 
     // DailyLogPanel should NOT contain mood emoji buttons
-    const moodButtons = dailyLogPanel.querySelectorAll('[role="radio"]');
+    const moodButtons = dailyLogPanel!.querySelectorAll('[role="radio"]');
     expect(moodButtons).toHaveLength(0);
   });
 });

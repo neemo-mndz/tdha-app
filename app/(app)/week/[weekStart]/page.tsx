@@ -8,7 +8,7 @@ import { getUserTasks } from '@/lib/db/queries/tasks';
 import { getWeekPlan } from '@/lib/db/queries/weekPlans';
 import { getDayLogs } from '@/lib/db/queries/logs';
 import { getCurrentUserId } from '@/lib/auth';
-import { currentWeekStart } from '@/lib/utils/date';
+import { currentWeekStart, getBrazilNow } from '@/lib/utils/date';
 import { HomeGreetingLive } from '@/components/home/HomeGreetingLive';
 import { DailyLogPanel } from '@/components/home/DailyLogPanel';
 import { WeeklyTasksPanel } from '@/components/home/WeeklyTasksPanel';
@@ -45,7 +45,7 @@ export default async function WeekPage({
   }
 
   const weekStartDate = result.data;
-  const today = new Date();
+  const today = getBrazilNow();
   const todayStr = format(today, 'yyyy-MM-dd');
   const weekStartStr = format(weekStartDate, 'yyyy-MM-dd');
   const isCurrentWeek = isSameDay(weekStartDate, currentWeekStart(today));
@@ -91,6 +91,7 @@ export default async function WeekPage({
           )}
           <WeeklyTasksPanel
             weekStart={weekStartStr}
+            today={todayStr}
             activeTasks={activeTasks}
             allTasks={allTasks}
           />

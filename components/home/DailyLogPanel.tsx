@@ -1,20 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { createLog } from "@/lib/actions/logs";
+import { useState, useTransition } from "react";
+import { createLog, getLogsForDate } from "@/lib/actions/logs";
 import { TaskChips } from "@/components/logs/TaskChips";
 import type { ActiveTaskDisplay } from "@/lib/types/tasks";
 import { useLogs } from "@/components/home/LogsProvider";
-import { format, isSameDay } from "date-fns";
-import type { LogWithTask } from "@/lib/db/queries/logs";
+import { format } from "date-fns";
+
+import { ptBR } from "date-fns/locale";
+import { isDateInWeek } from "@/lib/utils/taskRhythm";
 
 interface DailyLogPanelProps {
+  weekStart?: string;
   activeTasks: ActiveTaskDisplay[];
 }
 
-export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
-  const { dispatchOptimistic, selectedDate, todayDate } = useLogs();
-  const dateStr = format(todayDate, "yyyy-MM-dd");
+export function DailyLogPanel({ activeTasks, weekStart }: DailyLogPanelProps) {
+  const { dispatchOptimistic, selectedDate, todayDate, setLogs } = useLogs();
+  const dateStr = format(selectedDate, "yyyy-MM-dd");
+  const availableTasks = weekStart && !isDateInWeek(dateStr, weekStart) ? [] : activeTasks;
+  const future = selectedDate > todayDate;
+  const [, startTransition] = useTransition();
 
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +29,7 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleSave = async () => {
+    if (submitting || future) return;
     if (!content.trim()) {
       setError("O registro não pode ser vazio.");
       return;
@@ -36,33 +43,28 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
 
     const trimmed = content.trim();
 
-    // Optimistic Update
-    if (isSameDay(selectedDate, todayDate)) {
-      const optimisticLog: LogWithTask = {
-        id: `optimistic-${Date.now()}`,
-        content: trimmed,
-        dayId: "optimistic",
-        createdAt: new Date(),
-        weekPlanTaskId: selectedTaskId,
-        taskName: activeTasks.find((t) => t.weekPlanTaskId === selectedTaskId)?.name ?? null,
-        tags: [],
-      };
-      dispatchOptimistic({ type: "add", log: optimisticLog });
-    }
-
-    const result = await createLog({
-      content: trimmed,
-      date: dateStr,
-      weekPlanTaskId: selectedTaskId,
+    const linkedTask = availableTasks.find((task) => task.weekPlanTaskId === selectedTaskId);
+    startTransition(async () => {
+      dispatchOptimistic({ type: "add", log: {
+        id: `optimistic-${Date.now()}`, content: trimmed, dayId: "optimistic",
+        createdAt: new Date(), weekPlanTaskId: linkedTask?.weekPlanTaskId ?? null,
+        taskName: linkedTask?.name ?? null, tags: [],
+      } });
+      try {
+        const result = await createLog({ content: trimmed, date: dateStr, weekPlanTaskId: linkedTask?.weekPlanTaskId ?? null });
+        if (result.success) {
+          setContent("");
+          setSelectedTaskId(null);
+          try { setLogs(await getLogsForDate(dateStr)); } catch { /* A gravação já foi concluída; a próxima navegação atualiza a lista. */ }
+        } else {
+          setError(result.error ?? "Erro ao salvar.");
+        }
+      } catch {
+        setError("Não foi possível salvar. Seu texto foi mantido; tente novamente.");
+      } finally {
+        setSubmitting(false);
+      }
     });
-    setSubmitting(false);
-
-    if (result.success) {
-      setContent("");
-      setSelectedTaskId(null);
-    } else {
-      setError(result.error ?? "Erro ao salvar.");
-    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -74,9 +76,9 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
 
   return (
     <div className="daily-log-panel">
-      <h2 className="daily-log-panel__title">Registro do dia</h2>
+      <h2 className="daily-log-panel__title">Registrar agora</h2>
       <p className="daily-log-panel__subtitle">
-        Registre os momentos da rotina: acordar, trabalhar, almoçar…
+        Anote algo rápido sobre {format(selectedDate, "EEE (dd/MM)", { locale: ptBR })}
       </p>
 
       <div className="capture-box">
@@ -90,7 +92,7 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
               setIsFocused(false);
             }
           }}
-          placeholder="O que você fez? Ex.: saí para almoçar."
+          placeholder="O que aconteceu hoje? Uma frase já basta…"
           maxLength={2000}
           aria-label="Novo registro do dia"
           style={{
@@ -100,11 +102,11 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
             overflowY: isFocused || content.trim() ? 'auto' : 'hidden'
           }}
         />
-        {activeTasks.length > 0 && (
+        {availableTasks.length > 0 && (
           <>
-            <p className="link-task-label">Vincular a uma tarefa da semana (opcional)</p>
+            <p className="link-task-label">Vincular a tarefa da semana (opcional — também marca o dia acima)</p>
             <TaskChips
-              activeTasks={activeTasks}
+              activeTasks={availableTasks}
               selectedTaskId={selectedTaskId}
               onSelect={setSelectedTaskId}
             />
@@ -113,12 +115,12 @@ export function DailyLogPanel({ activeTasks }: DailyLogPanelProps) {
         {error && <p style={{ color: "#C6685A", fontSize: "13px", marginTop: "8px" }}>{error}</p>}
         <div className="capture-actions">
           <div>
-            <button className="save-btn" onClick={handleSave} disabled={submitting}>
-              {submitting ? "Salvando..." : "Salvar"}
+            <button className="save-btn" onClick={handleSave} disabled={submitting || future || !content.trim()}>
+              {submitting ? "Salvando..." : "Salvar registro"}
             </button>
           </div>
           <span className="capture-actions__hint">
-            Enter + Ctrl/Cmd para salvar
+            Menos de 10 segundos · sem categorias obrigatórias
           </span>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import styles from "@/components/home/HomePresentation.module.css";
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 import { startOfWeek, parseISO, isValid, format, isSameDay } from 'date-fns';
@@ -68,7 +69,7 @@ export default async function WeekPage({
   const activeTasks = weekPlan?.tasks ?? [];
 
   return (
-    <div className="shell">
+    <main className={`shell ${styles.home}`}>
       {isCurrentWeek && <HomeGreetingLive initialTime={today.toISOString()} />}
       {!isCurrentWeek && (
         <div className="greeting">
@@ -85,18 +86,15 @@ export default async function WeekPage({
 
         {isCurrentWeek && <TodayLogsCard allUserTags={allUserTags} />}
 
-        <div className="stack">
-          {isCurrentWeek && (
-            <DailyLogPanel activeTasks={activeTasks} />
-          )}
-          <WeeklyTasksPanel
-            weekStart={weekStartStr}
-            today={todayStr}
-            activeTasks={activeTasks}
-            allTasks={allTasks}
-          />
-        </div>
+        <WeeklyTasksPanel
+          weekStart={weekStartStr}
+          today={todayStr}
+          activeTasks={activeTasks}
+          allTasks={allTasks}
+        />
+        {isCurrentWeek && <DailyLogPanel activeTasks={activeTasks} weekStart={weekStartStr} />}
+
       </LogsProvider>
-    </div>
+    </main>
   );
 }

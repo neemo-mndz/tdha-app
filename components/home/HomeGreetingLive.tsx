@@ -16,13 +16,14 @@ interface HomeGreetingLiveProps {
 export function HomeGreetingLive({ initialTime }: HomeGreetingLiveProps) {
   const currentTime = useCurrentTime({ initialTime: new Date(initialTime) });
 
-  const greeting = getGreetingText(currentTime.getHours());
-  const dateStr = formatGreetingDate(currentTime);
+  const brazilTime = new Date(currentTime.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+  const greeting = getGreetingText(brazilTime.getHours());
+  const dateStr = formatGreetingDate(brazilTime);
 
   return (
     <div className="greeting">
-      <h1>{greeting}. Hoje é {dateStr}.</h1>
-      <p>Seu espaço para registrar o dia, sem pressão.</p>
+      <h1>{greeting} — {dateStr}</h1>
+      <p>Sua semana em um só lugar, no seu ritmo.</p>
     </div>
   );
 }

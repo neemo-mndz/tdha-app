@@ -4006,3 +4006,16 @@ header.top {
 @media (prefers-reduced-motion: reduce) {
   .task-day-pill, .task-progress-fill, .rhythm-overview-bar__fill { transition: none; }
 }
+
+/* Cabeçalho compacto: evita comprimir o mês em uma coluna no celular. */
+.app-header { max-width: 960px; margin-inline: auto; gap: 16px; flex-wrap: wrap; padding: 18px 24px 10px; }
+.app-header .brand { flex-shrink: 0; }
+.app-header__right { gap: 10px; min-width: 0; flex-wrap: wrap; justify-content: flex-end; }
+.app-header .month-badge { white-space: nowrap; flex-shrink: 0; font-size: 11px; padding: 5px 10px; }
+@media (max-width: 480px) {
+  .app-header { padding: 18px 20px 8px; align-items: center; }
+  .app-header__right { flex: 1; gap: 7px; }
+  .app-header .month-badge { order: -1; }
+  .app-header .top__settings-link { font-size: 15px; padding: 3px; }
+  .app-header .logout-button { padding: 5px 10px; font-size: 11px; }
+}

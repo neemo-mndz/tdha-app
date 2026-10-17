@@ -1,6 +1,6 @@
 "use client";
 
-import { getBadgeText } from "@/lib/utils/greeting";
+
 import { useCurrentTime } from "@/lib/hooks/useCurrentTime";
 
 /**
@@ -10,7 +10,7 @@ import { useCurrentTime } from "@/lib/hooks/useCurrentTime";
  */
 export function MonthBadge() {
   const now = useCurrentTime({ initialTime: new Date() });
-  const text = getBadgeText(now);
+  const text = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric", timeZone: "America/Sao_Paulo" }).format(now);
 
   return <span className="month-badge">{text}</span>;
 }

@@ -41,7 +41,10 @@ export function TodayLogsCard({ allUserTags = [] }: TodayLogsCardProps) {
 
   return (
     <div className="today-logs-card">
-      <h3 className="today-logs-card__title">{label}</h3>
+      <div className="today-logs-card__header">
+        <h3 className="today-logs-card__title">{label}</h3>
+        <span className="today-logs-card__count">{optimisticLogs.length} {optimisticLogs.length === 1 ? "registro" : "registros"}</span>
+      </div>
       {!isToday && <Link href={`/day/${dateStr}`} className="task-panel-link">Ver pensamentos sobre esse dia</Link>}
 
       {isPending ? (

@@ -1,3 +1,4 @@
+import styles from "@/components/home/HomePresentation.module.css";
 import { currentWeekStart, getBrazilNow } from '@/lib/utils/date';
 import { getWeekStatus } from '@/lib/db/queries/weeks';
 import { getUserTasks } from '@/lib/db/queries/tasks';
@@ -48,44 +49,27 @@ export default async function HomePage() {
   const activeTasks = weekPlan?.tasks ?? [];
 
   return (
-    <div className="shell">
+    <main className={`shell ${styles.home}`}>
       <LogsProvider initialLogs={todayLogs} todayStr={todayStr}>
-        {/* CONTEXTO */}
-        <div className="context-section">
-          <HomeGreetingLive initialTime={today.toISOString()} />
-          <div className="context-date">{format(today, "EEEE, d 'de' MMMM")}</div>
-          <HomeCalendarSection
-            weekStart={weekStartStr}
-            days={days}
-          />
-        </div>
+        <section className="context-section" aria-label="Sua semana">
+          <HomeGreetingLive initialTime={new Date().toISOString()} />
+          <HomeCalendarSection weekStart={weekStartStr} days={days} />
+        </section>
 
-        {/* AGORA / MEU DIA */}
-        <div className="now-section">
-          <DailyLogPanel activeTasks={activeTasks} />
-          <MoodCard
-            date={todayStr}
-            initialMood={dayMood.mood}
-            initialNote={dayMood.moodNote}
-          />
-          <TodayLogsCard allUserTags={allUserTags} />
-        </div>
-      </LogsProvider>
+        <TodayLogsCard allUserTags={allUserTags} />
 
-      {/* REFLEXÃO */}
-      <div className="reflection-section">
-        <DayThoughtsPanel key={todayStr} date={todayStr} initialEntries={todayThoughts} legacyInsight={todayInsight} />
-      </div>
-
-      {/* ACOMPANHAMENTO */}
-      <div className="accompaniment-section">
         <WeeklyTasksPanel
           weekStart={weekStartStr}
           today={todayStr}
           activeTasks={activeTasks}
           allTasks={allTasks}
         />
-      </div>
-    </div>
+
+        <DailyLogPanel activeTasks={activeTasks} weekStart={weekStartStr} />
+
+        <MoodCard date={todayStr} initialMood={dayMood.mood} initialNote={dayMood.moodNote} />
+        <DayThoughtsPanel key={todayStr} date={todayStr} initialEntries={todayThoughts} legacyInsight={todayInsight} />
+      </LogsProvider>
+    </main>
   );
 }

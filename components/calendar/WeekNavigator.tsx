@@ -6,10 +6,11 @@ import { currentWeekStart, weekLabel } from '@/lib/utils/date';
 
 export interface WeekNavigatorProps {
   weekStart: Date;       // semana atualmente exibida
+  onToday?: () => void;
   today: Date;           // para determinar se está na semana atual
 }
 
-export function WeekNavigator({ weekStart, today }: WeekNavigatorProps) {
+export function WeekNavigator({ weekStart, today, onToday }: WeekNavigatorProps) {
   const router = useRouter();
 
   // Ensure dates are proper Date objects after RSC serialization
@@ -30,7 +31,7 @@ export function WeekNavigator({ weekStart, today }: WeekNavigatorProps) {
   }
 
   function handleToday() {
-    router.push('/');
+    if (onToday) onToday(); else router.push('/');
   }
 
   return (
@@ -41,7 +42,7 @@ export function WeekNavigator({ weekStart, today }: WeekNavigatorProps) {
         aria-label="Semana anterior"
         className="week-navigator__btn week-navigator__btn--prev"
       >
-        <span className="week-navigator__btn-text">← semana anterior</span>
+        <span className="week-navigator__btn-text">Anterior</span>
         <span className="week-navigator__btn-arrow">←</span>
       </button>
 
@@ -55,11 +56,11 @@ export function WeekNavigator({ weekStart, today }: WeekNavigatorProps) {
         aria-label="Próxima semana"
         className="week-navigator__btn week-navigator__btn--next"
       >
-        <span className="week-navigator__btn-text">próxima semana →</span>
+        <span className="week-navigator__btn-text">Próxima →</span>
         <span className="week-navigator__btn-arrow">→</span>
       </button>
 
-      {!isCurrentWeek && (
+      {(onToday || !isCurrentWeek) && (
         <button
           type="button"
           onClick={handleToday}

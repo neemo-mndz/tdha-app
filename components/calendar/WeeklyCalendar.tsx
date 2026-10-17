@@ -17,7 +17,7 @@ export function WeeklyCalendar({ weekStart, days, today, selectedDate, onSelectD
 
   return (
     <section className="weekly-calendar" aria-label="Calendário semanal">
-      <WeekNavigator weekStart={weekStart} today={today} />
+      <WeekNavigator weekStart={weekStart} today={today} onToday={onSelectDay ? () => onSelectDay(today) : undefined} />
 
       <div className="weekly-calendar__timeline-wrapper">
         <div className="weekly-calendar__timeline-bar">

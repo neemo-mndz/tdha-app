@@ -32,7 +32,6 @@ export function HomeCalendarSection({ weekStart, days }: HomeCalendarSectionProp
   // Parse date strings as local dates (no timezone shift)
   const weekStartDate = parseDateString(weekStart);
 
-  const [calendarOpen, setCalendarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('week');
 
   // Month view state
@@ -51,9 +50,6 @@ export function HomeCalendarSection({ weekStart, days }: HomeCalendarSectionProp
     setSelectedDate(date);
   }
 
-  function handleToggleCalendar() {
-    setCalendarOpen(!calendarOpen);
-  }
 
   function handleViewModeChange(mode: ViewMode) {
     setViewMode(mode);
@@ -84,30 +80,8 @@ export function HomeCalendarSection({ weekStart, days }: HomeCalendarSectionProp
 
   return (
     <>
-      <button
-        className="calendar-toggle"
-        onClick={handleToggleCalendar}
-        aria-expanded={calendarOpen}
-      >
-        <span>{calendarOpen ? "Ocultar calendário" : "Ver calendário"}</span>
-        <span
-          style={{
-            display: "inline-block",
-            transition: "transform 0.2s ease",
-            transform: calendarOpen ? "rotate(180deg)" : "none",
-          }}
-        >
-          ⌄
-        </span>
-      </button>
 
-      <div
-        style={{
-          maxHeight: calendarOpen ? "1200px" : "0",
-          overflow: "hidden",
-          transition: "max-height 0.28s ease",
-        }}
-      >
+      <div className="home-calendar">
         {/* View mode toggle */}
         <div className="calendar-view-toggle">
           <button

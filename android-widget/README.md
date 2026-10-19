@@ -11,7 +11,7 @@ Aplicativo Android auxiliar, com widget 2 × 1 redimensionável. Ao tocar em **+
 5. Manter pressionada a tela inicial do Samsung → Widgets → semana. Registro rápido → adicionar **+ Registro**. A configuração solicita a mesma URL.
 6. Tocar no widget e salvar um registro. Confirmar que aparece na Home com horário. Se necessário, entrar com a mesma conta. O navegador que abre o link determina a sessão; use o mesmo da instalação do PWA.
 
-Sem SDK Android neste ambiente de desenvolvimento, a compilação e o lint nativos devem ser executados pelo workflow ou pelo Android Studio antes de considerar o APK validado. Validar também no S25 Ultra: adicionar/redimensionar widget, login vencido, cancelamento, rede indisponível e toque repetido em Salvar. O foco é solicitado pelo formulário, mas a abertura automática do teclado depende do navegador.
+Um APK de teste foi compilado localmente com Android SDK 35, AAPT2, Eclipse ECJ e D8, e sua assinatura foi verificada com apksigner. O workflow Gradle/lint permanece pendente na fila do GitHub. A compilação não substitui a validação em dispositivo físico. Validar também no S25 Ultra: adicionar/redimensionar widget, login vencido, cancelamento, rede indisponível e toque repetido em Salvar. O foco é solicitado pelo formulário, mas a abertura automática do teclado depende do navegador.
 
 ## Compilação local
 

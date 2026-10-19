@@ -24,3 +24,9 @@ Thumbs.db
 
 # vercel
 .vercel
+
+# Android widget
+android-widget/.gradle/
+android-widget/**/build/
+android-widget/local.properties
+android-widget/.idea/

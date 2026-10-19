@@ -1,0 +1,7 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="110dp" android:minHeight="48dp"
+    android:targetCellWidth="2" android:targetCellHeight="1"
+    android:initialLayout="@layout/quick_capture_widget" android:previewLayout="@layout/quick_capture_widget"
+    android:configure="app.semana.widget.ConfigureActivity"
+    android:widgetFeatures="reconfigurable" android:resizeMode="horizontal"
+    android:updatePeriodMillis="0" android:widgetCategory="home_screen" />

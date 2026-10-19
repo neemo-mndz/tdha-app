@@ -9,8 +9,10 @@ import {
   boolean,
   primaryKey,
   index,
+  check,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
+import type { AgendaTag, AgendaPeriod } from "@/lib/agenda/model";
 
 /**
  * Tabela users — usuários do aplicativo
@@ -443,3 +445,25 @@ export const logTagsRelations = relations(logTags, ({ one }) => ({
  */
 export type Tag = typeof tags.$inferSelect;
 export type LogTag = typeof logTags.$inferSelect;
+
+/** Agenda pessoal: planejamento futuro, separado dos registros já realizados. */
+export const agendaEntries = pgTable("agenda_entries", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  date: date("date").notNull(),
+  title: text("title").notNull(),
+  notes: text("notes").notNull().default(""),
+  tags: text("tags").array().$type<AgendaTag[]>().notNull().default(["pessoal"]),
+  period: text("period").$type<AgendaPeriod>().notNull().default("anytime"),
+  startTime: text("start_time"),
+  endTime: text("end_time"),
+  completed: boolean("completed").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, table => ({
+  userDateIndex: index("agenda_entries_user_date_idx").on(table.userId, table.date),
+  titleCheck: check("agenda_entries_title_check", sql`length(trim(${table.title})) between 1 and 160`),
+  notesCheck: check("agenda_entries_notes_check", sql`length(${table.notes}) <= 2000`),
+  tagsCheck: check("agenda_entries_tags_check", sql`${table.tags} <@ ARRAY['trabalho','casal','pessoal']::text[] AND cardinality(${table.tags}) between 1 and 3 AND array_position(${table.tags}, NULL) IS NULL`),
+  periodCheck: check("agenda_entries_period_check", sql`${table.period} in ('anytime','morning','afternoon','evening')`),
+  timeCheck: check("agenda_entries_time_check", sql`(${table.startTime} IS NULL OR ${table.startTime} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$') AND (${table.endTime} IS NULL OR (${table.startTime} IS NOT NULL AND ${table.endTime} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$' AND ${table.endTime} > ${table.startTime}))`),
+}));

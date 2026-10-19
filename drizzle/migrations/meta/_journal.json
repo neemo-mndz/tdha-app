@@ -29,6 +29,13 @@
       "when": 1784857803620,
       "tag": "0003_lush_blindfold",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792447057288,
+      "tag": "0007_agenda_entries",
+      "breakpoints": true
     }
   ]
 }

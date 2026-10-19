@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { QuickCaptureButton } from "@/components/logs/QuickCaptureButton";
-import { LogoutButton } from "@/components/auth/LogoutButton";
+import { AppMenu } from "@/components/navigation/AppMenu";
 import { MonthBadge } from "@/components/home/MonthBadge";
 import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { getCurrentUserId } from "@/lib/auth";
@@ -31,23 +31,7 @@ export default async function AppLayout({
         <Link href="/" className="brand">semana<span>.</span></Link>
         <div className="app-header__right">
           <MonthBadge />
-          <Link href="/history" className="top__settings-link" aria-label="Histórico">
-            🕐
-          </Link>
-          <Link href="/reading" className="top__settings-link" aria-label="Leitura">
-            📖
-          </Link>
-          <Link href="/settings/reminders" className="top__settings-link" aria-label="Lembretes">
-            ⚙
-          </Link>
-          <Link href="/profile" className="top__settings-link app-header__profile" aria-label="Perfil">
-            {profile?.avatarUrl ? (
-              <img src={profile.avatarUrl} alt="" className="app-header__avatar" />
-            ) : (
-              "👤"
-            )}
-          </Link>
-          <LogoutButton />
+          <AppMenu avatarUrl={profile?.avatarUrl} />
         </div>
       </header>
       {children}

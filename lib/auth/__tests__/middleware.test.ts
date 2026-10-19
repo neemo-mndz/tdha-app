@@ -107,3 +107,20 @@ describe("middleware", () => {
     });
   });
 });
+
+
+describe("entrada pelo widget", () => {
+  it("preserva o formulário após login", () => {
+    const response = middleware(createRequest("/quick-capture", false));
+    const destination = new URL(response.headers.get("location")!);
+    expect(destination.pathname).toBe("/login");
+    expect(destination.searchParams.get("next")).toBe("/quick-capture");
+  });
+  it("permite renovar sessão vencida na entrada do widget", () => {
+    expect(middleware(createRequest("/login?next=/quick-capture", true)).status).toBe(200);
+  });
+  it("não usa destinos externos do parâmetro next", () => {
+    const response = middleware(createRequest("/login?next=https://example.com", true));
+    expect(new URL(response.headers.get("location")!).pathname).toBe("/");
+  });
+});

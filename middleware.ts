@@ -8,13 +8,15 @@ export function middleware(request: NextRequest) {
   const sessionCookie = request.cookies.get("session_id");
 
   // Rotas públicas com sessão ativa → redirect para home
-  if (publicPaths.some((p) => pathname.startsWith(p)) && sessionCookie) {
+  if (publicPaths.some((p) => pathname.startsWith(p)) && sessionCookie && request.nextUrl.searchParams.get("next") !== "/quick-capture") {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
   // Rotas protegidas sem cookie → redirect para login
   if (!publicPaths.some((p) => pathname.startsWith(p)) && !sessionCookie) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const loginUrl = new URL("/login", request.url);
+    if (pathname === "/quick-capture") loginUrl.searchParams.set("next", "/quick-capture");
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();

@@ -204,7 +204,7 @@ export async function loginAction(formData: FormData): Promise<ActionResult> {
     };
   }
 
-  redirect("/");
+  redirect(formData.get("next") === "/quick-capture" ? "/quick-capture" : "/");
 }
 
 /**

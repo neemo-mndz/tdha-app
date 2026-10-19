@@ -21,38 +21,47 @@ export function QuickCaptureSheet({ open, onClose, date, activeTasks }: QuickCap
 
   useEffect(() => {
     if (open) {
-      setTimeout(() => textareaRef.current?.focus(), 50);
+      const timer = setTimeout(() => textareaRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
     }
   }, [open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     if (!content.trim()) {
       setError("O registro não pode ser vazio.");
       return;
     }
+    setError(null);
     setSubmitting(true);
-    const result = await createLog({ content: content.trim(), date, weekPlanTaskId: selectedTaskId });
-    setSubmitting(false);
-    if (result.success) {
-      setContent("");
-      setSelectedTaskId(null);
-      setError(null);
-      onClose();
-    } else {
-      setError(result.error ?? "Erro ao salvar. Tente novamente.");
+    try {
+      const result = await createLog({ content: content.trim(), date, weekPlanTaskId: selectedTaskId });
+      if (result.success) {
+        setContent("");
+        setSelectedTaskId(null);
+        onClose();
+      } else {
+        setError(result.error ?? "Erro ao salvar. Tente novamente.");
+      }
+    } catch {
+      setError("Não foi possível salvar. Seu texto foi mantido; tente novamente.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
+  const close = () => { if (!submitting) onClose(); };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
-      onClose();
+      close();
     }
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      close();
     }
   };
 
@@ -75,7 +84,7 @@ export function QuickCaptureSheet({ open, onClose, date, activeTasks }: QuickCap
             <h2 className="quick-capture-modal__title">Captura instantânea</h2>
             <p className="quick-capture-modal__sub">Salve agora, sem se preocupar em organizar.</p>
           </div>
-          <button onClick={onClose} aria-label="Fechar" className="quick-capture-modal__close">
+          <button onClick={close} disabled={submitting} aria-label="Fechar" className="quick-capture-modal__close">
             ✕
           </button>
         </div>
@@ -87,6 +96,8 @@ export function QuickCaptureSheet({ open, onClose, date, activeTasks }: QuickCap
               onSelect={setSelectedTaskId}
             />
             <textarea
+              disabled={submitting}
+              aria-label="Novo registro do dia"
               ref={textareaRef}
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -97,7 +108,7 @@ export function QuickCaptureSheet({ open, onClose, date, activeTasks }: QuickCap
           </div>
           {error && <p role="alert" className="quick-capture-modal__error">{error}</p>}
           <div className="quick-capture-modal__footer">
-            <button type="button" onClick={onClose} className="quick-capture-modal__btn-cancel">
+            <button type="button" onClick={close} disabled={submitting} className="quick-capture-modal__btn-cancel">
               Cancelar
             </button>
             <button type="submit" disabled={submitting} className="quick-capture-modal__btn-save">

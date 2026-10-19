@@ -40,5 +40,20 @@
       "type": "image/svg+xml",
       "purpose": "any"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Registro rápido",
+      "short_name": "+ Registro",
+      "description": "Registrar uma atividade agora",
+      "url": "/quick-capture",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
   ]
 }

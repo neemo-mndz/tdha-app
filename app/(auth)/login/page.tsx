@@ -91,6 +91,9 @@ export default function LoginPage() {
       try {
         const formData = new FormData();
         formData.set("email", email);
+        if (new URLSearchParams(window.location.search).get("next") === "/quick-capture") {
+          formData.set("next", "/quick-capture");
+        }
         formData.set("password", password);
         formData.set("rememberMe", rememberMe ? "true" : "false");
 

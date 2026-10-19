@@ -11,18 +11,18 @@ import { validateSession, renewSession } from "@/lib/auth/session";
  * - Se não autenticado: `redirect('/login')` — funciona tanto em Server Components
  *   (renderiza redirect) quanto em Server Actions (lança NEXT_REDIRECT internamente)
  */
-export async function getCurrentUserId(): Promise<string> {
+export async function getCurrentUserId(returnTo?: "/quick-capture"): Promise<string> {
   const cookieStore = await cookies();
   const sessionId = cookieStore.get("session_id")?.value;
 
   if (!sessionId) {
-    redirect("/login");
+    redirect(returnTo === "/quick-capture" ? "/login?next=/quick-capture" : "/login");
   }
 
   const session = await validateSession(sessionId);
 
   if (!session) {
-    redirect("/login");
+    redirect(returnTo === "/quick-capture" ? "/login?next=/quick-capture" : "/login");
   }
 
   // Rolling session: renova expiração a cada request autenticado

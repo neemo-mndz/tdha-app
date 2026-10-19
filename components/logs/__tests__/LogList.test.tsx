@@ -20,7 +20,6 @@ function createMockLog(overrides: Partial<LogWithTask> = {}): LogWithTask {
     id: "log-1",
     dayId: "day-1",
     content: "Test log content",
-    mood: null,
     weekPlanTaskId: null,
     createdAt: new Date("2024-07-14T10:00:00Z"),
     taskName: null,

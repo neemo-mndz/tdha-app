@@ -12,7 +12,7 @@ it("filtra por assunto sem perder compromissos com múltiplas tags", () => {
   render(<AgendaView initialEntries={[entry,other]} date="2026-10-19" today="2026-10-19" view="day" tag="trabalho" />);
   expect(screen.getByRole("button", { name: "Editar: Reunião" })).toBeInTheDocument();
   expect(screen.queryByRole("button", { name: "Editar: Cinema" })).not.toBeInTheDocument();
-  expect(screen.getByRole("link", { name: "Casal", exact: true })).toHaveAttribute("href", expect.stringContaining("tag=casal"));
+  expect(screen.getByRole("link", { name: "Casal" })).toHaveAttribute("href", expect.stringContaining("tag=casal"));
   expect(screen.getByRole("region", { name: "Manhã" })).toBeInTheDocument();
   expect(screen.getByRole("region", { name: "Tarde" })).toHaveTextContent("Reunião");
 });

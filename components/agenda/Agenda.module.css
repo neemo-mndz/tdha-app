@@ -120,3 +120,6 @@
   .formActions > .primary { flex: 1; }
 }
 @media (prefers-reduced-motion: reduce) { .page *, .dialog * { scroll-behavior: auto; } }
+
+.page :global(.fab) { background: var(--structure); box-shadow: 0 12px 24px -10px rgba(63, 92, 83, .6); }
+.page :global(.fab):hover { background: #2d473e; }

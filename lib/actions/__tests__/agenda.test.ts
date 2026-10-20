@@ -29,3 +29,10 @@ it("não relata sucesso para compromisso de outro usuário e rejeita id inválid
   expect((await saveAgendaEntry(input, "not-a-uuid")).success).toBe(false);
   expect((await deleteAgendaEntry("not-a-uuid")).success).toBe(false);
 });
+
+it("encaminha a situação realizada no mesmo salvamento da tarefa", async () => {
+  await saveAgendaEntry({ ...input, date: "2026-10-16", completed: true });
+  expect(insertAgenda).toHaveBeenCalledWith("owner", expect.objectContaining({ date: "2026-10-16", completed: true }));
+  await saveAgendaEntry({ ...input, completed: true }, id);
+  expect(updateAgenda).toHaveBeenCalledWith("owner", id, expect.objectContaining({ completed: true }));
+});

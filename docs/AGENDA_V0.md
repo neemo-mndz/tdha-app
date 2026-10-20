@@ -2,7 +2,7 @@
 
 O menu hambúrguer reúne Minha semana, Agenda, Acompanhamento de leitura, Histórico, Configurações e lembretes, Perfil e Sair. A navegação tem rótulos, estado atual, fechamento com Escape/clique externo e suporte a teclado.
 
-A agenda fica em `/agenda`. O dia é uma folha com manhã, tarde, noite e itens sem período definido. A visão semanal mostra sete dias. Há navegação entre semanas, seleção de data, retorno a Hoje, filtros por assunto e contagem de pendências. O plano recebe título, data, observações, horário opcional de início/fim e uma ou mais tags: Trabalho, Casal e Pessoal. É possível editar, reagendar, concluir/reabrir e excluir com confirmação.
+A agenda fica em `/agenda`. O dia é uma folha com manhã, tarde, noite e itens sem período definido. A visão semanal mostra sete dias. Há navegação entre semanas, seleção de data, retorno a Hoje, filtros por assunto e contagem de pendências. A tarefa ou compromisso recebe título, data, observações, horário opcional de início/fim e uma ou mais tags: Trabalho, Casal e Pessoal. É possível editar, reagendar, concluir/reabrir e excluir com confirmação. A opção “Já realizada” permite cadastrar diretamente uma tarefa concluída, inclusive com data passada. O botão flutuante “+” da agenda abre este formulário usando a data selecionada e o assunto filtrado; nas outras páginas, continua abrindo a captura rápida.
 
 As tags classificam assuntos; Casal não compartilha dados com outra conta. Os compromissos são privados por usuário e não geram registros de atividades automaticamente. Recorrência, notificações, integração com calendários externos e edição das tags ficam fora desta versão.
 
@@ -18,7 +18,7 @@ A adaptação prioriza a folha diária e mantém a paleta e a tipografia do app,
 
 - Schema Drizzle: `agenda_entries`, com índice em usuário/data e restrições de tamanho, tags, períodos e horários.
 - Migração aditiva: `drizzle/migrations/0007_agenda_entries.sql`.
-- Testada somente no branch Neon `dev-agenda-v0` (`br-morning-darkness-acmbzml7`), projeto `old-sky-36133942`, banco `neondb`. Produção permanece sem a nova tabela até a autorização de publicação.
+- Testada no branch Neon `dev-agenda-v0` (`br-morning-darkness-acmbzml7`), projeto `old-sky-36133942`, banco `neondb`. A tabela já está presente em produção desde a publicação da v0; a opção “Já realizada” utiliza a coluna `completed` existente e não exige nova migração.
 - O snapshot Drizzle registra o schema atual, incluindo mudanças anteriores já presentes no ponto zero. O journal anterior não registrava as migrações manuais 0004–0006; a 0007 não tenta reaplicá-las. Em um banco existente, aplicar apenas a 0007, sem rodar o histórico completo automaticamente.
 - O preview do branch Git `feat/agenda-v0` deve usar uma variável DATABASE_URL exclusiva do branch Neon de teste. Nenhuma credencial deve ser versionada.
 

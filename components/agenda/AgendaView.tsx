@@ -56,8 +56,8 @@ export function AgendaView({ initialEntries, date, today, view, tag }: {
   }
   return <main className={styles.page}>
     <header className={styles.heading}>
-      <div><p className={styles.eyebrow}>Um plano de cada vez</p><h1>Sua agenda<span>.</span></h1></div>
-      <button type="button" className={styles.primary} onClick={() => setEditor({ date })}>+ Compromisso</button>
+      <div><p className={styles.eyebrow}>Planos e realizações</p><h1>Sua agenda<span>.</span></h1></div>
+      <button type="button" className={styles.primary} onClick={() => setEditor({ date })}>+ Adicionar</button>
     </header>
     <div className={styles.toolbar}>
       <div className={styles.navigator}>
@@ -79,7 +79,7 @@ export function AgendaView({ initialEntries, date, today, view, tag }: {
       return <Link key={day} href={agendaPath(day, view, tag)} className={styles.day} aria-current={day === date ? "date" : undefined}
         data-today={day === today} aria-label={`${format(parseISO(day), "EEEE, d 'de' MMMM", { locale: ptBR })}, ${count} pendentes`}>
         <span>{format(parseISO(day), "EEE", { locale: ptBR }).replace(".", "")}</span><strong>{format(parseISO(day), "dd")}</strong>
-        <span className={styles.dayCount}>{count ? `${count} ${count === 1 ? "plano" : "planos"}` : "—"}</span>
+        <span className={styles.dayCount}>{count ? `${count} ${count === 1 ? "pendente" : "pendentes"}` : "—"}</span>
       </Link>;
     })}</nav>
     <div className={styles.filterBar}>
@@ -87,7 +87,7 @@ export function AgendaView({ initialEntries, date, today, view, tag }: {
         href={agendaPath(date, view, value)} className={styles.filter} data-tag={value} aria-current={tag === value ? "page" : undefined}>
         {value === "all" ? "Todos" : TAG_LABELS[value]}
       </Link>)}</div>
-      <span className={styles.summary}>{planned} {planned === 1 ? "plano pendente" : "planos pendentes"} na semana</span>
+      <span className={styles.summary}>{planned} {planned === 1 ? "item pendente" : "itens pendentes"} na semana</span>
     </div>
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {view === "day" ? <section className={styles.sheet} aria-label="Folha diária">
@@ -98,15 +98,16 @@ export function AgendaView({ initialEntries, date, today, view, tag }: {
         {dayEntries.some(entry => entry.period === period) ? <ul className={styles.entries}>{sortAgenda(dayEntries.filter(entry => entry.period === period)).map(entry => row(entry))}</ul>
           : <p className={styles.empty}>Espaço livre.</p>}
       </section>)}
-      <button type="button" className={styles.addInline} onClick={() => setEditor({ date })}>+ Planejar algo para este dia</button>
-    </section> : <section className={styles.weekBoard} aria-label="Planejamento semanal">
+      <button type="button" className={styles.addInline} onClick={() => setEditor({ date })}>+ Adicionar tarefa ou compromisso</button>
+    </section> : <section className={styles.weekBoard} aria-label="Agenda semanal">
       {days.map(day => <section key={day} className={styles.weekCard} data-today={day === today}>
         <header><Link href={agendaPath(day, "day", tag)}><span>{format(parseISO(day), "EEE", { locale: ptBR })}</span><strong>{format(parseISO(day), "dd/MM")}</strong></Link>
           <button className={styles.iconButton} type="button" aria-label={`Adicionar em ${format(parseISO(day), "dd/MM")}`} onClick={() => setEditor({ date: day })}>+</button></header>
         {filtered.some(entry => entry.date === day) ? <ul className={styles.entries}>{sortAgenda(filtered.filter(entry => entry.date === day)).map(entry => row(entry, true))}</ul>
-          : <button type="button" className={styles.weekEmpty} onClick={() => setEditor({ date: day })}>Dia em aberto<br /><span>+ Adicionar plano</span></button>}
+          : <button type="button" className={styles.weekEmpty} onClick={() => setEditor({ date: day })}>Dia em aberto<br /><span>+ Adicionar</span></button>}
       </section>)}
     </section>}
+    {!editor && <button type="button" className="fab" aria-label="Nova tarefa ou compromisso" title="Nova tarefa ou compromisso" onClick={() => setEditor({ date })}>+</button>}
     {editor && <AgendaForm date={editor.date} entry={editor.entry} defaultTag={tag === "all" ? undefined : tag} onClose={() => setEditor(null)} onSaved={saved}
       onDeleted={id => { setEntries(current => current.filter(entry => entry.id !== id)); setEditor(null); router.refresh(); }} />}
   </main>;

@@ -1,8 +1,8 @@
 import { addDays, format, parseISO, startOfWeek } from "date-fns";
 
-export const AGENDA_TAGS = ["trabalho", "casal", "pessoal"] as const;
+export const AGENDA_TAGS = ["trabalho", "casal", "pessoal", "psicologa"] as const;
 export type AgendaTag = typeof AGENDA_TAGS[number];
-export const TAG_LABELS: Record<AgendaTag, string> = { trabalho: "Trabalho", casal: "Casal", pessoal: "Pessoal" };
+export const TAG_LABELS: Record<AgendaTag, string> = { trabalho: "Trabalho", casal: "Casal", pessoal: "Pessoal", psicologa: "Psicóloga" };
 export const PERIODS = ["anytime", "morning", "afternoon", "evening"] as const;
 export type AgendaPeriod = typeof PERIODS[number];
 export const PERIOD_LABELS: Record<AgendaPeriod, string> = { anytime: "Sem horário definido", morning: "Manhã", afternoon: "Tarde", evening: "Noite" };

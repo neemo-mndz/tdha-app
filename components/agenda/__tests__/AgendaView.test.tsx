@@ -49,3 +49,13 @@ it("mantém a captura rápida nas outras páginas após sair da agenda", () => {
   fireEvent.click(screen.getByRole("button", { name: "Captura rápida" }));
   expect(screen.getByRole("dialog")).toHaveTextContent("Captura instantânea");
 });
+
+it("exibe e filtra os registros da Psicóloga", () => {
+  const appointment: AgendaEntry = { ...entry, title: "Consulta", tags: ["psicologa"] };
+  render(<AgendaView initialEntries={[entry, appointment]} date="2026-10-19" today="2026-10-19" view="day" tag="psicologa" />);
+  expect(screen.getByRole("link", { name: "Psicóloga" })).toHaveAttribute("href", expect.stringContaining("tag=psicologa"));
+  expect(screen.getByRole("button", { name: "Editar: Consulta" })).toHaveTextContent("Psicóloga");
+  expect(screen.queryByRole("button", { name: "Editar: Reunião" })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Nova tarefa ou compromisso" }));
+  expect(screen.getByRole("checkbox", { name: "Psicóloga" })).toBeChecked();
+});

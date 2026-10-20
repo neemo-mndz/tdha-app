@@ -24,3 +24,8 @@ describe("agenda", () => {
       .toMatchObject({ period: "morning", startTime: null, endTime: null, notes: "" });
   });
 });
+
+it("aceita Psicóloga sozinha ou combinada com todos os assuntos", () => {
+  expect(agendaEntrySchema.parse({ ...valid, tags: ["psicologa"] }).tags).toEqual(["psicologa"]);
+  expect(agendaEntrySchema.parse({ ...valid, tags: ["trabalho", "casal", "pessoal", "psicologa"] }).tags).toHaveLength(4);
+});

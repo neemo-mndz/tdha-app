@@ -446,7 +446,7 @@ export const logTagsRelations = relations(logTags, ({ one }) => ({
 export type Tag = typeof tags.$inferSelect;
 export type LogTag = typeof logTags.$inferSelect;
 
-/** Agenda pessoal: planejamento futuro, separado dos registros já realizados. */
+/** Agenda pessoal: planos e tarefas realizadas, separados dos registros diários. */
 export const agendaEntries = pgTable("agenda_entries", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
@@ -463,7 +463,7 @@ export const agendaEntries = pgTable("agenda_entries", {
   userDateIndex: index("agenda_entries_user_date_idx").on(table.userId, table.date),
   titleCheck: check("agenda_entries_title_check", sql`length(trim(${table.title})) between 1 and 160`),
   notesCheck: check("agenda_entries_notes_check", sql`length(${table.notes}) <= 2000`),
-  tagsCheck: check("agenda_entries_tags_check", sql`${table.tags} <@ ARRAY['trabalho','casal','pessoal']::text[] AND cardinality(${table.tags}) between 1 and 3 AND array_position(${table.tags}, NULL) IS NULL`),
+  tagsCheck: check("agenda_entries_tags_check", sql`${table.tags} <@ ARRAY['trabalho','casal','pessoal','psicologa']::text[] AND cardinality(${table.tags}) between 1 and 4 AND array_position(${table.tags}, NULL) IS NULL`),
   periodCheck: check("agenda_entries_period_check", sql`${table.period} in ('anytime','morning','afternoon','evening')`),
   timeCheck: check("agenda_entries_time_check", sql`(${table.startTime} IS NULL OR ${table.startTime} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$') AND (${table.endTime} IS NULL OR (${table.startTime} IS NOT NULL AND ${table.endTime} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$' AND ${table.endTime} > ${table.startTime}))`),
 }));

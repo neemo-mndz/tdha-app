@@ -14,6 +14,11 @@ describe("agenda", () => {
   ])("rejeita dados inválidos: %j", patch => {
     expect(agendaEntrySchema.safeParse({ ...valid, ...patch }).success).toBe(false);
   });
+  it("aceita uma tarefa realizada no passado e preserva a omissão de situação para clientes anteriores", () => {
+    expect(agendaEntrySchema.parse({ ...valid, date: "2026-10-01", completed: true }).completed).toBe(true);
+    expect(agendaEntrySchema.parse(valid).completed).toBeUndefined();
+    expect(agendaEntrySchema.safeParse({ ...valid, completed: "true" }).success).toBe(false);
+  });
   it("permite planejar por período sem exigir horário", () => {
     expect(agendaEntrySchema.parse({ title: "Passeio", date: "2026-10-25", tags: ["casal"], period: "morning" }))
       .toMatchObject({ period: "morning", startTime: null, endTime: null, notes: "" });

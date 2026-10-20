@@ -81,6 +81,8 @@
 .tagFieldset { border: 0; padding: 0; }
 .tagFieldset legend { font-size: 12px; margin-bottom: 10px; }
 .form label.tagOption { display: flex; align-items: center; gap: 7px; padding: 10px 12px; border-radius: 10px; cursor: pointer; font-size: 12px; }
+.form label.completedOption { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
+.completedOption input { width: 18px; height: 18px; accent-color: var(--structure); }
 .tagOption input { accent-color: var(--structure); }
 .formActions { display: flex; gap: 10px; justify-content: flex-end; }
 .deleteArea { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border-top: 1px solid #e0e5d9; padding-top: 14px; font-size: 12px; }

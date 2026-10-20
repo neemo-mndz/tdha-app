@@ -18,6 +18,7 @@ export function AgendaForm({ date, entry, defaultTag, onClose, onSaved, onDelete
   const [period, setPeriod] = useState<AgendaPeriod>(entry?.period ?? "anytime");
   const [startTime, setStartTime] = useState(entry?.startTime ?? "");
   const [endTime, setEndTime] = useState(entry?.endTime ?? "");
+  const [completed, setCompleted] = useState(entry?.completed ?? false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -33,7 +34,7 @@ export function AgendaForm({ date, entry, defaultTag, onClose, onSaved, onDelete
     if (busy.current) return;
     busy.current = true; setPending(true); setError("");
     try {
-      const result = await saveAgendaEntry({ title, notes, date: entryDate, tags, period,
+      const result = await saveAgendaEntry({ title, notes, date: entryDate, tags, period, completed,
         startTime: startTime || null, endTime: endTime || null }, entry?.id);
       if (result.success) onSaved(result.entry); else setError(result.error);
     } catch { setError("Não foi possível salvar. Suas informações foram mantidas; tente novamente."); }
@@ -53,11 +54,11 @@ export function AgendaForm({ date, entry, defaultTag, onClose, onSaved, onDelete
     onCancel={event => { event.preventDefault(); if (!busy.current) onClose(); }}>
     <form onSubmit={submit} className={styles.form}>
       <div className={styles.formHeader}>
-        <h2 id="agenda-form-title">{entry ? "Editar compromisso" : "Novo compromisso"}</h2>
+        <h2 id="agenda-form-title">{entry ? "Editar tarefa ou compromisso" : "Nova tarefa ou compromisso"}</h2>
         <button type="button" className={styles.iconButton} aria-label="Fechar formulário" onClick={onClose} disabled={pending}>✕</button>
       </div>
-      <label>O que você quer planejar?
-        <input autoFocus required maxLength={160} value={title} onChange={event => setTitle(event.target.value)} disabled={pending} placeholder="Ex.: reunião da equipe" />
+      <label>Título
+        <input autoFocus required maxLength={160} value={title} onChange={event => setTitle(event.target.value)} disabled={pending} placeholder="Ex.: reunião da equipe ou relatório entregue" />
       </label>
       <div className={styles.formGrid}>
         <label>Data<input required type="date" value={entryDate} onChange={event => setEntryDate(event.target.value)} disabled={pending} /></label>
@@ -76,17 +77,21 @@ export function AgendaForm({ date, entry, defaultTag, onClose, onSaved, onDelete
           {TAG_LABELS[tag]}
         </label>)}</div>
       </fieldset>
+      <label className={styles.completedOption}>
+        <input type="checkbox" checked={completed} onChange={event => setCompleted(event.target.checked)} disabled={pending} />
+        Já realizada
+      </label>
       <label>Observações <span className={styles.optional}>(opcional)</span>
         <textarea rows={3} maxLength={2000} value={notes} onChange={event => setNotes(event.target.value)} disabled={pending} placeholder="Local, detalhes ou algo para lembrar" />
       </label>
       {error && <p role="alert" className={styles.error}>{error}</p>}
       <div className={styles.formActions}>
         <button type="button" className={styles.secondary} onClick={onClose} disabled={pending}>Cancelar</button>
-        <button type="submit" className={styles.primary} disabled={pending}>{pending ? "Salvando…" : "Salvar compromisso"}</button>
+        <button type="submit" className={styles.primary} disabled={pending}>{pending ? "Salvando…" : "Salvar"}</button>
       </div>
       {entry && <div className={styles.deleteArea}>
-        {confirmDelete ? <><span>Excluir este compromisso?</span><button type="button" className={styles.danger} onClick={remove} disabled={pending}>Confirmar exclusão</button><button type="button" className={styles.textButton} disabled={pending} onClick={() => setConfirmDelete(false)}>Manter</button></>
-          : <button type="button" className={styles.textButton} disabled={pending} onClick={() => setConfirmDelete(true)}>Excluir compromisso</button>}
+        {confirmDelete ? <><span>Excluir esta tarefa ou compromisso?</span><button type="button" className={styles.danger} onClick={remove} disabled={pending}>Confirmar exclusão</button><button type="button" className={styles.textButton} disabled={pending} onClick={() => setConfirmDelete(false)}>Manter</button></>
+          : <button type="button" className={styles.textButton} disabled={pending} onClick={() => setConfirmDelete(true)}>Excluir tarefa ou compromisso</button>}
       </div>}
     </form>
   </dialog>;

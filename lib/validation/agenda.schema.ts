@@ -7,7 +7,7 @@ export const agendaEntrySchema = z.object({
   title: z.string().trim().min(1, "Dê um título à tarefa ou compromisso.").max(160, "Use até 160 caracteres no título."),
   notes: z.string().trim().max(2000, "Use até 2000 caracteres nas observações.").default(""),
   date: thoughtDateSchema,
-  tags: z.array(z.enum(AGENDA_TAGS)).min(1, "Selecione pelo menos um assunto.").max(3).transform(tags => [...new Set(tags)]),
+  tags: z.array(z.enum(AGENDA_TAGS)).min(1, "Selecione pelo menos um assunto.").max(AGENDA_TAGS.length).transform(tags => [...new Set(tags)]),
   period: z.enum(PERIODS).default("anytime"),
   completed: z.boolean().optional(),
   startTime: time,

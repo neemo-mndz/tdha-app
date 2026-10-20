@@ -19,7 +19,7 @@ describe.skipIf(!enabled)("agenda — integração no branch isolado", () => {
   }, 30000);
   afterAll(async () => { await db.delete(users).where(inArray(users.id, [owner, stranger])); }, 30000);
   it("persiste, isola usuários, reagenda e exclui sem afetar outra conta", async () => {
-    const input=agendaEntrySchema.parse({ title: "Reunião de teste", date: "2026-10-19", tags: ["trabalho", "pessoal"], startTime: "10:00" });
+    const input=agendaEntrySchema.parse({ title: "Reunião de teste", date: "2026-10-19", tags: ["trabalho", "casal", "pessoal", "psicologa"], startTime: "10:00" });
     const entry=await insertAgenda(owner, input);
     const [own, other, intrusion, intrusionComplete, intrusionDelete] = await Promise.all([
       getAgendaWeek(owner, "2026-10-19", "2026-10-25"),
@@ -27,7 +27,7 @@ describe.skipIf(!enabled)("agenda — integração no branch isolado", () => {
       updateAgenda(stranger, entry.id, { ...input, title: "Intrusão" }),
       completeAgenda(stranger, entry.id, true), removeAgenda(stranger, entry.id),
     ]);
-    expect(own).toHaveLength(1); expect(other).toHaveLength(0);
+    expect(own).toHaveLength(1); expect(own[0].tags).toContain("psicologa"); expect(other).toHaveLength(0);
     expect(intrusion).toBeUndefined(); expect(intrusionComplete).toBeUndefined(); expect(intrusionDelete).toBeUndefined();
     expect((await completeAgenda(owner, entry.id, true))?.completed).toBe(true);
     expect((await updateAgenda(owner, entry.id, { ...input, date: "2026-10-27" }))?.date).toBe("2026-10-27");

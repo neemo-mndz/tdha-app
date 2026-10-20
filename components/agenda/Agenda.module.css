@@ -123,3 +123,5 @@
 
 .page :global(.fab) { background: var(--structure); box-shadow: 0 12px 24px -10px rgba(63, 92, 83, .6); }
 .page :global(.fab):hover { background: #2d473e; }
+
+.tag[data-tag="psicologa"], .tagOption[data-tag="psicologa"] { background: #eee9f7; color: #705195; }

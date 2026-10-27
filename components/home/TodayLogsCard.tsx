@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { format, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getLogsForDate } from "@/lib/actions/logs";
+import { PastDayLogPanel } from "@/components/logs/PastDayLogPanel";
 import { LogItem } from "@/components/logs/LogItem";
 import { useLogs } from "@/components/home/LogsProvider";
 import Link from "next/link";
@@ -22,17 +23,24 @@ interface TodayLogsCardProps {
 export function TodayLogsCard({ allUserTags = [] }: TodayLogsCardProps) {
   const { selectedDate, todayDate, logs, setLogs, optimisticLogs, dispatchOptimistic } = useLogs();
   const [isPending, startTransition] = useTransition();
+  const [loadError, setLoadError] = useState("");
   const dateStr = format(selectedDate, "yyyy-MM-dd");
 
   useEffect(() => {
+    setLoadError("");
     if (isSameDay(selectedDate, todayDate)) return;
 
+    let cancelled = false;
     startTransition(async () => {
-      const fresh = await getLogsForDate(dateStr);
-      setLogs(fresh);
+      try {
+        const fresh = await getLogsForDate(dateStr);
+        if (!cancelled) setLogs(fresh);
+      } catch {
+        if (!cancelled) setLoadError("Não foi possível carregar os registros. Selecione o dia novamente para tentar.");
+      }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateStr]);
+    return () => { cancelled = true; };
+  }, [dateStr, selectedDate, todayDate, setLogs]);
 
   const isToday = isSameDay(selectedDate, todayDate);
   const label = isToday
@@ -47,6 +55,10 @@ export function TodayLogsCard({ allUserTags = [] }: TodayLogsCardProps) {
       </div>
       {!isToday && <Link href={`/day/${dateStr}`} className="task-panel-link">Ver pensamentos sobre esse dia</Link>}
 
+      {loadError && <p role="alert">{loadError}</p>}
+      {dateStr < format(todayDate, "yyyy-MM-dd") && !isPending && !loadError && <PastDayLogPanel key={dateStr} date={dateStr} onSaved={log => {
+        setLogs([...logs.filter(item => item.id !== log.id), log].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+      }} />}
       {isPending ? (
         <p className="today-logs-card__empty">Carregando...</p>
       ) : optimisticLogs.length === 0 ? (

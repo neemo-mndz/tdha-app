@@ -1,0 +1,20 @@
+.panel { margin: 16px 0; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #f3f6f1; }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.header h3 { margin: 0; color: var(--structure); font: 500 16px 'Outfit', sans-serif; }
+.header p { margin: 5px 0 0; font-size: 12px; color: var(--muted); }
+.add, .cancel { min-height: 44px; padding: 10px 14px; border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; }
+.add { border: 1px solid var(--structure); color: white; background: var(--structure); }
+.add:hover { background: #2d473e; }
+.cancel { background: transparent; border: 1px solid var(--line); color: var(--structure); }
+.form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-top: 16px; }
+.form label { font-size: 12px; color: var(--structure); min-width: 0; }
+.activity { flex: 1 1 220px; }
+.time { flex: 0 1 130px; }
+.form input { display: block; box-sizing: border-box; width: 100%; min-width: 0; margin-top: 7px; padding: 10px; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; font: 16px 'Inter', sans-serif; color: var(--ink); background: var(--surface); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.error { color: #934b34; font-size: 13px; line-height: 1.5; margin-top: 12px; }
+.notice { color: var(--structure); font-size: 12px; margin: 8px 0 0; }
+.notice:empty { display: none; }
+.panel button:disabled { opacity: .6; cursor: default; }
+.panel :is(input, button):focus-visible { outline: 2px solid var(--structure); outline-offset: 3px; }
+@media (max-width: 480px) { .activity { flex-basis: 100%; } .time { flex: 1 1 110px; } .panel { padding: 14px; } }

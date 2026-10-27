@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { thoughtDateSchema } from "./dayThought.schema";
 
 const contentSchema = z
   .string()
@@ -52,3 +53,10 @@ export type CreateLogInput = z.infer<typeof createLogSchema>;
 export type UpdateLogInput = z.infer<typeof updateLogSchema>;
 export type DeleteLogInput = z.infer<typeof deleteLogSchema>;
 export type UpdateLogTimeInput = z.infer<typeof updateLogTimeSchema>;
+
+export const createPastLogSchema = z.object({
+  content: contentSchema.transform(value => value.trim()),
+  date: thoughtDateSchema,
+  time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Informe um horário válido."),
+  timezoneOffset: z.number().int().min(-720).max(840),
+});

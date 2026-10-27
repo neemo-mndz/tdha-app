@@ -79,6 +79,7 @@ export async function insertLog(input: {
   dayId: string;
   content: string;
   weekPlanTaskId?: string | null;
+  createdAt?: Date;
 }): Promise<Log> {
   const [log] = await db.insert(logs).values(input).returning();
   return log;

@@ -1,9 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState, useOptimistic, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useOptimistic, useEffect, useCallback, type ReactNode } from "react";
 import { logsReducer, type OptimisticAction } from "@/components/logs/optimisticLogs";
 import type { LogWithTask } from "@/lib/db/queries/logs";
-import { isSameDay } from "date-fns";
+import { format, isSameDay } from "date-fns";
 
 /** Parse "yyyy-MM-dd" as local date without timezone shift */
 function parseDateString(s: string): Date {
@@ -33,8 +33,21 @@ export function LogsProvider({
   todayStr: string;
 }) {
   const [todayDate] = useState(() => parseDateString(todayStr));
-  const [selectedDate, setSelectedDate] = useState<Date>(todayDate);
-  const [logs, setLogs] = useState<LogWithTask[]>(initialLogs);
+  const [selectedDate, selectDate] = useState<Date>(todayDate);
+  const dateStr = format(selectedDate, "yyyy-MM-dd");
+  const [dayLogs, setDayLogs] = useState({ date: todayStr, logs: initialLogs });
+  const logs = dayLogs.logs;
+  // Bind each result to the date that requested it; late responses cannot replace another day.
+  const setLogs = useCallback((next: LogWithTask[]) => {
+    setDayLogs(current => current.date === dateStr ? { date: dateStr, logs: next } : current);
+  }, [dateStr]);
+  function setSelectedDate(date: Date) {
+    const nextDate = format(date, "yyyy-MM-dd");
+    selectDate(date);
+    setDayLogs(current => current.date === nextDate ? current : {
+      date: nextDate, logs: nextDate === todayStr ? initialLogs : [],
+    });
+  }
 
   const [optimisticLogs, dispatchOptimistic] = useOptimistic(
     logs,
@@ -47,7 +60,7 @@ export function LogsProvider({
     if (isSameDay(selectedDate, todayDate)) {
       setLogs(initialLogs);
     }
-  }, [initialLogs, selectedDate, todayDate]);
+  }, [initialLogs, selectedDate, todayDate, setLogs]);
 
   return (
     <LogsContext.Provider

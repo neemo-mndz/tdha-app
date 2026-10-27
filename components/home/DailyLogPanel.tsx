@@ -74,6 +74,8 @@ export function DailyLogPanel({ activeTasks, weekStart }: DailyLogPanelProps) {
     }
   };
 
+  if (dateStr < format(todayDate, "yyyy-MM-dd")) return null;
+
   return (
     <div className="daily-log-panel">
       <h2 className="daily-log-panel__title">Registrar agora</h2>

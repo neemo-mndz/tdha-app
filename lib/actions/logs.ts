@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import {
   createLogSchema,
+  createPastLogSchema,
   updateLogSchema,
   deleteLogSchema,
   updateLogTimeSchema,
@@ -241,4 +242,29 @@ export async function updateLogTime(input: unknown): Promise<ActionResult> {
 export async function getMonthStatusAction(year: number, month: number): Promise<DayStatus[]> {
   const userId = await getCurrentUserId();
   return getMonthStatus(userId, year, month);
+}
+
+/** Registra uma atividade já realizada, com data e horário informados juntos. */
+export async function createPastLog(input: unknown): Promise<
+  { success: true; log: LogWithTask } | { success: false; error: string }
+> {
+  const parsed = createPastLogSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+  const userId = await getCurrentUserId();
+  const { date, time, timezoneOffset, content } = parsed.data;
+  if (date >= rhythmToday()) return { success: false, error: "Selecione um dia anterior a hoje." };
+  const [year, month, day] = date.split("-").map(Number);
+  const [hour, minute] = time.split(":").map(Number);
+  const createdAt = new Date(Date.UTC(year, month - 1, day, hour, minute) + timezoneOffset * 60000);
+  try {
+    const dayRecord = await upsertDay(userId, date);
+    const log = await insertLog({ dayId: dayRecord.id, content, createdAt, weekPlanTaskId: null });
+    revalidatePath(`/day/${date}`);
+    revalidatePath("/");
+    revalidatePath("/history");
+    revalidatePath("/week/[weekStart]", "page");
+    return { success: true, log: { ...log, taskName: null, tags: [] } };
+  } catch {
+    return { success: false, error: "Não foi possível salvar. Seus dados foram mantidos; tente novamente." };
+  }
 }

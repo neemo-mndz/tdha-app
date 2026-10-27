@@ -1,9 +1,10 @@
 "use client";
 
-import { useOptimistic, useTransition } from "react";
+import { useEffect, useState, useOptimistic, useTransition } from "react";
 import type { LogWithTask } from "@/lib/db/queries/logs";
 import { createLog } from "@/lib/actions/logs";
 import { LogItem } from "./LogItem";
+import { PastDayLogPanel } from "./PastDayLogPanel";
 import { LogForm } from "./LogForm";
 import { logsReducer, type OptimisticAction } from "./optimisticLogs";
 
@@ -12,12 +13,15 @@ export type { OptimisticAction };
 interface LogListProps {
   initialLogs: LogWithTask[];
   date: string;
+  isPast?: boolean;
   allUserTags?: { id: string; name: string }[];
 }
 
-export function LogList({ initialLogs, date, allUserTags = [] }: LogListProps) {
+export function LogList({ initialLogs, date, isPast = false, allUserTags = [] }: LogListProps) {
+  const [logs, setLogs] = useState(initialLogs);
+  useEffect(() => setLogs(initialLogs), [initialLogs]);
   const [optimisticLogs, dispatchOptimistic] = useOptimistic(
-    initialLogs,
+    logs,
     logsReducer
   );
   const [, startTransition] = useTransition();
@@ -42,13 +46,17 @@ export function LogList({ initialLogs, date, allUserTags = [] }: LogListProps) {
     });
   };
 
+  const form = isPast ? <PastDayLogPanel key={date} date={date} onSaved={log => {
+    setLogs(current => [...current.filter(item => item.id !== log.id), log].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+  }} /> : <LogForm onSubmit={handleCreate} />;
+
   if (optimisticLogs.length === 0) {
     return (
       <section aria-label="Sem registros" className="day-view__logs">
         <div className="day-view__empty">
           <p>Nenhum registro ainda. Que tal começar agora?</p>
         </div>
-        <LogForm onSubmit={handleCreate} />
+        {form}
       </section>
     );
   }
@@ -67,7 +75,7 @@ export function LogList({ initialLogs, date, allUserTags = [] }: LogListProps) {
           />
         ))}
       </ul>
-      <LogForm onSubmit={handleCreate} />
+      {form}
     </section>
   );
 }

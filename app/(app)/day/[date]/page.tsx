@@ -38,7 +38,8 @@ export default async function DayPage({ params }: DayPageProps) {
     getDayLogs(userId, dateString), getDayThoughts(userId, dateString), getDayInsight(userId, dateString),
   ]);
   const weekStart = getWeekStart(dateString);
-  const isToday = dateString === format(getBrazilNow(), "yyyy-MM-dd");
+  const today = format(getBrazilNow(), "yyyy-MM-dd");
+  const isToday = dateString === today;
   const displayDate = format(parseISO(dateString), "EEEE, d 'de' MMMM", { locale: ptBR });
 
   return (
@@ -47,7 +48,7 @@ export default async function DayPage({ params }: DayPageProps) {
         <a href={`/week/${weekStart}`} className="day-view__back">← Voltar à semana</a>
         <h1 className="day-view__title">{isToday ? "Hoje" : displayDate}</h1>
       </header>
-      <LogList initialLogs={logs} date={dateString} />
+      <LogList key={dateString} initialLogs={logs} date={dateString} isPast={dateString < today} />
       <DayThoughtsPanel key={dateString} date={dateString} initialEntries={thoughts} legacyInsight={insight} />
     </main>
   );
